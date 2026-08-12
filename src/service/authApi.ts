@@ -50,6 +50,31 @@ export const loginWithPhone = (
         useAuth: false,
     });
 
+// Khong con purpose (login/register) - server tu quyet dinh dua vao viec so
+// dien thoai da co tai khoan hay chua (xem docstring requestOtp o backend).
+export const requestOtp = (phone: string): Promise<null> =>
+    request<null>(
+        "POST",
+        API.AUTH_OTP_REQUEST,
+        { phone },
+        {
+            useAuth: false,
+        },
+    );
+
+export interface OtpVerifyParams {
+    phone: string;
+    code: string;
+    displayName?: string;
+}
+
+export const verifyOtp = (
+    params: OtpVerifyParams,
+): Promise<LoginWithZaloResponse> =>
+    request<LoginWithZaloResponse>("POST", API.AUTH_OTP_VERIFY, params, {
+        useAuth: false,
+    });
+
 export const setPassword = (
     password: string,
     currentPassword?: string,
@@ -75,9 +100,10 @@ export const updateMyProfile = (params: UpdateProfileParams): Promise<User> =>
     request<User>("PATCH", API.AUTH_ME, params);
 
 /**
- * Doi so dien thoai dang nhap - accessToken/phoneToken tu zmp-sdk
- * (getToken/getPhoneNumber trong @service/zalo), xac thuc lai qua Zalo o
- * backend (xem changeOwnPhone).
+ * Doi so dien thoai dang nhap - can accessToken/phoneToken xac thuc lai qua
+ * Zalo o backend (xem changeOwnPhone). Khong con UI goi ham nay o ban web
+ * (chi kha dung tren Zalo Mini App, xem plan chuyen doi web) - giu lai binding
+ * nay phong khi can bat lai.
  */
 export const changePhone = (
     accessToken: string,

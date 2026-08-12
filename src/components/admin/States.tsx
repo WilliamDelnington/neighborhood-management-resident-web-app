@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Spinner, Text } from "zmp-ui";
+import { Box, Spinner, Text } from "@components/ui";
 
 export const LoadingState: React.FC<{ label?: string }> = ({
     label = "Đang tải...",

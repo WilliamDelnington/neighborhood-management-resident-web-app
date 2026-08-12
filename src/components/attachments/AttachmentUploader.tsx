@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Icon, Text, useSnackbar } from "zmp-ui";
+import { Box, Icon, Text, useSnackbar } from "@components/ui";
 import { LoadingState, EmptyState } from "@components/admin";
 import { pickAndUploadAttachment } from "@service/uploadApi";
 import { FileAsset } from "@dts";

@@ -1,5 +1,11 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, useLocation, useNavigate, useSnackbar } from "zmp-ui";
+import {
+    Box,
+    Text,
+    useLocation,
+    useNavigate,
+    useSnackbar,
+} from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button, Input } from "@components/customized";
 import { useStore } from "@store";
@@ -8,7 +14,7 @@ import { Role } from "@dts";
 import { isValidVietnamesePhone } from "@utils/string";
 import Logo from "@assets/logo.png";
 
-type PhoneAuthMode = "hidden" | "login" | "register";
+type PhoneAuthMode = "login" | "register";
 
 /**
  * Danh sach tai khoan mau tao boi backend-app/scripts/seed.ts - dung de test nhanh tung vai tro
@@ -45,18 +51,26 @@ const DEV_TEST_ACCOUNTS: { zaloUserId: string; name: string; role: Role }[] = [
 ];
 
 /**
- * Man hinh dang nhap: san pham chinh thuc chi dang nhap bang Zalo. Kenh dang nhap
- * bang so dien thoai + mat khau chi hien khi import.meta.env.DEV (build dev), dung
- * de test khi chua co tai khoan Zalo sandbox phu hop - khong duoc bat trong production.
- * Tai khoan moi da la house_owner day du quyen ngay tu dau (khong con buoc
- * onboarding bat buoc) - dang ky nha so la viec lam sau, tu trang quan tri.
+ * Man hinh dang nhap: kenh dang nhap/dang ky duy nhat la so dien thoai + mat
+ * khau (loginWithPhone/registerWithPhone).
+ *
+ * OTP (eSMS/Zalo ZNS) da duoc XAY XONG o backend (otpService.ts, lib/esms.ts,
+ * lib/esmsZns.ts) nhung TAM HOAN dung o man hinh nay - eSMS/Zalo ZNS deu can
+ * mau tin duoc duyet truoc (2-3 ngay), khong kip cho demo. Code OTP van con,
+ * chi khong duoc goi tu day nua; bat lai bang cach doi UI ve dung
+ * requestOtp/verifyOtp trong @store/authSlice.ts khi cac mau tin da duoc
+ * duyet.
+ *
+ * Ngoai tu dang ky, tai khoan con co the duoc to truong/nguoi co quyen tao
+ * san (kem mat khau) tu form tao ho/nha trong khu Admin - xem
+ * components/house/AddHouseOwnershipSheet.tsx.
  */
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { openSnackbar } = useSnackbar();
 
-    const [phoneAuthMode, setPhoneAuthMode] = useState<PhoneAuthMode>("hidden");
+    const [phoneAuthMode, setPhoneAuthMode] = useState<PhoneAuthMode>("login");
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -66,7 +80,6 @@ const LoginPage: React.FC = () => {
         token,
         bootstrapping,
         bootstrapError,
-        bootstrapSession,
         loginAsTestUser,
         loginWithPhone,
         registerWithPhone,
@@ -74,7 +87,6 @@ const LoginPage: React.FC = () => {
         state.token,
         state.bootstrapping,
         state.bootstrapError,
-        state.bootstrapSession,
         state.loginAsTestUser,
         state.loginWithPhone,
         state.registerWithPhone,
@@ -91,10 +103,6 @@ const LoginPage: React.FC = () => {
             navigate(from, { animate: true, replace: true });
         }
     }, [token]);
-
-    const handleLogin = () => {
-        bootstrapSession();
-    };
 
     const handleLoginAsTestUser = (zaloUserId: string, name: string) => {
         loginAsTestUser(zaloUserId, name);
@@ -158,17 +166,6 @@ const LoginPage: React.FC = () => {
                     Phường Dương Nội, Hà Nội
                 </Text>
 
-                {!token && (
-                    <Button
-                        fullWidth
-                        loading={bootstrapping}
-                        onClick={handleLogin}
-                        className="!bg-white !text-main"
-                    >
-                        Đăng nhập bằng Zalo
-                    </Button>
-                )}
-
                 {!token && bootstrapError && (
                     <Text
                         size="xSmall"
@@ -178,17 +175,7 @@ const LoginPage: React.FC = () => {
                     </Text>
                 )}
 
-                {import.meta.env.DEV && !token && phoneAuthMode === "hidden" && (
-                    <Text
-                        size="xSmall"
-                        className="text-white mt-4 text-center"
-                        onClick={() => setPhoneAuthMode("login")}
-                    >
-                        Đăng nhập bằng số điện thoại
-                    </Text>
-                )}
-
-                {import.meta.env.DEV && !token && phoneAuthMode !== "hidden" && (
+                {!token && (
                     <Box className="bg-white rounded-2xl p-4 w-full mt-6">
                         <Text.Title size="small">
                             {phoneAuthMode === "register"

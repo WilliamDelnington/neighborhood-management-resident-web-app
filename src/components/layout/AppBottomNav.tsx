@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { BottomNavigation, Icon } from "zmp-ui";
+import { BottomNavigation, Icon } from "@components/ui";
 import { useStore } from "@store";
 import { hasPermission } from "@components/role";
 

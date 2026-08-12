@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { Header, Icon } from "zmp-ui";
+import { Header, Icon } from "@components/ui";
 import styled from "styled-components";
 import tw from "twin.macro";
 import Background from "@assets/header-background.png";

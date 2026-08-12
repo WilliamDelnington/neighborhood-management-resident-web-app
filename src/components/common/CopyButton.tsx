@@ -1,6 +1,6 @@
 import React, { FC, useCallback } from "react";
 import styled from "styled-components";
-import { Button, Icon, useSnackbar } from "zmp-ui";
+import { Button, Icon, useSnackbar } from "@components/ui";
 
 import tw from "twin.macro";
 

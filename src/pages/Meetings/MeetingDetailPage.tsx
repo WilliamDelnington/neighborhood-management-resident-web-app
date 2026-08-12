@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Icon, Text, useParams, useSnackbar } from "zmp-ui";
+import { Box, Icon, Text, useParams, useSnackbar } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button, Input, Radio } from "@components/customized";
 import { ErrorState, LoadingState } from "@components/admin";

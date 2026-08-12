@@ -15,11 +15,15 @@ export interface AddHouseOwnershipInput {
     ownerType: OwnerType;
     // Mot trong hai: ownerId (chon to chuc qua OrganizationPickerSheet) hoac
     // phone (nhap tay, chi ap dung voi ownerType="user" - backend tim tai
-    // khoan CO SAN theo so dien thoai, khong tu tao moi, vi house_owner khong
-    // co quyen "users.read" de tim theo id nhu admin-web-app - xem
+    // khoan CO SAN theo so dien thoai; neu chua co VA kem displayName+password
+    // VA nguoi goi co quyen "users.create", se tao tai khoan moi luon - xem
     // houseOwnershipService.resolveExistingOwnerId o backend).
     ownerId?: string;
     phone?: string;
+    // Chi dung khi tao tai khoan moi (phone chua co tai khoan) - bo qua neu
+    // phone da co tai khoan san, hoac nguoi goi khong co quyen "users.create".
+    displayName?: string;
+    password?: string;
     relationshipType: HouseOwnershipRelationshipType;
     reason?: string;
 }

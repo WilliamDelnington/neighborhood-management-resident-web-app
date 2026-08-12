@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import styled from "styled-components";
 import tw from "twin.macro";
-import { List } from "zmp-ui";
+import { List } from "@components/ui";
 
 import { ImageIcon } from "@components/icons";
 import { Utinity } from "@dts";

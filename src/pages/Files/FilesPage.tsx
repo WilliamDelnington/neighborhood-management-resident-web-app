@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Icon } from "zmp-ui";
+import { Box, Icon } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import {
     EmptyState,

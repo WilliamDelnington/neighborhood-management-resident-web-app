@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Sheet, Text } from "zmp-ui";
+import { Box, Sheet, Text } from "@components/ui";
 import { LoadingState, EmptyState } from "@components/admin";
 import { fetchEligibleSenderCorrespondenceTypes } from "@service/correspondenceTypeApi";
 import { CorrespondenceType } from "@dts";

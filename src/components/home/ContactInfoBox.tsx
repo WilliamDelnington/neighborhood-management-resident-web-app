@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { useNavigate } from "zmp-ui";
+import { useNavigate } from "@components/ui";
 import styled from "styled-components";
 import tw from "twin.macro";
 

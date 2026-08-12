@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Modal, Text, useSnackbar } from "zmp-ui";
+import { Box, Modal, Text, useSnackbar } from "@components/ui";
 import {
     EmptyState,
     ErrorState,

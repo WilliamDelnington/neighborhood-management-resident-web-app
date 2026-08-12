@@ -1,6 +1,4 @@
 export const BASE_URL = import.meta.env.VITE_BASE_URL;
-export const MINI_APP_ID =
-    window.APP_ID || (import.meta.env.VITE_MINI_APP_ID as string);
 
 /**
  * URL cua trang quan tri web rieng (quan-ly-to-dan-pho-hoa-binh-admin) - mo trong
@@ -14,6 +12,8 @@ export const API = {
     AUTH_LOGIN: "/api/auth/login",
     AUTH_SET_PASSWORD: "/api/auth/set-password",
     AUTH_CHANGE_PHONE: "/api/auth/change-phone",
+    AUTH_OTP_REQUEST: "/api/auth/otp/request",
+    AUTH_OTP_VERIFY: "/api/auth/otp/verify",
     AUTH_ME: "/api/auth/me",
     AUTH_LOGOUT: "/api/auth/logout",
 

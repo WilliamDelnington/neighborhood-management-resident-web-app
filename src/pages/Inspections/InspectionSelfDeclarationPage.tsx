@@ -1,5 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import { Box, Text, useNavigate, useParams, useSnackbar } from "zmp-ui";
+import { Box, Text, useNavigate, useParams, useSnackbar } from "@components/ui";
 import {
     EmptyState,
     ErrorState,

@@ -1,14 +1,12 @@
 import React, { PropsWithChildren, ReactElement, useEffect } from "react";
-import { Box, Page, Spinner, useLocation, useNavigate } from "zmp-ui";
+import { Box, Page, Spinner, useLocation, useNavigate } from "@components/ui";
 import DefaultHeader from "@components/layout/DefaultHeader";
 import { useStore } from "@store";
 
 /**
- * Bao boc mot man hinh yeu cau dang nhap. KHONG tu dong goi bootstrapSession (xin quyen Zalo) -
- * theo chinh sach kiem duyet Zalo Mini App, viec xin thong tin nguoi dung chi duoc thuc hien khi
- * co hanh dong ro rang cua nguoi dung (bam nut "Dang nhap bang Zalo" o LoginPage). Vi vay: neu
- * dang co token thi hien children ngay; neu chua co token va khong co luot bootstrap nao dang
- * chay (vd nguoi dung vua bam dang nhap tu man khac) thi dieu huong thang ve /login.
+ * Bao boc mot man hinh yeu cau dang nhap: neu dang co token thi hien children
+ * ngay; neu chua co token va khong co luot dang nhap nao dang chay (vd nguoi
+ * dung vua bam dang nhap tu man khac) thi dieu huong thang ve /login.
  *
  * Luu y: import DefaultHeader truc tiep (khong qua barrel @components/layout) de tranh vong lap
  * import - AppBottomNav (trong @components/layout) lai import hasAdminAccess tu chinh module nay.

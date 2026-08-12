@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Sheet, Text } from "zmp-ui";
+import { Box, Sheet, Text } from "@components/ui";
 import { Input } from "@components/customized";
 import { LoadingState, EmptyState, ErrorState } from "@components/admin";
 import { fetchBusinessTypes } from "@service/businessTypeApi";

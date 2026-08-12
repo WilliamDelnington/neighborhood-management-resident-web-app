@@ -1,15 +1,16 @@
 import Routes from "@pages";
 import React from "react";
-import { App, SnackbarProvider } from "zmp-ui";
+import { BrowserRouter } from "react-router-dom";
+import { SnackbarProvider } from "@components/ui";
 import ErrorNotification from "./notifications/ErrorNotification";
 
 const MyApp = () => (
-    <App>
+    <BrowserRouter>
         <SnackbarProvider>
             <ErrorNotification />
             <Routes />
         </SnackbarProvider>
-    </App>
+    </BrowserRouter>
 );
 
 export default MyApp;

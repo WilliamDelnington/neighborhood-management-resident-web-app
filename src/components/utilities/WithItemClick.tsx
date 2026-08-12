@@ -1,7 +1,6 @@
 import React, { ComponentType } from "react";
-import { openPhone } from "zmp-sdk";
 import { openWebView } from "@service/zalo";
-import { useSnackbar, useNavigate } from "zmp-ui";
+import { useSnackbar, useNavigate } from "@components/ui";
 
 function WithItemClick<T>(Component: ComponentType<T & object>) {
     return function WithItemClickWrapper(props: T) {
@@ -30,7 +29,7 @@ function WithItemClick<T>(Component: ComponentType<T & object>) {
             } else if (path) {
                 navigate(path, { animate: true, direction: "forward" });
             } else if (phoneNumber) {
-                openPhone({ phoneNumber });
+                window.location.href = `tel:${phoneNumber}`;
             } else if (link) {
                 openWebView(link);
             }

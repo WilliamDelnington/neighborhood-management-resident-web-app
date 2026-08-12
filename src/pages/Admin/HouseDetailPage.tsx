@@ -7,7 +7,7 @@ import {
     useNavigate,
     useParams,
     useSnackbar,
-} from "zmp-ui";
+} from "@components/ui";
 import { PageLayout } from "@components/layout";
 import {
     EmptyState,

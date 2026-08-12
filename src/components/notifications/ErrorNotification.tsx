@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useStore } from "@store";
-import { useSnackbar } from "zmp-ui";
+import { useSnackbar } from "@components/ui";
 
 const ErrorNotification = () => {
     const [error, setError] = useStore(state => [state.error, state.setError]);

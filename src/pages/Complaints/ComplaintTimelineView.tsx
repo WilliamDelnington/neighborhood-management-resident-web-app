@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text } from "zmp-ui";
+import { Box, Text } from "@components/ui";
 import { StatusBadge } from "@components/admin";
 import {
     NHOM_PHAN_ANH_LABEL,

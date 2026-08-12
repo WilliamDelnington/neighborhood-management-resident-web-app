@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Text, useNavigate } from "zmp-ui";
+import { Box, Text, useNavigate } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { ListRow } from "@components/admin";
 import { RequireAuth, hasPermission, hasAdminAccess } from "@components/role";

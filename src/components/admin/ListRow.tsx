@@ -1,5 +1,5 @@
 import React, { ReactNode } from "react";
-import { Box, Icon, Text } from "zmp-ui";
+import { Box, Icon, Text } from "@components/ui";
 
 export interface ListRowProps {
     title: string;

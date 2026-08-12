@@ -1,5 +1,5 @@
 import React from "react";
-import { Text } from "zmp-ui";
+import { Text } from "@components/ui";
 
 export type BadgeTone = "gray" | "blue" | "yellow" | "green" | "red";
 

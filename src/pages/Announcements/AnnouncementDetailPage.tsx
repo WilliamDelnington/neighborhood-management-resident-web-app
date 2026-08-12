@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, useParams } from "zmp-ui";
+import { Box, Text, useParams } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { ErrorState, LoadingState } from "@components/admin";
 import { fetchAnnouncementDetail } from "@service/announcementApi";

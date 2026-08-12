@@ -1,25 +1,36 @@
 <!DOCTYPE html>
 <html>
+    <head>
+        <meta charset="utf-8" />
+        <!--
+    'unsafe-inline' stays on script-src/style-src: styled-components injects
+    a runtime <style> tag, and Vite's dev server injects an inline React
+    Fast Refresh preamble script into this same index.html (no nonce/hash
+    support without per-mode templating) - dropping it breaks `npm run dev`,
+    not just this file's production use. connect-src lists every real API
+    origin used across .env*/.env.dev/.env.production/.env.remote since this
+    file is static regardless of build mode.
+  -->
+        <meta
+            http-equiv="Content-Security-Policy"
+            content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.dev.quanlytodanpho.com https://hiscustom.io.vn http://localhost:4000"
+        />
+        <meta
+            name="viewport"
+            content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover"
+        />
 
-<head>
-  <meta charset="utf-8">
-  <meta http-equiv="Content-Security-Policy"
-    content="default-src * 'self' 'unsafe-inline' 'unsafe-eval' data: gap: content:">
-  <meta name="viewport"
-    content="width=device-width, initial-scale=1, maximum-scale=1, minimum-scale=1, user-scalable=no, viewport-fit=cover">
+        <meta name="theme-color" content="#007aff" />
+        <meta name="format-detection" content="telephone=no" />
+        <meta name="msapplication-tap-highlight" content="no" />
+        <link rel="icon" href="/src/static/icons/favicon.png" />
+        <title>Dịch Vụ Công</title>
+    </head>
 
-  <meta name="theme-color" content="#007aff">
-  <meta name="format-detection" content="telephone=no">
-  <meta name="msapplication-tap-highlight" content="no">
-  <link rel="icon" href="/src/static/icons/favicon.png">
-  <title>Dịch Vụ Công</title>
-</head>
+    <body>
+        <div id="app"></div>
+        <!-- built script files will be auto injected -->
 
-<body>
-  <div id="app"></div>
-  <!-- built script files will be auto injected -->
-
-  <script type="module" src="/src/app.ts"></script>
-</body>
-
+        <script type="module" src="/src/app.ts"></script>
+    </body>
 </html>

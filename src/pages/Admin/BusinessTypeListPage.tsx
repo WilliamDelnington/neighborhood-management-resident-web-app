@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Icon, Sheet, Text, useSnackbar } from "zmp-ui";
+import { Box, Icon, Sheet, Text, useSnackbar } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { Button, Input } from "@components/customized";
 import {

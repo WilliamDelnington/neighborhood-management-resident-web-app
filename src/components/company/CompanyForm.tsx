@@ -1,5 +1,5 @@
 import React from "react";
-import { Box } from "zmp-ui";
+import { Box } from "@components/ui";
 import { Input, TextArea, Checkbox } from "@components/customized";
 import { CompanyInput } from "@service/companyApi";
 

@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, useNavigate } from "zmp-ui";
+import { Box, useNavigate } from "@components/ui";
 import {
     EmptyState,
     ErrorState,

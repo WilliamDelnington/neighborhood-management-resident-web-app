@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Text } from "zmp-ui";
+import { Box, Text } from "@components/ui";
 import { UtinityItem } from "@components/utilities";
 import { Utinity } from "@dts";
 

@@ -1,7 +1,9 @@
 import React, { useState } from "react";
-import { Box, Sheet, Text, useSnackbar } from "zmp-ui";
+import { Box, Sheet, Text, useSnackbar } from "@components/ui";
 import { Button, Input, Radio, TextArea } from "@components/customized";
 import OrganizationPickerSheet from "@components/house/OrganizationPickerSheet";
+import { hasPermission } from "@components/role";
+import { useStore } from "@store";
 import { HOUSE_OWNERSHIP_RELATIONSHIP_TYPE_LABEL } from "@constants/domain";
 import {
     AppError,
@@ -28,7 +30,13 @@ export interface AddHouseOwnershipSheetProps {
  * houseOwnershipService.addHouseOwnership o backend. Voi ownerType="user",
  * nhap so dien thoai thay vi chon tu danh sach: house_owner khong co quyen
  * tim kiem tai khoan nguoi khac (users.read la quyen cua nhan vien), backend
- * tu tim tai khoan CO SAN theo so dien thoai (khong tu tao moi).
+ * tu tim tai khoan CO SAN theo so dien thoai.
+ *
+ * Nguoi co quyen "users.create" (vd to truong/admin, KHONG phai house_owner
+ * thuong) con thay them muc "Ho ten"/"Mat khau" - neu so dien thoai CHUA co
+ * tai khoan, backend se tao tai khoan moi luon voi mat khau nay (TAM THOI
+ * dung phone+password thay OTP - xem LoginPage.tsx); neu da co tai khoan, hai
+ * truong nay bi bo qua.
  */
 const AddHouseOwnershipSheet: React.FC<AddHouseOwnershipSheetProps> = ({
     visible,
@@ -37,10 +45,14 @@ const AddHouseOwnershipSheet: React.FC<AddHouseOwnershipSheetProps> = ({
     onAdded,
 }) => {
     const { openSnackbar } = useSnackbar();
+    const user = useStore(state => state.user);
+    const canCreateAccount = hasPermission(user, "users.create");
     const [relationshipType, setRelationshipType] =
         useState<HouseOwnershipRelationshipType>("co_owner");
     const [ownerType, setOwnerType] = useState<OwnerType>("user");
     const [phone, setPhone] = useState("");
+    const [newAccountName, setNewAccountName] = useState("");
+    const [newAccountPassword, setNewAccountPassword] = useState("");
     const [organizationId, setOrganizationId] = useState("");
     const [organizationLabel, setOrganizationLabel] = useState("");
     const [organizationPickerVisible, setOrganizationPickerVisible] =
@@ -52,6 +64,8 @@ const AddHouseOwnershipSheet: React.FC<AddHouseOwnershipSheetProps> = ({
         setRelationshipType("co_owner");
         setOwnerType("user");
         setPhone("");
+        setNewAccountName("");
+        setNewAccountPassword("");
         setOrganizationId("");
         setOrganizationLabel("");
         setReason("");
@@ -76,6 +90,14 @@ const AddHouseOwnershipSheet: React.FC<AddHouseOwnershipSheetProps> = ({
                 phone: ownerType === "user" ? phone.trim() : undefined,
                 ownerId:
                     ownerType === "organization" ? organizationId : undefined,
+                displayName:
+                    ownerType === "user" && canCreateAccount
+                        ? newAccountName.trim() || undefined
+                        : undefined,
+                password:
+                    ownerType === "user" && canCreateAccount
+                        ? newAccountPassword.trim() || undefined
+                        : undefined,
                 relationshipType,
                 reason: reason.trim() || undefined,
             });
@@ -169,8 +191,38 @@ const AddHouseOwnershipSheet: React.FC<AddHouseOwnershipSheetProps> = ({
                                 onChange={e => setPhone(e.target.value)}
                             />
                             <Text size="xxSmall" className="text-text_2 mt-1">
-                                Người này cần đã có tài khoản trong ứng dụng.
+                                {canCreateAccount
+                                    ? "Nếu số này chưa có tài khoản, điền họ tên + mật khẩu dưới đây để tạo tài khoản mới."
+                                    : "Người này cần đã có tài khoản trong ứng dụng."}
                             </Text>
+                            {canCreateAccount && (
+                                <>
+                                    <Box mt={3}>
+                                        <Input
+                                            label="Họ tên (nếu tạo tài khoản mới)"
+                                            value={newAccountName}
+                                            onChange={e =>
+                                                setNewAccountName(
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+                                    </Box>
+                                    <Box mt={3}>
+                                        <Input
+                                            type="password"
+                                            label="Mật khẩu (nếu tạo tài khoản mới)"
+                                            placeholder="Ít nhất 6 ký tự"
+                                            value={newAccountPassword}
+                                            onChange={e =>
+                                                setNewAccountPassword(
+                                                    e.target.value,
+                                                )
+                                            }
+                                        />
+                                    </Box>
+                                </>
+                            )}
                         </Box>
                     ) : (
                         <Box mb={3}>

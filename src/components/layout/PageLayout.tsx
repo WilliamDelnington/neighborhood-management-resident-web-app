@@ -1,7 +1,6 @@
 import React, { ReactNode, useImperativeHandle, useRef } from "react";
 import styled from "styled-components";
-import { Page } from "zmp-ui";
-import { PageProps } from "zmp-ui/page";
+import { Page, PageProps } from "@components/ui";
 import tw from "twin.macro";
 import DefaultHeader from "./DefaultHeader";
 

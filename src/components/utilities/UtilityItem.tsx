@@ -2,7 +2,7 @@
 import React, { FunctionComponent } from "react";
 import styled from "styled-components";
 import tw from "twin.macro";
-import { Text } from "zmp-ui";
+import { Text } from "@components/ui";
 
 import WithItem from "./WithItemClick";
 

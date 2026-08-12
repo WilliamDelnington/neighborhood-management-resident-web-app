@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, DatePicker, Text } from "zmp-ui";
+import { Box, DatePicker, Text } from "@components/ui";
 import { Input, Radio, Checkbox } from "@components/customized";
 import { HouseholdPickerSheet } from "@components/household";
 import { GIOI_TINH_LABEL, LOAI_CU_TRU_LABEL } from "@constants/domain";

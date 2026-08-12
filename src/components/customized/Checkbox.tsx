@@ -1,20 +1,6 @@
-import React from "react";
-import styled from "styled-components";
-import tw from "twin.macro";
-import { Checkbox } from "zmp-ui";
-import { CheckboxProps } from "zmp-ui/checkbox";
+import React, { FC } from "react";
+import { Checkbox, CheckboxProps } from "@components/ui";
 
-const StyledCheckbox = styled(Checkbox)`
-    .zaui-checkbox-inner {
-        ${tw`rounded-3xl`}
-    }
-
-    &.zaui-checkbox-checked .zaui-checkbox-inner {
-        ${tw`bg-main`}
-    }
-`;
-const AppCheckbox: React.FC<CheckboxProps> = props => (
-    <StyledCheckbox {...props} />
-);
+const AppCheckbox: FC<CheckboxProps> = props => <Checkbox {...props} />;
 
 export default AppCheckbox;

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Text } from "zmp-ui";
+import { Box, Text } from "@components/ui";
 import { Input, TextArea, Radio, Checkbox } from "@components/customized";
 import { HousePickerSheet } from "@components/house";
 import { LOAI_SO_HUU_LABEL } from "@constants/domain";

@@ -1,6 +1,5 @@
 import React, { FC } from "react";
-import { openPhone } from "zmp-sdk";
-import { useNavigate } from "zmp-ui";
+import { useNavigate } from "@components/ui";
 import styled from "styled-components";
 import tw from "twin.macro";
 import { PhoneIcon } from "@components/icons";
@@ -56,7 +55,7 @@ const EmergencyContactBox: FC<EmergencyContactBoxProps> = props => {
         phoneNumber: string,
     ) => {
         event.stopPropagation();
-        openPhone({ phoneNumber });
+        window.location.href = `tel:${phoneNumber}`;
     };
 
     return (

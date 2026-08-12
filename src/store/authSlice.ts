@@ -1,15 +1,11 @@
 import { User } from "@dts";
 import { StateCreator } from "zustand";
 import {
-    getToken,
-    getZaloUserInfo,
-    getPhoneNumber,
-    authorizeUserInfo,
-} from "@service/zalo";
-import {
     loginWithZalo,
     loginWithPhone,
     registerWithPhone,
+    requestOtp as requestOtpApi,
+    verifyOtp as verifyOtpApi,
     fetchMe,
 } from "@service/authApi";
 
@@ -19,21 +15,15 @@ export interface AuthSlice {
     bootstrapping: boolean;
     bootstrapError?: string;
     /**
-     * Dem tang dan moi khi mot luot dang nhap moi bat dau (bootstrapSession hoac
-     * loginAsTestUser). Dung de dam bao luot dang nhap duoc khoi tao SAU CUNG luon
-     * la luot duoc ap dung vao store - tranh truong hop luot dang nhap Zalo that
-     * (tu dong chay khi app mo, thuong cham hon vi phai qua nhieu buoc SDK) tra ve
-     * SAU va de len ket qua cua luot dang nhap tai khoan thu nghiem nguoi dung vua
-     * bam, khien viec chon tai khoan thu nghiem trong "im lang" khong co tac dung.
+     * Dem tang dan moi khi mot luot dang nhap moi bat dau (loginAsTestUser,
+     * loginWithPhone, registerWithPhone, verifyOtp). Dung de dam bao luot
+     * dang nhap duoc khoi tao SAU CUNG luon la luot duoc ap dung vao store -
+     * tranh truong hop mot luot cham hon tra ve sau va de len ket qua cua
+     * luot nguoi dung vua bam sau do.
      */
     loginSeq: number;
     setToken: (token?: string) => void;
     setUser: (user?: User) => void;
-    /**
-     * Dang nhap bang Zalo: xin quyen -> lay accessToken + thong tin ho so ->
-     * doi lay session token cua backend -> luu ca hai vao store.
-     */
-    bootstrapSession: () => Promise<void>;
     /**
      * Chi dung khi dev (xem LoginPage - khoi "tai khoan thu nghiem"). Dang nhap thang bang mot
      * zaloUserId tuy chon, bo qua zmp-sdk. Chi hoat dong khi backend dang ZALO_ENV=sandbox (tin
@@ -53,6 +43,22 @@ export interface AuthSlice {
         password: string,
         displayName: string,
     ) => Promise<void>;
+    /**
+     * Xin gui ma OTP toi so dien thoai - kenh dang nhap khong mat khau, dung
+     * cho ban web (khong co Zalo). Khong con purpose: server tu quyet dinh
+     * dang nhap hay dang ky dua vao viec so da co tai khoan hay chua.
+     */
+    requestOtp: (phone: string) => Promise<void>;
+    /**
+     * Xac thuc ma OTP roi dang nhap/dang ky luon (gop trong mot buoc, giong
+     * verifyOtpAndAuthenticate ben backend). displayName chi duoc dung neu
+     * day la lan dau (tao tai khoan moi) - bi backend bo qua neu dang nhap.
+     */
+    verifyOtp: (
+        phone: string,
+        code: string,
+        displayName?: string,
+    ) => Promise<void>;
     refreshMe: () => Promise<void>;
     logout: () => void;
 }
@@ -65,65 +71,6 @@ const authSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set, get) => ({
     loginSeq: 0,
     setToken: (token?: string) => set(state => ({ ...state, token })),
     setUser: (user?: User) => set(state => ({ ...state, user })),
-    bootstrapSession: async () => {
-        const mySeq = get().loginSeq + 1;
-        set(state => ({
-            ...state,
-            loginSeq: mySeq,
-            bootstrapping: true,
-            bootstrapError: undefined,
-        }));
-        try {
-            const accessToken = await getToken();
-            await authorizeUserInfo();
-
-            let zaloUserId = "";
-            let name: string | undefined;
-            let avatarUrl: string | undefined;
-            try {
-                const info = await getZaloUserInfo();
-                zaloUserId = info.id;
-                name = info.name;
-                avatarUrl = info.avatar;
-            } catch {
-                // Nguoi dung tu choi quyen ho so - van cho phep dang nhap voi ID toi thieu
-                zaloUserId = `sandbox-${accessToken}`;
-            }
-
-            // getPhoneNumber returns a one-time code. The backend exchanges
-            // it with Zalo and links the verified phone to the Zalo identity.
-            const phoneToken = await getPhoneNumber();
-            if (!phoneToken && import.meta.env.PROD) {
-                throw new Error(
-                    "Vui lòng cho phép chia sẻ số điện thoại để liên kết tài khoản chủ hộ",
-                );
-            }
-
-            const { token, user } = await loginWithZalo({
-                accessToken,
-                zaloUserId,
-                name,
-                avatarUrl,
-                phoneToken,
-            });
-
-            // Neu trong luc cho phan hoi tu backend, mot luot dang nhap moi hon
-            // (vd. bam tai khoan thu nghiem) da bat dau, bo qua ket qua cu nay.
-            if (get().loginSeq !== mySeq) return;
-            set(state => ({ ...state, token, user }));
-        } catch (err: any) {
-            if (get().loginSeq === mySeq) {
-                set(state => ({
-                    ...state,
-                    bootstrapError: err?.message || "Không thể đăng nhập Zalo",
-                }));
-            }
-        } finally {
-            if (get().loginSeq === mySeq) {
-                set(state => ({ ...state, bootstrapping: false }));
-            }
-        }
-    },
     loginAsTestUser: async (zaloUserId: string, name?: string) => {
         const mySeq = get().loginSeq + 1;
         set(state => ({
@@ -207,6 +154,54 @@ const authSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set, get) => ({
                     bootstrapError: err?.message || "Không thể đăng ký",
                 }));
             }
+        } finally {
+            if (get().loginSeq === mySeq) {
+                set(state => ({ ...state, bootstrapping: false }));
+            }
+        }
+    },
+    requestOtp: async (phone: string) => {
+        set(state => ({
+            ...state,
+            bootstrapping: true,
+            bootstrapError: undefined,
+        }));
+        try {
+            await requestOtpApi(phone);
+        } catch (err: any) {
+            set(state => ({
+                ...state,
+                bootstrapError: err?.message || "Không thể gửi mã OTP",
+            }));
+            throw err;
+        } finally {
+            set(state => ({ ...state, bootstrapping: false }));
+        }
+    },
+    verifyOtp: async (phone: string, code: string, displayName?: string) => {
+        const mySeq = get().loginSeq + 1;
+        set(state => ({
+            ...state,
+            loginSeq: mySeq,
+            bootstrapping: true,
+            bootstrapError: undefined,
+        }));
+        try {
+            const { token, user } = await verifyOtpApi({
+                phone,
+                code,
+                displayName,
+            });
+            if (get().loginSeq !== mySeq) return;
+            set(state => ({ ...state, token, user }));
+        } catch (err: any) {
+            if (get().loginSeq === mySeq) {
+                set(state => ({
+                    ...state,
+                    bootstrapError: err?.message || "Mã OTP không đúng",
+                }));
+            }
+            throw err;
         } finally {
             if (get().loginSeq === mySeq) {
                 set(state => ({ ...state, bootstrapping: false }));

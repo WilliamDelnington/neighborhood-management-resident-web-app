@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from "react";
-import { Box, Icon, useNavigate } from "zmp-ui";
+import { Box, Icon, useNavigate } from "@components/ui";
 import styled from "styled-components";
 import tw from "twin.macro";
 import Logo from "@assets/logo.png";

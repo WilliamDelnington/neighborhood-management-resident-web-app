@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text } from "zmp-ui";
+import { Box, Text } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { EmptyState, ErrorState, LoadingState } from "@components/admin";
 import { RequireAuth } from "@components/role";

@@ -1,6 +1,13 @@
 import React, { useState } from "react";
 import { useLocation } from "react-router-dom";
-import { Box, Icon, Select, Text, useNavigate, useSnackbar } from "zmp-ui";
+import {
+    Box,
+    Icon,
+    Select,
+    Text,
+    useNavigate,
+    useSnackbar,
+} from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button, Input, TextArea } from "@components/customized";
 import { RequireAuth, hasPermission } from "@components/role";

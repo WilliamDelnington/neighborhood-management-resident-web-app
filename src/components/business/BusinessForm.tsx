@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Text } from "zmp-ui";
+import { Box, Text } from "@components/ui";
 import { Input, TextArea, Checkbox } from "@components/customized";
 import { BusinessType } from "@dts";
 import { BusinessInput } from "@service/businessApi";

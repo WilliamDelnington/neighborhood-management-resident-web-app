@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { Text } from "zmp-ui";
+import { Text } from "@components/ui";
 
 const SectionTitle = styled(Text.Title)``;
 

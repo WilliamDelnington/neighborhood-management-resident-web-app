@@ -8,7 +8,7 @@ import "react-datepicker/dist/react-datepicker.css";
 import { createGlobalStyle } from "styled-components";
 import tw from "twin.macro";
 import vi from "date-fns/locale/vi";
-import { Button, Icon } from "zmp-ui";
+import { Button, Icon } from "@components/ui";
 import "styled-components/macro";
 
 registerLocale("vi", vi);

@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Icon, Text } from "zmp-ui";
+import { Box, Icon, Text } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { RequireAuth } from "@components/role";
 
