@@ -31,6 +31,7 @@ export interface CitizenInput {
     relationToHead?: string;
     householdId: string;
     residenceType?: LoaiCuTru;
+    temporaryResidenceExpiresAt?: string;
     isElderly?: boolean;
     isChild?: boolean;
     isDisabledOrSupportNeeded?: boolean;

@@ -30,7 +30,7 @@ const FeaturesCard: React.FC<FeaturesCardProps> = ({
     return (
         <Box className="bg-white mt-2 p-4">
             <Text.Title size="small" className="mb-3">
-                Tiện ích
+                Nhóm dịch vụ
             </Text.Title>
             <Box
                 style={{

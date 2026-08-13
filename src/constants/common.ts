@@ -56,6 +56,7 @@ export const API = {
     NOTIFICATIONS_READ_ALL: "/api/notifications/read-all",
 
     FILES: "/api/files",
+    UTILITY_APPS: "/api/utility-apps",
     SETTINGS: "/api/settings",
 
     UPLOADS_TOKEN: "/api/uploads/token",

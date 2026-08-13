@@ -245,6 +245,24 @@ const LoginPage: React.FC = () => {
                             </Button>
                         </Box>
 
+                        <Box mt={3}>
+                            <Button
+                                fullWidth
+                                variant="secondary"
+                                onClick={() =>
+                                    openSnackbar({
+                                        text: "Tính năng đang được phát triển",
+                                        type: "info",
+                                        duration: 3000,
+                                        verticalAction: true,
+                                        action: { text: "Đóng", close: true },
+                                    })
+                                }
+                            >
+                                Đăng nhập bằng VNeID
+                            </Button>
+                        </Box>
+
                         <Text
                             size="xSmall"
                             className="text-main text-center mt-3"

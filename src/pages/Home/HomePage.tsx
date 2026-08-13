@@ -6,6 +6,7 @@ import {
     EmergencyContactBox,
     ContactInfoBox,
     FeaturesCard,
+    UtilityAppsRow,
 } from "@components/home";
 import { hasPermission } from "@components/role";
 import {
@@ -272,6 +273,8 @@ const HomePage: React.FunctionComponent = () => {
                     </Box>
                 ))}
             </Box>
+
+            <UtilityAppsRow />
 
             <EmergencyContactBox hotlines={EMERGENCY_HOTLINES} />
 

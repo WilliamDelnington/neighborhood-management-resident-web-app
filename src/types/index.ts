@@ -439,6 +439,7 @@ export type Citizen = {
     relationToHead?: string;
     householdId: string | Household;
     residenceType: LoaiCuTru;
+    temporaryResidenceExpiresAt?: string;
     isElderly: boolean;
     isChild: boolean;
     isDisabledOrSupportNeeded: boolean;
@@ -882,4 +883,13 @@ export type InspectionSelfDeclarationDetail = {
 export type InspectionSelfDeclarationListItem = {
     target: InspectionTarget;
     campaign: InspectionCampaign;
+};
+
+export type UtilityApp = {
+    _id: string;
+    name: string;
+    icon: string;
+    url: string;
+    active: boolean;
+    sortOrder: number;
 };

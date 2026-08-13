@@ -46,6 +46,9 @@ const toFormValues = (c: Citizen): CitizenFormValues => {
             ? `${household.code} — ${household.address}`
             : "",
         residenceType: c.residenceType,
+        temporaryResidenceExpiresAt: c.temporaryResidenceExpiresAt
+            ? new Date(c.temporaryResidenceExpiresAt)
+            : null,
         isElderly: c.isElderly,
         isChild: c.isChild,
         isDisabledOrSupportNeeded: c.isDisabledOrSupportNeeded,

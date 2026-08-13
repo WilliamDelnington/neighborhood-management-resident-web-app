@@ -16,6 +16,7 @@ export interface CitizenFormValues {
     householdId: string;
     householdLabel: string;
     residenceType: LoaiCuTru;
+    temporaryResidenceExpiresAt: Date | null;
     isElderly: boolean;
     isChild: boolean;
     isDisabledOrSupportNeeded: boolean;
@@ -33,6 +34,7 @@ export const EMPTY_CITIZEN_FORM: CitizenFormValues = {
     householdId: "",
     householdLabel: "",
     residenceType: "thuong_tru",
+    temporaryResidenceExpiresAt: null,
     isElderly: false,
     isChild: false,
     isDisabledOrSupportNeeded: false,
@@ -52,6 +54,9 @@ export function toCitizenInput(values: CitizenFormValues): CitizenInput {
         gender: values.gender,
         relationToHead: values.relationToHead.trim() || undefined,
         residenceType: values.residenceType,
+        temporaryResidenceExpiresAt: values.temporaryResidenceExpiresAt
+            ? values.temporaryResidenceExpiresAt.toISOString()
+            : undefined,
         isElderly: values.isElderly,
         isChild: values.isChild,
         isDisabledOrSupportNeeded: values.isDisabledOrSupportNeeded,
@@ -61,7 +66,12 @@ export function toCitizenInput(values: CitizenFormValues): CitizenInput {
 }
 
 export function isCitizenFormValid(values: CitizenFormValues): boolean {
-    return !!(values.fullName.trim() && values.householdId);
+    return !!(
+        values.fullName.trim() &&
+        values.householdId &&
+        (values.residenceType !== "tam_tru" ||
+            !!values.temporaryResidenceExpiresAt)
+    );
 }
 
 interface CitizenFormProps {
@@ -172,6 +182,15 @@ const CitizenForm: React.FC<CitizenFormProps> = ({
                     ))}
                 </Box>
             </Box>
+            {values.residenceType === "tam_tru" && (
+                <DatePicker
+                    label="Thời hạn tạm trú"
+                    title="Chọn ngày hết hạn tạm trú"
+                    value={values.temporaryResidenceExpiresAt || undefined}
+                    onChange={date => set("temporaryResidenceExpiresAt", date)}
+                    placeholder="Chọn ngày hết hạn"
+                />
+            )}
             <Box style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <Checkbox
                     label="Người cao tuổi"

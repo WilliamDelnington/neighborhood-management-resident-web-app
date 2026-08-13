@@ -2,7 +2,7 @@ import React, { useEffect, useState } from "react";
 import { Box, Sheet, Text } from "@components/ui";
 import { Input } from "@components/customized";
 import { LoadingState, EmptyState } from "@components/admin";
-import { searchHouseholds } from "@service/householdApi";
+import { fetchHouseholds } from "@service/householdApi";
 import { Household } from "@dts";
 
 export interface HouseholdPickerSheetProps {
@@ -26,7 +26,14 @@ const HouseholdPickerSheet: React.FC<HouseholdPickerSheetProps> = ({
         if (!visible) return;
         setLoading(true);
         const timer = setTimeout(() => {
-            searchHouseholds({ search: search || undefined, cluster })
+            // fetchHouseholds (GET /api/households) - KHONG dung searchHouseholds
+            // (GET /api/households/lookup, danh cho onboarding "chua co ho nao")
+            // vi endpoint do khong loc theo actor, tra ve MOI ho dan trong he
+            // thong bat ke ai dang xem - day chinh la nguyen nhan chu nha thay
+            // ho dan khong thuoc nha cua minh khi tao nhan khau. fetchHouseholds
+            // di qua listHouseholds, co nhanh loc rieng cho house_owner (chi
+            // tra ve ho dan thuoc nha ma actor dang so huu).
+            fetchHouseholds({ search: search || undefined, cluster })
                 .then(res => setItems(res.items))
                 .catch(() => setItems([]))
                 .finally(() => setLoading(false));
