@@ -6,6 +6,7 @@ import { CompanyInput } from "@service/companyApi";
 export interface CompanyFormValues {
     name: string;
     ownerName: string;
+    taxCode: string;
     phone: string;
     active: boolean;
     note: string;
@@ -14,6 +15,7 @@ export interface CompanyFormValues {
 export const EMPTY_COMPANY_FORM: CompanyFormValues = {
     name: "",
     ownerName: "",
+    taxCode: "",
     phone: "",
     active: true,
     note: "",
@@ -27,6 +29,7 @@ export function toCompanyInput(
         name: values.name.trim(),
         houseId,
         ownerName: values.ownerName.trim() || undefined,
+        taxCode: values.taxCode.trim(),
         phone: values.phone.trim() || undefined,
         active: values.active,
         note: values.note.trim() || undefined,
@@ -34,7 +37,7 @@ export function toCompanyInput(
 }
 
 export function isCompanyFormValid(values: CompanyFormValues): boolean {
-    return !!values.name.trim();
+    return !!values.name.trim() && !!values.taxCode.trim();
 }
 
 interface CompanyFormProps {
@@ -60,6 +63,11 @@ const CompanyForm: React.FC<CompanyFormProps> = ({ values, onChange }) => {
                 label="Tên công ty"
                 value={values.name}
                 onChange={e => set("name", e.target.value)}
+            />
+            <Input
+                label="Mã số thuế"
+                value={values.taxCode}
+                onChange={e => set("taxCode", e.target.value)}
             />
             <Input
                 label="Người đại diện"

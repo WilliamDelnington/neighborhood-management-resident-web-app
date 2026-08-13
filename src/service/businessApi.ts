@@ -34,6 +34,7 @@ export interface BusinessInput {
     houseId: string;
     businessType?: string | null;
     ownerName?: string;
+    taxCode?: string;
     phone?: string;
     active?: boolean;
     note?: string;

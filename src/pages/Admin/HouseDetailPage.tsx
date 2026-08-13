@@ -706,7 +706,11 @@ const HouseDetailContent: React.FC = () => {
                         <AttachmentUploader
                             relatedModel="HouseRecord"
                             relatedId={id}
-                            canUpload={isOwner || canUpdate || canVerify}
+                            canUpload={
+                                (isOwner && house.status !== "verified") ||
+                                canUpdate ||
+                                canVerify
+                            }
                             canDelete={canUpdate || canVerify}
                             fetchAttachments={fetchHouseAttachments}
                             deleteAttachmentFn={deleteHouseAttachment}

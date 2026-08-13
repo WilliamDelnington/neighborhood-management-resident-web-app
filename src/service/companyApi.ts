@@ -24,6 +24,7 @@ export interface CompanyInput {
     name: string;
     houseId: string;
     ownerName?: string;
+    taxCode: string;
     phone?: string;
     active?: boolean;
     note?: string;

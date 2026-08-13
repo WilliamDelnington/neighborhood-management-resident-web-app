@@ -8,6 +8,7 @@ import BusinessTypePickerSheet from "./BusinessTypePickerSheet";
 export interface BusinessFormValues {
     name: string;
     ownerName: string;
+    taxCode: string;
     phone: string;
     active: boolean;
     businessTypeId: string;
@@ -18,6 +19,7 @@ export interface BusinessFormValues {
 export const EMPTY_BUSINESS_FORM: BusinessFormValues = {
     name: "",
     ownerName: "",
+    taxCode: "",
     phone: "",
     active: true,
     businessTypeId: "",
@@ -34,6 +36,7 @@ export function toBusinessInput(
         houseId,
         businessType: values.businessTypeId || null,
         ownerName: values.ownerName.trim() || undefined,
+        taxCode: values.taxCode.trim() || undefined,
         phone: values.phone.trim() || undefined,
         active: values.active,
         note: values.note.trim() || undefined,
@@ -89,6 +92,11 @@ const BusinessForm: React.FC<BusinessFormProps> = ({ values, onChange }) => {
                 label="Chủ hộ kinh doanh"
                 value={values.ownerName}
                 onChange={e => set("ownerName", e.target.value)}
+            />
+            <Input
+                label="Mã số thuế"
+                value={values.taxCode}
+                onChange={e => set("taxCode", e.target.value)}
             />
             <Input
                 label="Số điện thoại"

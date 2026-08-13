@@ -51,6 +51,7 @@ const VERIFICATION_STATUS_OVERRIDE_OPTIONS: VerificationStatus[] = [
 const toFormValues = (b: Business): BusinessFormValues => ({
     name: b.name,
     ownerName: b.ownerName || "",
+    taxCode: b.taxCode || "",
     phone: b.phone || "",
     active: b.active,
     businessTypeId:

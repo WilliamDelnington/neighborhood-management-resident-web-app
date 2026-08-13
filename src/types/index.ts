@@ -279,6 +279,9 @@ export type Business = {
     cluster: string;
     businessType?: string | BusinessType;
     ownerName?: string;
+    // Khong bat buoc - khong phai ho kinh doanh nao cung da dang ky ma so
+    // thue (xem models/Business.ts o backend).
+    taxCode?: string;
     phone?: string;
     active: boolean;
     status: VerificationStatus;
@@ -297,6 +300,8 @@ export type Company = {
     houseId: string | House;
     cluster: string;
     ownerName?: string;
+    // Bat buoc o Company (khac Business) - xem models/Company.ts o backend.
+    taxCode: string;
     // Lien ket tuy chon toi mot Organization co san - chua co UI chon/hien thi
     // trong mini app (chi admin web app), them field de du lieu day du khi
     // can dung sau nay.
