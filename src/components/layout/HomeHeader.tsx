@@ -12,7 +12,7 @@ export interface HomeHeaderProps {
 const HeaderContainer = styled.div`
     ${tw`flex flex-row bg-white text-text_1 items-center justify-between fixed top-0 left-0 w-full px-4`};
     height: calc(48px + var(--zaui-safe-area-inset-top, 0px));
-    padding-top: var(--zaui-safe-area-inset-top);
+    padding-top: var(--zaui-safe-area-inset-top, 0px);
     z-index: 1;
     box-shadow: inset 0 -1px 0 0 #e9ebed;
 `;
