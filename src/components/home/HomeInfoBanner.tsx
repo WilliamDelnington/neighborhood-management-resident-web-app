@@ -15,8 +15,8 @@ const Wrapper = styled.div`
     padding: 16px;
     background: linear-gradient(
             135deg,
-            rgba(37, 99, 235, 0.95),
-            rgba(29, 78, 216, 0.95)
+            rgba(59, 130, 246, 0.95),
+            rgba(37, 99, 235, 0.95)
         ),
         url(${Background});
     background-size: cover;

@@ -4,10 +4,10 @@ module.exports = {
     theme: {
         extend: {
             colors: {
-                primary: "#2563EB",
-                "primary-dark": "#1D4ED8",
+                primary: "#3B82F6",
+                "primary-dark": "#2563EB",
                 "app-bg": "#F8FAFC",
-                main: "#2563EB",
+                main: "#3B82F6",
                 wth_a70: "rgba(255, 255, 255, 0.7)",
                 ui_bg: "#FFFFFF",
                 text_1: "#141415",

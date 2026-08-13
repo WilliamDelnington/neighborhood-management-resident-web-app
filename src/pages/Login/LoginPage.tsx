@@ -70,7 +70,7 @@ const LoginPage: React.FC = () => {
     const location = useLocation();
     const { openSnackbar } = useSnackbar();
 
-    const [phoneAuthMode, setPhoneAuthMode] = useState<PhoneAuthMode>("login");
+    const [phoneAuthMode] = useState<PhoneAuthMode>("login");
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -155,7 +155,7 @@ const LoginPage: React.FC = () => {
                     }
                 />
             }
-            bg="#2563EB"
+            bg="#3B82F6"
         >
             <Box
                 flex
@@ -249,16 +249,14 @@ const LoginPage: React.FC = () => {
                             size="xSmall"
                             className="text-main text-center mt-3"
                             onClick={() =>
-                                setPhoneAuthMode(
-                                    phoneAuthMode === "register"
-                                        ? "login"
-                                        : "register",
-                                )
+                                openSnackbar({
+                                    type: "info",
+                                    text: "Vui lòng liên hệ Tổ trưởng tổ dân phố hoặc UBND phường Dương Nội để được hỗ trợ đặt lại mật khẩu.",
+                                    duration: 6000,
+                                })
                             }
                         >
-                            {phoneAuthMode === "register"
-                                ? "Đã có tài khoản? Đăng nhập"
-                                : "Chưa có tài khoản? Đăng ký"}
+                            Quên mật khẩu? Gửi hỗ trợ
                         </Text>
                     </Box>
                 )}
