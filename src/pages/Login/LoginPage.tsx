@@ -6,7 +6,7 @@ import {
     useNavigate,
     useSnackbar,
 } from "@components/ui";
-import { PageLayout } from "@components/layout";
+import { PageLayout, DefaultHeader } from "@components/layout";
 import { Button, Input } from "@components/customized";
 import { useStore } from "@store";
 import { ROLE_LABEL, APP_NAME_DEFAULT } from "@constants/domain";
@@ -144,7 +144,17 @@ const LoginPage: React.FC = () => {
     return (
         <PageLayout
             id="login-page"
-            customHeader={<Box className="h-[env(safe-area-inset-top)]" />}
+            customHeader={
+                <DefaultHeader
+                    title={
+                        phoneAuthMode === "register" ? "Đăng ký" : "Đăng nhập"
+                    }
+                    back
+                    onBackClick={() =>
+                        navigate("/", { animate: true, replace: true })
+                    }
+                />
+            }
             bg="#2563EB"
         >
             <Box

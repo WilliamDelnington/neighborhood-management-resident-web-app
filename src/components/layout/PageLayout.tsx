@@ -17,7 +17,9 @@ interface PropsType extends PageProps {
 
 const StyledPage = styled(Page)`
     ${tw`bg-[#EAEBED]`}
-    padding: calc(var(--zaui-safe-area-inset-top, 0px) + 48px) 0 var(--zaui-safe-area-inset-bottom) 0;
+    min-height: 100vh;
+    padding: calc(var(--zaui-safe-area-inset-top, 0px) + 48px) 0
+        var(--zaui-safe-area-inset-bottom) 0;
     ${({ $bg }: { $bg?: string }) => {
         if (!$bg) {
             return "";
