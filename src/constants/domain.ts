@@ -39,7 +39,7 @@ export const ROLE_LABEL: Record<Role, string> = {
  * admin (quan ly toan bo to dan pho). Dung khi chua dang nhap hoac vai tro
  * khac house_owner.
  */
-export const APP_NAME_DEFAULT = "Quản lý tổ dân phố";
+export const APP_NAME_DEFAULT = "Quản lý nhà số";
 export const APP_NAME_HOUSE_OWNER = "Quản lý nhà số";
 
 export const NHOM_PHAN_ANH_LABEL: Record<NhomPhanAnh, string> = {
