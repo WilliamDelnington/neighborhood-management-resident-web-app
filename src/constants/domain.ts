@@ -1,4 +1,5 @@
 import type {
+    AppointmentStatus,
     BusinessDocumentStatus,
     DangKyHop,
     GioiTinh,
@@ -27,6 +28,7 @@ import type {
 export const ROLE_LABEL: Record<Role, string> = {
     house_owner: "Chủ sở hữu",
     neighborhood_leader: "Tổ trưởng",
+    neighborhood_coleader: "Tổ phó",
     secretary: "Bí thư",
     regional_police: "Công an khu vực",
     people_committee_official: "Cán bộ UBND",
@@ -286,4 +288,27 @@ export const LOAI_CAU_HOI_KHAO_SAT_LABEL: Record<LoaiCauHoiKhaoSat, string> = {
     chon_mot: "Chọn một",
     chon_nhieu: "Chọn nhiều",
     y_kien_khac: "Ý kiến khác",
+};
+
+export const APPOINTMENT_STATUS_LABEL: Record<AppointmentStatus, string> = {
+    cho_xac_nhan: "Chờ xác nhận",
+    da_xac_nhan: "Đã xác nhận",
+    da_check_in: "Đã check-in",
+    hoan_thanh: "Hoàn thành",
+    tu_choi: "Từ chối",
+    da_huy: "Đã hủy",
+    vang_mat: "Vắng mặt",
+};
+
+export const APPOINTMENT_STATUS_TONE: Record<
+    AppointmentStatus,
+    "gray" | "blue" | "yellow" | "green" | "red"
+> = {
+    cho_xac_nhan: "yellow",
+    da_xac_nhan: "blue",
+    da_check_in: "blue",
+    hoan_thanh: "green",
+    tu_choi: "red",
+    da_huy: "gray",
+    vang_mat: "red",
 };

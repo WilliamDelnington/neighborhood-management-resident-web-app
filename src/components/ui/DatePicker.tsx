@@ -13,6 +13,11 @@ export interface DatePickerProps {
     placeholder?: string;
     disabled?: boolean;
     className?: string;
+    // Gioi han ngay co the chon (vd BR-01 dat lich hen: chi tu ngay mai den
+    // 30 ngay toi) - trinh duyet tu vo hieu hoa ngay ngoai khoang nay tren
+    // wheel-picker native cua input[type=date].
+    min?: Date;
+    max?: Date;
 }
 
 const toInputValue = (date?: Date): string => {
@@ -38,6 +43,8 @@ const DatePicker: FC<DatePickerProps> = ({
     placeholder,
     disabled,
     className,
+    min,
+    max,
 }) => (
     <div>
         {label && (
@@ -52,6 +59,8 @@ const DatePicker: FC<DatePickerProps> = ({
             value={toInputValue(value)}
             placeholder={placeholder}
             disabled={disabled}
+            min={toInputValue(min)}
+            max={toInputValue(max)}
             onChange={e => {
                 const date = fromInputValue(e.target.value);
                 if (date) onChange(date);

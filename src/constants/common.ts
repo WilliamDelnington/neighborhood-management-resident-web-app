@@ -51,6 +51,12 @@ export const API = {
     MEETINGS: "/api/meetings",
     SURVEYS: "/api/surveys",
 
+    APPOINTMENT_SERVICES: "/api/appointment-services",
+    APPOINTMENTS: "/api/appointments",
+    APPOINTMENTS_DRAFT: "/api/appointments/draft",
+    APPOINTMENTS_AVAILABLE_SLOTS: "/api/appointments/available-slots",
+    APPOINTMENTS_MINE: "/api/appointments/my",
+
     NOTIFICATIONS: "/api/notifications",
     NOTIFICATIONS_UNREAD_COUNT: "/api/notifications/unread-count",
     NOTIFICATIONS_READ_ALL: "/api/notifications/read-all",

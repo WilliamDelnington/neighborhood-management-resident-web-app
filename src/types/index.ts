@@ -26,6 +26,10 @@ export type AppError = {
 export type Role =
     | "house_owner"
     | "neighborhood_leader"
+    // To pho - cung quyen dat lich ho (proxy booking) nhu To truong, xem
+    // AppointmentBookingPage.tsx. Chua co trong Record<Role,...> nao khac
+    // ngoai ROLE_LABEL truoc day - da them nhan tuong ung.
+    | "neighborhood_coleader"
     | "secretary"
     | "regional_police"
     | "people_committee_official"
@@ -897,4 +901,66 @@ export type UtilityApp = {
     url: string;
     active: boolean;
     sortOrder: number;
+};
+
+// ---------------------------------------------------------------------------
+// Dat lich hen (Appointment) - dat lich lam viec voi can bo Phuong/To dan pho
+// theo khung gio, nhan ma dat lich, duoc check-in/hoan thanh boi nhan vien
+// roi danh gia. Xem appointmentApi.ts.
+// ---------------------------------------------------------------------------
+export type AppointmentStatus =
+    | "cho_xac_nhan"
+    | "da_xac_nhan"
+    | "da_check_in"
+    | "hoan_thanh"
+    | "tu_choi"
+    | "da_huy"
+    | "vang_mat";
+
+export type AppointmentTimeSlot = {
+    _id: string;
+    dayOfWeek: number; // 1-7, Thu Hai - Chu Nhat
+    startTime: string; // "HH:mm"
+    endTime: string;
+    maxCapacity: number;
+    active: boolean;
+};
+
+export type AppointmentService = {
+    _id: string;
+    key: string;
+    name: string;
+    description?: string;
+    locationAddress: string;
+    scope: "ward" | "neighborhood";
+    slotDurationMinutes: number;
+    autoApprove: boolean;
+    active: boolean;
+    timeSlots: AppointmentTimeSlot[];
+};
+
+export type Appointment = {
+    _id: string;
+    code: string;
+    serviceId: string | { _id: string; name: string };
+    timeSlotId: string;
+    houseId: string | { _id: string; code: string; address?: string };
+    citizenUserId?:
+        | string
+        | { _id: string; displayName: string; phone?: string };
+    proxyName?: string;
+    proxyPhone?: string;
+    bookedByUserId: string | { _id: string; displayName: string };
+    appointedDate: string;
+    startTime: string;
+    endTime: string;
+    note?: string;
+    status: AppointmentStatus;
+    cancelReason?: string;
+    checkinTime?: string;
+    completedTime?: string;
+    rating?: number;
+    ratingNote?: string;
+    createdAt: string;
+    updatedAt: string;
 };

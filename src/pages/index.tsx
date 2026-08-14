@@ -82,6 +82,19 @@ const NotificationsPage = lazy(
 const MeetingListPage = lazy(() => import("./Meetings/MeetingListPage"));
 const MeetingDetailPage = lazy(() => import("./Meetings/MeetingDetailPage"));
 
+const AppointmentServiceListPage = lazy(
+    () => import("./Appointments/AppointmentServiceListPage"),
+);
+const AppointmentBookingPage = lazy(
+    () => import("./Appointments/AppointmentBookingPage"),
+);
+const AppointmentDetailPage = lazy(
+    () => import("./Appointments/AppointmentDetailPage"),
+);
+const MyAppointmentsPage = lazy(
+    () => import("./Appointments/MyAppointmentsPage"),
+);
+
 const SurveyListPage = lazy(() => import("./Surveys/SurveyListPage"));
 const SurveyDetailPage = lazy(() => import("./Surveys/SurveyDetailPage"));
 
@@ -209,6 +222,20 @@ const Routes: React.FC = () => (
 
             <Route path="/meetings" element={<MeetingListPage />} />
             <Route path="/meetings/:id" element={<MeetingDetailPage />} />
+
+            <Route
+                path="/appointments/services"
+                element={<AppointmentServiceListPage />}
+            />
+            <Route
+                path="/appointments/book/:serviceId"
+                element={<AppointmentBookingPage />}
+            />
+            <Route path="/appointments/mine" element={<MyAppointmentsPage />} />
+            <Route
+                path="/appointments/:id"
+                element={<AppointmentDetailPage />}
+            />
 
             <Route path="/surveys" element={<SurveyListPage />} />
             <Route path="/surveys/:id" element={<SurveyDetailPage />} />

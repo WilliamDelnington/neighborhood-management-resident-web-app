@@ -53,6 +53,15 @@ export const MORE_FEATURES: Array<Utinity> = [
         path: "/house/mine",
     },
     {
+        key: "appointments",
+        label: "Đặt lịch hẹn",
+        icon: Icon.ClockIcon,
+        color: "#0EA5E9",
+        bgColor: "#E0F2FE",
+        path: "/appointments/services",
+        requiredPermission: "appointments.create",
+    },
+    {
         key: "inspection-self-declarations",
         label: "Biểu mẫu tự khai",
         icon: Icon.QAndAIcon,
