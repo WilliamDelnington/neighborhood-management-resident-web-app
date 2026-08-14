@@ -1,6 +1,7 @@
 import React, { useState } from "react";
 import { Box, Text } from "@components/ui";
 import { Input, TextArea, Checkbox } from "@components/customized";
+import { PendingAttachmentsPicker } from "@components/attachments";
 import { BusinessType } from "@dts";
 import { BusinessInput } from "@service/businessApi";
 import BusinessTypePickerSheet from "./BusinessTypePickerSheet";
@@ -14,6 +15,7 @@ export interface BusinessFormValues {
     businessTypeId: string;
     businessTypeLabel: string;
     note: string;
+    attachments: File[];
 }
 
 export const EMPTY_BUSINESS_FORM: BusinessFormValues = {
@@ -25,6 +27,7 @@ export const EMPTY_BUSINESS_FORM: BusinessFormValues = {
     businessTypeId: "",
     businessTypeLabel: "",
     note: "",
+    attachments: [],
 };
 
 export function toBusinessInput(
@@ -50,13 +53,23 @@ export function isBusinessFormValid(values: BusinessFormValues): boolean {
 interface BusinessFormProps {
     values: BusinessFormValues;
     onChange: (values: BusinessFormValues) => void;
+    /**
+     * An khi chinh sua ho kinh doanh da co tu man chi tiet - man do da co
+     * AttachmentUploader rieng de quan ly tai lieu (xem BusinessDetailPage),
+     * nen khong can chon lai file trong Form (chi dung khi tao moi).
+     */
+    showAttachments?: boolean;
 }
 
 /**
  * Bo truong dung chung cho tao moi/chinh sua ho kinh doanh. houseId khong nam
  * trong form vi luon co san tu ngu canh (man chi tiet nha so).
  */
-const BusinessForm: React.FC<BusinessFormProps> = ({ values, onChange }) => {
+const BusinessForm: React.FC<BusinessFormProps> = ({
+    values,
+    onChange,
+    showAttachments = true,
+}) => {
     const [pickerVisible, setPickerVisible] = useState(false);
     const set = <K extends keyof BusinessFormValues>(
         key: K,
@@ -115,6 +128,12 @@ const BusinessForm: React.FC<BusinessFormProps> = ({ values, onChange }) => {
                 value={values.note}
                 onChange={e => set("note", e.target.value)}
             />
+            {showAttachments && (
+                <PendingAttachmentsPicker
+                    files={values.attachments}
+                    onChange={files => set("attachments", files)}
+                />
+            )}
             <BusinessTypePickerSheet
                 visible={pickerVisible}
                 onClose={() => setPickerVisible(false)}

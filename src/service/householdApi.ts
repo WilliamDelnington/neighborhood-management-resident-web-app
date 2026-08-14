@@ -1,6 +1,7 @@
 import { API } from "@constants/common";
 import {
     Citizen,
+    FileAsset,
     Household,
     LoaiSoHuu,
     PaginatedData,
@@ -74,6 +75,15 @@ export const updateHousehold = (
 
 export const deleteHousehold = (id: string): Promise<null> =>
     request<null>("DELETE", `${API.HOUSEHOLDS}/${id}`);
+
+export const fetchHouseholdAttachments = (id: string): Promise<FileAsset[]> =>
+    request<FileAsset[]>("GET", `${API.HOUSEHOLDS}/${id}/attachments`);
+
+export const deleteHouseholdAttachment = (
+    id: string,
+    fileId: string,
+): Promise<null> =>
+    request<null>("DELETE", `${API.HOUSEHOLDS}/${id}/attachments/${fileId}`);
 
 export const updateHouseholdStatus = (
     id: string,

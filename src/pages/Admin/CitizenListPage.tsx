@@ -25,6 +25,7 @@ import {
 } from "@components/citizen";
 import { useStore } from "@store";
 import { createCitizen, fetchCitizens } from "@service/citizenApi";
+import { uploadPendingAttachments } from "@service/uploadApi";
 import { GIOI_TINH_LABEL } from "@constants/domain";
 import { AppError, Citizen } from "@dts";
 
@@ -128,8 +129,19 @@ const CitizenListContent: React.FC = () => {
         }
         try {
             setSubmitting(true);
-            await createCitizen(toCitizenInput(form));
-            openSnackbar({ type: "success", text: "Đã thêm nhân khẩu mới" });
+            const citizen = await createCitizen(toCitizenInput(form));
+            let text = "Đã thêm nhân khẩu mới";
+            if (form.attachments.length > 0) {
+                const { failed } = await uploadPendingAttachments(
+                    "Citizen",
+                    citizen._id,
+                    form.attachments,
+                );
+                if (failed.length > 0) {
+                    text = `${text}, nhưng ${failed.length} tài liệu tải lên thất bại`;
+                }
+            }
+            openSnackbar({ type: "success", text });
             setCreateVisible(false);
             load(1, search, false);
         } catch (err) {

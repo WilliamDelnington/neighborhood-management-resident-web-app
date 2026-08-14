@@ -1,6 +1,7 @@
 import React from "react";
 import { Box } from "@components/ui";
 import { Input, TextArea, Checkbox } from "@components/customized";
+import { PendingAttachmentsPicker } from "@components/attachments";
 import { CompanyInput } from "@service/companyApi";
 
 export interface CompanyFormValues {
@@ -10,6 +11,7 @@ export interface CompanyFormValues {
     phone: string;
     active: boolean;
     note: string;
+    attachments: File[];
 }
 
 export const EMPTY_COMPANY_FORM: CompanyFormValues = {
@@ -19,6 +21,7 @@ export const EMPTY_COMPANY_FORM: CompanyFormValues = {
     phone: "",
     active: true,
     note: "",
+    attachments: [],
 };
 
 export function toCompanyInput(
@@ -90,6 +93,10 @@ const CompanyForm: React.FC<CompanyFormProps> = ({ values, onChange }) => {
                 placeholder="Ghi chú thêm (nếu có)"
                 value={values.note}
                 onChange={e => set("note", e.target.value)}
+            />
+            <PendingAttachmentsPicker
+                files={values.attachments}
+                onChange={files => set("attachments", files)}
             />
         </Box>
     );

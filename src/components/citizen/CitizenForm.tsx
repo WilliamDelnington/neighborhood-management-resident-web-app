@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, DatePicker, Text } from "@components/ui";
 import { Input, Radio, Checkbox } from "@components/customized";
 import { HouseholdPickerSheet } from "@components/household";
+import { PendingAttachmentsPicker } from "@components/attachments";
 import { GIOI_TINH_LABEL, LOAI_CU_TRU_LABEL } from "@constants/domain";
 import { GioiTinh, Household, LoaiCuTru } from "@dts";
 import { CitizenInput } from "@service/citizenApi";
@@ -22,6 +23,7 @@ export interface CitizenFormValues {
     isDisabledOrSupportNeeded: boolean;
     isPartyMember: boolean;
     isUnionMember: boolean;
+    attachments: File[];
 }
 
 export const EMPTY_CITIZEN_FORM: CitizenFormValues = {
@@ -40,6 +42,7 @@ export const EMPTY_CITIZEN_FORM: CitizenFormValues = {
     isDisabledOrSupportNeeded: false,
     isPartyMember: false,
     isUnionMember: false,
+    attachments: [],
 };
 
 export function toCitizenInput(values: CitizenFormValues): CitizenInput {
@@ -79,6 +82,12 @@ interface CitizenFormProps {
     onChange: (values: CitizenFormValues) => void;
     /** An khi tao nhan khau tu man chi tiet ho dan (da co household co dinh). */
     lockHousehold?: boolean;
+    /**
+     * An khi chinh sua nhan khau da co tu man chi tiet - man do da co
+     * AttachmentUploader rieng de quan ly tai lieu (xem CitizenDetailPage),
+     * nen khong can chon lai file trong Form (chi dung khi tao moi).
+     */
+    showAttachments?: boolean;
 }
 
 /**
@@ -88,6 +97,7 @@ const CitizenForm: React.FC<CitizenFormProps> = ({
     values,
     onChange,
     lockHousehold,
+    showAttachments = true,
 }) => {
     const [pickerVisible, setPickerVisible] = useState(false);
     const set = <K extends keyof CitizenFormValues>(
@@ -228,6 +238,12 @@ const CitizenForm: React.FC<CitizenFormProps> = ({
                     onChange={() => set("isUnionMember", !values.isUnionMember)}
                 />
             </Box>
+            {showAttachments && (
+                <PendingAttachmentsPicker
+                    files={values.attachments}
+                    onChange={files => set("attachments", files)}
+                />
+            )}
             {!lockHousehold && (
                 <HouseholdPickerSheet
                     visible={pickerVisible}

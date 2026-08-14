@@ -54,6 +54,7 @@ const toFormValues = (c: Citizen): CitizenFormValues => {
         isDisabledOrSupportNeeded: c.isDisabledOrSupportNeeded,
         isPartyMember: c.isPartyMember,
         isUnionMember: c.isUnionMember,
+        attachments: [],
     };
 };
 
@@ -152,7 +153,11 @@ const CitizenDetailContent: React.FC = () => {
 
                         {editing ? (
                             <>
-                                <CitizenForm values={form} onChange={setForm} />
+                                <CitizenForm
+                                    values={form}
+                                    onChange={setForm}
+                                    showAttachments={false}
+                                />
                                 <Box mt={4} flex style={{ gap: 8 }}>
                                     <Button
                                         variant="secondary"

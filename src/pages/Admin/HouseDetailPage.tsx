@@ -80,6 +80,7 @@ import { createHousehold } from "@service/householdApi";
 import { createCompany } from "@service/companyApi";
 import { fetchOrganizationById } from "@service/organizationApi";
 import { createChangeRequest } from "@service/changeRequestApi";
+import { uploadPendingAttachments } from "@service/uploadApi";
 
 // Truong "dinh danh/dia chi" cua nha so - mot khi nha da "verified", chu nha
 // (khong phai nhan vien) phai gui ChangeRequest cho cac truong nay thay vi
@@ -426,8 +427,21 @@ const HouseDetailContent: React.FC = () => {
         }
         try {
             setHouseholdSubmitting(true);
-            await createHousehold(toHouseholdInput(householdForm));
-            openSnackbar({ type: "success", text: "Đã thêm hộ dân" });
+            const household = await createHousehold(
+                toHouseholdInput(householdForm),
+            );
+            let text = "Đã thêm hộ dân";
+            if (householdForm.attachments.length > 0) {
+                const { failed } = await uploadPendingAttachments(
+                    "Household",
+                    household._id,
+                    householdForm.attachments,
+                );
+                if (failed.length > 0) {
+                    text = `${text}, nhưng ${failed.length} tài liệu tải lên thất bại`;
+                }
+            }
+            openSnackbar({ type: "success", text });
             setHouseholdSheetVisible(false);
             loadHouseholds();
         } catch (err) {
@@ -452,8 +466,21 @@ const HouseDetailContent: React.FC = () => {
         }
         try {
             setBusinessSubmitting(true);
-            await createBusiness(toBusinessInput(businessForm, id));
-            openSnackbar({ type: "success", text: "Đã thêm hộ kinh doanh" });
+            const business = await createBusiness(
+                toBusinessInput(businessForm, id),
+            );
+            let text = "Đã thêm hộ kinh doanh";
+            if (businessForm.attachments.length > 0) {
+                const { failed } = await uploadPendingAttachments(
+                    "Business",
+                    business._id,
+                    businessForm.attachments,
+                );
+                if (failed.length > 0) {
+                    text = `${text}, nhưng ${failed.length} tài liệu tải lên thất bại`;
+                }
+            }
+            openSnackbar({ type: "success", text });
             setBusinessSheetVisible(false);
             loadBusinesses();
         } catch (err) {
@@ -478,8 +505,21 @@ const HouseDetailContent: React.FC = () => {
         }
         try {
             setCompanySubmitting(true);
-            await createCompany(toCompanyInput(companyForm, id));
-            openSnackbar({ type: "success", text: "Đã thêm công ty" });
+            const company = await createCompany(
+                toCompanyInput(companyForm, id),
+            );
+            let text = "Đã thêm công ty";
+            if (companyForm.attachments.length > 0) {
+                const { failed } = await uploadPendingAttachments(
+                    "Company",
+                    company._id,
+                    companyForm.attachments,
+                );
+                if (failed.length > 0) {
+                    text = `${text}, nhưng ${failed.length} tài liệu tải lên thất bại`;
+                }
+            }
+            openSnackbar({ type: "success", text });
             setCompanySheetVisible(false);
             loadCompanies();
         } catch (err) {

@@ -75,6 +75,7 @@ const toFormValues = (h: Household): HouseholdFormValues => {
         houseId: typeof h.houseId === "string" ? h.houseId : house?._id || "",
         houseLabel: house ? `${house.code} — ${house.address}` : "",
         note: h.note || "",
+        attachments: [],
     };
 };
 
@@ -344,6 +345,7 @@ const HouseholdDetailContent: React.FC = () => {
                                     <HouseholdForm
                                         values={form}
                                         onChange={setForm}
+                                        showAttachments={false}
                                     />
                                     <Box mt={4} flex style={{ gap: 8 }}>
                                         <Button

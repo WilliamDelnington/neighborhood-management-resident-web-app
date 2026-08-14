@@ -6,7 +6,10 @@ export type AttachmentRelatedModel =
     | "Business"
     | "BusinessDocument"
     | "Complaint"
-    | "Request";
+    | "Request"
+    | "Citizen"
+    | "Household"
+    | "Company";
 
 /**
  * Cap mot token upload ngan han (10 phut), gan chet vao dung mot ban ghi
@@ -48,6 +51,16 @@ export interface PickedUpload {
  * window nhan lai focus (nguoi dung dong hop thoai) ma khong thay "change" -
  * coi nhu da huy.
  */
+/**
+ * Mo bo chon file cua trinh duyet, dung khi can de nguoi dung chon file truoc
+ * ma chua co relatedId de upload ngay (vd dinh kem tai lieu ngay tren form tao
+ * moi nhan khau/ho dan/ho kinh doanh/cong ty, truoc khi ban ghi duoc luu) -
+ * xem PendingAttachmentsPicker va uploadPendingAttachments duoi day.
+ */
+export function pickLocalFile(): Promise<File | null> {
+    return pickFile();
+}
+
 function pickFile(): Promise<File | null> {
     return new Promise(resolve => {
         const input = document.createElement("input");
@@ -83,21 +96,18 @@ function pickFile(): Promise<File | null> {
 }
 
 /**
- * Xin token upload, mo hop thoai chon file cua trinh duyet, POST thang len
- * server bang FormData (xem createUploadToken/buildUploadUrl o tren) roi doc
- * lai fileAssetId ma server tra ve (xem /api/uploads/attachments) - can cho
- * cac API can tham chieu toi FileAsset vua tao (vd nop giay to cho ho kinh
- * doanh), khong chi URL nhu AttachmentUploader thong thuong.
+ * Xin token upload roi POST thang file (da co san, khong mo hop thoai chon)
+ * len server bang FormData (xem createUploadToken/buildUploadUrl o tren) roi
+ * doc lai fileAssetId ma server tra ve (xem /api/uploads/attachments) - dung
+ * chung cho pickAndUploadAttachment (chon + tai len ngay) va
+ * uploadPendingAttachments (tai len cac file da duoc chon truoc, sau khi
+ * relatedId moi duoc tao).
  */
-export async function pickAndUploadAttachment(
+export async function uploadAttachmentFile(
     relatedModel: AttachmentRelatedModel,
     relatedId: string,
+    file: File,
 ): Promise<PickedUpload> {
-    const file = await pickFile();
-    if (!file) {
-        throw new Error("Chưa chọn file nào");
-    }
-
     const { token } = await createUploadToken(relatedModel, relatedId);
     const uploadUrl = buildUploadUrl(token);
 
@@ -134,4 +144,44 @@ export async function pickAndUploadAttachment(
         throw new Error("Phản hồi tải file lên thiếu dữ liệu cần thiết");
     }
     return { url, fileAssetId };
+}
+
+/**
+ * Mo hop thoai chon file cua trinh duyet roi tai len ngay (xem
+ * uploadAttachmentFile o tren) - dung cho AttachmentUploader, khi relatedId da
+ * ton tai san (man chi tiet).
+ */
+export async function pickAndUploadAttachment(
+    relatedModel: AttachmentRelatedModel,
+    relatedId: string,
+): Promise<PickedUpload> {
+    const file = await pickFile();
+    if (!file) {
+        throw new Error("Chưa chọn file nào");
+    }
+    return uploadAttachmentFile(relatedModel, relatedId, file);
+}
+
+/**
+ * Tai len tuan tu cac file da duoc chon truoc (xem PendingAttachmentsPicker),
+ * dung ngay sau khi mot ban ghi moi (nhan khau/ho dan/ho kinh doanh/cong ty)
+ * vua duoc tao va co _id - moi file loi khong lam gian doan cac file con lai,
+ * vi ban ghi chinh da duoc luu thanh cong roi.
+ */
+export async function uploadPendingAttachments(
+    relatedModel: AttachmentRelatedModel,
+    relatedId: string,
+    files: File[],
+): Promise<{ succeeded: number; failed: string[] }> {
+    let succeeded = 0;
+    const failed: string[] = [];
+    for (const file of files) {
+        try {
+            await uploadAttachmentFile(relatedModel, relatedId, file);
+            succeeded += 1;
+        } catch (err) {
+            failed.push(file.name);
+        }
+    }
+    return { succeeded, failed };
 }

@@ -2,6 +2,7 @@ import React, { useState } from "react";
 import { Box, Text } from "@components/ui";
 import { Input, TextArea, Radio, Checkbox } from "@components/customized";
 import { HousePickerSheet } from "@components/house";
+import { PendingAttachmentsPicker } from "@components/attachments";
 import { LOAI_SO_HUU_LABEL } from "@constants/domain";
 import { House, LoaiSoHuu } from "@dts";
 import { HouseholdInput } from "@service/householdApi";
@@ -17,6 +18,7 @@ export interface HouseholdFormValues {
     houseId: string;
     houseLabel: string;
     note: string;
+    attachments: File[];
 }
 
 export const EMPTY_HOUSEHOLD_FORM: HouseholdFormValues = {
@@ -30,6 +32,7 @@ export const EMPTY_HOUSEHOLD_FORM: HouseholdFormValues = {
     houseId: "",
     houseLabel: "",
     note: "",
+    attachments: [],
 };
 
 export function toHouseholdInput(values: HouseholdFormValues): HouseholdInput {
@@ -60,12 +63,22 @@ export function isHouseholdFormValid(values: HouseholdFormValues): boolean {
 interface HouseholdFormProps {
     values: HouseholdFormValues;
     onChange: (values: HouseholdFormValues) => void;
+    /**
+     * An khi chinh sua ho dan da co tu man chi tiet - man do da co
+     * AttachmentUploader rieng de quan ly tai lieu (xem HouseholdDetailPage),
+     * nen khong can chon lai file trong Form (chi dung khi tao moi).
+     */
+    showAttachments?: boolean;
 }
 
 /**
  * Bo truong dung chung cho tao moi/chinh sua ho dan (dung o Sheet tao moi va man chi tiet).
  */
-const HouseholdForm: React.FC<HouseholdFormProps> = ({ values, onChange }) => {
+const HouseholdForm: React.FC<HouseholdFormProps> = ({
+    values,
+    onChange,
+    showAttachments = true,
+}) => {
     const [housePickerVisible, setHousePickerVisible] = useState(false);
     const set = <K extends keyof HouseholdFormValues>(
         key: K,
@@ -161,6 +174,12 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({ values, onChange }) => {
                 value={values.note}
                 onChange={e => set("note", e.target.value)}
             />
+            {showAttachments && (
+                <PendingAttachmentsPicker
+                    files={values.attachments}
+                    onChange={files => set("attachments", files)}
+                />
+            )}
             <HousePickerSheet
                 visible={housePickerVisible}
                 status={["unverified", "pending", "verified"]}

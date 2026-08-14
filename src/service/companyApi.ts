@@ -1,5 +1,5 @@
 import { API } from "@constants/common";
-import { Company, PaginatedData, VerificationStatus } from "@dts";
+import { Company, FileAsset, PaginatedData, VerificationStatus } from "@dts";
 import { request } from "./request";
 
 /**
@@ -41,6 +41,15 @@ export const updateCompany = (
 
 export const deleteCompany = (id: string): Promise<null> =>
     request<null>("DELETE", `${API.COMPANIES}/${id}`);
+
+export const fetchCompanyAttachments = (id: string): Promise<FileAsset[]> =>
+    request<FileAsset[]>("GET", `${API.COMPANIES}/${id}/attachments`);
+
+export const deleteCompanyAttachment = (
+    id: string,
+    fileId: string,
+): Promise<null> =>
+    request<null>("DELETE", `${API.COMPANIES}/${id}/attachments/${fileId}`);
 
 export const updateCompanyStatus = (
     id: string,

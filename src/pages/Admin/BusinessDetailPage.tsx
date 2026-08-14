@@ -63,6 +63,7 @@ const toFormValues = (b: Business): BusinessFormValues => ({
             ? b.businessType.name
             : "",
     note: b.note || "",
+    attachments: [],
 });
 
 const ownerIdOfHouse = (business: Business): string | undefined => {
@@ -291,6 +292,7 @@ const BusinessDetailContent: React.FC = () => {
                                 <BusinessForm
                                     values={form}
                                     onChange={setForm}
+                                    showAttachments={false}
                                 />
                                 <Box mt={4} flex style={{ gap: 8 }}>
                                     <Button
