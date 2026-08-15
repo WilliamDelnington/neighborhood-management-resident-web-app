@@ -32,6 +32,7 @@ export const API = {
     BUSINESS_TYPES: "/api/business-types",
     COMPANIES: "/api/companies",
 
+    COMPLAINT_TYPES: "/api/complaint-types",
     COMPLAINTS: "/api/complaints",
     COMPLAINTS_MINE: "/api/complaints/mine",
     COMPLAINTS_LOOKUP: "/api/complaints/lookup",

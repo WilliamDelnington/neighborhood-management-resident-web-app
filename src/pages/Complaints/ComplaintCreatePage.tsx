@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { useLocation } from "react-router-dom";
 import {
     Box,
@@ -18,6 +18,7 @@ import {
     deleteComplaintAttachment,
 } from "@service/complaintApi";
 import { pickAndUploadAttachment, PickedUpload } from "@service/uploadApi";
+import { fetchComplaintTypeDefinitions } from "@service/complaintTypeApi";
 import { NHOM_PHAN_ANH_LABEL } from "@constants/domain";
 import { Complaint, HouseLookupItem, NhomPhanAnh } from "@dts";
 import { useStore } from "@store";
@@ -73,6 +74,33 @@ const ComplaintCreatePageContent: React.FC = () => {
     const [draftId, setDraftId] = useState<string | null>(null);
     const [pendingFiles, setPendingFiles] = useState<PickedUpload[]>([]);
     const [pickingFile, setPickingFile] = useState(false);
+
+    // Bat dau bang danh sach tinh (khong rong khi dang tai), sau do thay bang
+    // danh sach nhom phan anh dang hoat dong tu ComplaintTypeDefinition (quan
+    // tri duoc qua man Loai phan anh o admin app) - cung pattern voi
+    // RoleListPage.tsx (admin app).
+    const [categoryOptions, setCategoryOptions] = useState<
+        Array<{ key: NhomPhanAnh; label: string }>
+    >(
+        Object.entries(NHOM_PHAN_ANH_LABEL).map(([key, label]) => ({
+            key,
+            label,
+        })),
+    );
+    useEffect(() => {
+        fetchComplaintTypeDefinitions({ active: true, limit: 200 })
+            .then(res =>
+                setCategoryOptions(
+                    res.items.map(type => ({
+                        key: type.key,
+                        label: type.name,
+                    })),
+                ),
+            )
+            .catch(() => {
+                /* giu danh sach tinh (NHOM_PHAN_ANH_LABEL) neu goi API loi */
+            });
+    }, []);
 
     if (!canCreate) {
         return (
@@ -268,15 +296,9 @@ const ComplaintCreatePageContent: React.FC = () => {
                     onChange={value => setCategory(value as NhomPhanAnh)}
                     closeOnSelect
                 >
-                    {Object.entries(NHOM_PHAN_ANH_LABEL).map(
-                        ([value, label]) => (
-                            <Select.Option
-                                key={value}
-                                value={value}
-                                title={label}
-                            />
-                        ),
-                    )}
+                    {categoryOptions.map(({ key, label }) => (
+                        <Select.Option key={key} value={key} title={label} />
+                    ))}
                 </Select>
 
                 <Box mt={3}>
