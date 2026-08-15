@@ -2,6 +2,7 @@ import { API } from "@constants/common";
 import {
     Business,
     Company,
+    EntityRequiredDocumentsResult,
     FileAsset,
     Household,
     House,
@@ -10,8 +11,15 @@ import {
     HouseStatus,
     HouseUsageType,
     PaginatedData,
+    RequiredDocumentRecord,
 } from "@dts";
 import { request } from "./request";
+import {
+    fetchEntityRequiredDocuments,
+    reviewEntityDocument,
+    submitEntityDocument,
+    SubmitEntityDocumentInput,
+} from "./requiredDocumentApi";
 
 /**
  * Yeu cau quyen houses.read. Backend tu gioi han theo ownerId (house_owner)
@@ -120,3 +128,30 @@ export const deleteHouseAttachment = (
     fileId: string,
 ): Promise<null> =>
     request<null>("DELETE", `${API.HOUSES}/${id}/attachments/${fileId}`);
+
+export const fetchHouseRequiredDocuments = (
+    id: string,
+): Promise<EntityRequiredDocumentsResult> =>
+    fetchEntityRequiredDocuments(API.HOUSES, id);
+
+export const submitHouseDocument = (
+    id: string,
+    input: SubmitEntityDocumentInput,
+): Promise<RequiredDocumentRecord> =>
+    submitEntityDocument(API.HOUSES, id, input);
+
+export const reviewHouseDocument = (
+    id: string,
+    documentId: string,
+    decision: "approved" | "rejected",
+    rejectionReason?: string,
+    approvalNote?: string,
+): Promise<RequiredDocumentRecord> =>
+    reviewEntityDocument(
+        API.HOUSES,
+        id,
+        documentId,
+        decision,
+        rejectionReason,
+        approvalNote,
+    );

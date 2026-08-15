@@ -1,13 +1,21 @@
 import { API } from "@constants/common";
 import {
     Citizen,
+    EntityRequiredDocumentsResult,
     FileAsset,
     Household,
     LoaiSoHuu,
     PaginatedData,
+    RequiredDocumentRecord,
     VerificationStatus,
 } from "@dts";
 import { request } from "./request";
+import {
+    fetchEntityRequiredDocuments,
+    reviewEntityDocument,
+    submitEntityDocument,
+    SubmitEntityDocumentInput,
+} from "./requiredDocumentApi";
 
 export const searchHouseholds = (params: {
     search?: string;
@@ -94,3 +102,30 @@ export const updateHouseholdStatus = (
         status,
         note,
     });
+
+export const fetchHouseholdRequiredDocuments = (
+    id: string,
+): Promise<EntityRequiredDocumentsResult> =>
+    fetchEntityRequiredDocuments(API.HOUSEHOLDS, id);
+
+export const submitHouseholdDocument = (
+    id: string,
+    input: SubmitEntityDocumentInput,
+): Promise<RequiredDocumentRecord> =>
+    submitEntityDocument(API.HOUSEHOLDS, id, input);
+
+export const reviewHouseholdDocument = (
+    id: string,
+    documentId: string,
+    decision: "approved" | "rejected",
+    rejectionReason?: string,
+    approvalNote?: string,
+): Promise<RequiredDocumentRecord> =>
+    reviewEntityDocument(
+        API.HOUSEHOLDS,
+        id,
+        documentId,
+        decision,
+        rejectionReason,
+        approvalNote,
+    );

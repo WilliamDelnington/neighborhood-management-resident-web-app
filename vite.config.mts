@@ -7,7 +7,16 @@ import path from "path";
 // https://vitejs.dev/config/
 export default () => {
     return defineConfig({
-        base: "./",
+        // Tuyet doi ("/"), khong phai tuong doi ("./"): app dung BrowserRouter
+        // gan o goc domain (khong co basename). Voi base tuong doi, script
+        // trong index.html duoc tro bang duong dan tuong doi ("./assets/..."),
+        // nen khi nguoi dung vao thang/tai lai mot route con (vd /complaints)
+        // va server tra ve index.html qua SPA fallback, trinh duyet lai phan
+        // giai duong dan do theo route hien tai (vd /complaints/assets/...)
+        // thay vi goc domain - file khong ton tai, server fallback lai tra ve
+        // index.html (text/html) cho duong dan .js do, gay loi MIME type va
+        // trang trang.
+        base: "/",
         plugins: [react(), macrosPlugin()],
         // twin.macro is a babel-plugin-macros macro (see babel-plugin-macros.config.js)
         // - it's meant to be fully compiled away by macrosPlugin() before the browser

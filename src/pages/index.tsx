@@ -110,6 +110,7 @@ const HouseDetailPage = lazy(() => import("./Admin/HouseDetailPage"));
 const BusinessTypeListPage = lazy(() => import("./Admin/BusinessTypeListPage"));
 const BusinessListPage = lazy(() => import("./Admin/BusinessListPage"));
 const BusinessDetailPage = lazy(() => import("./Admin/BusinessDetailPage"));
+const CompanyDetailPage = lazy(() => import("./Admin/CompanyDetailPage"));
 
 const RouteFallback = () => (
     <div className="flex items-center justify-center h-screen">
@@ -260,6 +261,10 @@ const Routes: React.FC = () => (
             <Route
                 path="/admin/businesses/:id"
                 element={<BusinessDetailPage />}
+            />
+            <Route
+                path="/admin/companies/:id"
+                element={<CompanyDetailPage />}
             />
         </RouterRoutes>
     </Suspense>

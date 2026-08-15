@@ -10,7 +10,10 @@ export type AttachmentRelatedModel =
     | "Citizen"
     | "Household"
     | "Company"
-    | "Appointment";
+    | "Appointment"
+    | "HouseDocument"
+    | "HouseholdDocument"
+    | "CompanyDocument";
 
 /**
  * Cap mot token upload ngan han (10 phut), gan chet vao dung mot ban ghi

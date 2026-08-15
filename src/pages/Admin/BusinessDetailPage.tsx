@@ -16,8 +16,8 @@ import {
     BusinessFormValues,
     isBusinessFormValid,
     toBusinessInput,
-    RequiredDocumentsPanel,
 } from "@components/business";
+import RequiredDocumentsPanel from "@components/documents/RequiredDocumentsPanel";
 import { AttachmentUploader } from "@components/attachments";
 import { useStore } from "@store";
 import {
@@ -34,7 +34,10 @@ import {
     deleteBusiness,
     fetchBusinessAttachments,
     fetchBusinessById,
+    fetchRequiredDocuments,
     deleteBusinessAttachment,
+    reviewBusinessDocument,
+    submitBusinessDocument,
     updateBusiness,
     updateBusinessStatus,
 } from "@service/businessApi";
@@ -419,7 +422,11 @@ const BusinessDetailContent: React.FC = () => {
 
                 {!loading && !error && business && (
                     <RequiredDocumentsPanel
-                        businessId={id}
+                        entityId={id}
+                        relatedModel="BusinessDocument"
+                        fetchItems={fetchRequiredDocuments}
+                        onSubmit={submitBusinessDocument}
+                        onReview={reviewBusinessDocument}
                         canSubmit={
                             isAdmin ||
                             (isOwner &&
@@ -428,6 +435,7 @@ const BusinessDetailContent: React.FC = () => {
                                 ))
                         }
                         canReview={canReviewItem}
+                        emptyLabel="Loại hình kinh doanh này chưa có yêu cầu giấy tờ nào"
                         onChanged={load}
                     />
                 )}

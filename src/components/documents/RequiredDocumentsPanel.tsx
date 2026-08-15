@@ -19,16 +19,15 @@ import {
     BUSINESS_DOCUMENT_STATUS_TONE,
 } from "@constants/domain";
 import {
-    fetchRequiredDocuments,
-    reviewBusinessDocument,
-    submitBusinessDocument,
-} from "@service/businessApi";
-import { pickAndUploadAttachment } from "@service/uploadApi";
+    pickAndUploadAttachment,
+    AttachmentRelatedModel,
+} from "@service/uploadApi";
+import { SubmitEntityDocumentInput } from "@service/requiredDocumentApi";
 import {
     AppError,
-    BusinessDocument,
     DocumentType,
     RequiredDocumentItem,
+    RequiredDocumentRecord,
 } from "@dts";
 
 const formatDate = (iso?: string) => {
@@ -43,7 +42,7 @@ const formatDateTime = (iso?: string) => {
     return Number.isNaN(d.getTime()) ? iso : d.toLocaleString("vi-VN");
 };
 
-const actorLabel = (actor: BusinessDocument["uploadedBy"]) => {
+const actorLabel = (actor: RequiredDocumentRecord["uploadedBy"]) => {
     if (!actor) return "Không rõ";
     return typeof actor === "string" ? actor : actor.displayName;
 };
@@ -63,27 +62,49 @@ const documentTypeIdOf = (item: RequiredDocumentItem): string => {
     return typeof dt === "string" ? dt : dt._id;
 };
 
-const fileNameOf = (doc: BusinessDocument): string =>
+const fileNameOf = (doc: RequiredDocumentRecord): string =>
     typeof doc.fileAssetId === "string" ? "Xem tệp" : doc.fileAssetId.name;
 
-const fileUrlOf = (doc: BusinessDocument): string | undefined =>
+const fileUrlOf = (doc: RequiredDocumentRecord): string | undefined =>
     typeof doc.fileAssetId === "string" ? undefined : doc.fileAssetId.url;
 
 export interface RequiredDocumentsPanelProps {
-    businessId: string;
+    entityId: string;
+    /** relatedModel dung khi tai file len qua pickAndUploadAttachment, vd "HouseDocument". */
+    relatedModel: AttachmentRelatedModel;
+    fetchItems: (
+        entityId: string,
+    ) => Promise<{ items: RequiredDocumentItem[] }>;
+    onSubmit: (
+        entityId: string,
+        input: SubmitEntityDocumentInput,
+    ) => Promise<unknown>;
+    onReview: (
+        entityId: string,
+        documentId: string,
+        decision: "approved" | "rejected",
+        rejectionReason?: string,
+        approvalNote?: string,
+    ) => Promise<unknown>;
     /** Chu ho (hoac admin) - nguoi duoc phep nop/nop lai giay to. */
     canSubmit: boolean;
     /** Tuy tung dong luat (reviewerRoles) ma xac dinh nguoi dung hien tai co duoc duyet hay khong. */
     canReview: (item: RequiredDocumentItem) => boolean;
-    /** Goi lai sau khi nop/duyet/tu choi thanh cong de trang cha lam moi trang thai ho kinh doanh. */
+    /** Goi lai sau khi nop/duyet/tu choi thanh cong de trang cha lam moi trang thai. */
     onChanged?: () => void;
+    emptyLabel?: string;
 }
 
 const RequiredDocumentsPanel: React.FC<RequiredDocumentsPanelProps> = ({
-    businessId,
+    entityId,
+    relatedModel,
+    fetchItems,
+    onSubmit,
+    onReview,
     canSubmit,
     canReview,
     onChanged,
+    emptyLabel = "Chưa có yêu cầu giấy tờ nào",
 }) => {
     const { openSnackbar } = useSnackbar();
     const [items, setItems] = useState<RequiredDocumentItem[]>([]);
@@ -112,13 +133,13 @@ const RequiredDocumentsPanel: React.FC<RequiredDocumentsPanelProps> = ({
     const load = () => {
         setLoading(true);
         setError(null);
-        fetchRequiredDocuments(businessId)
+        fetchItems(entityId)
             .then(res => setItems(res.items))
             .catch(err => setError((err as AppError).message))
             .finally(() => setLoading(false));
     };
 
-    useEffect(load, [businessId]);
+    useEffect(load, [entityId]);
 
     const toggleHistory = (key: string) => {
         setExpandedHistory(prev => {
@@ -141,10 +162,10 @@ const RequiredDocumentsPanel: React.FC<RequiredDocumentsPanelProps> = ({
         try {
             setSubmitBusy(true);
             const { fileAssetId } = await pickAndUploadAttachment(
-                "BusinessDocument",
-                businessId,
+                relatedModel,
+                entityId,
             );
-            await submitBusinessDocument(businessId, {
+            await onSubmit(entityId, {
                 documentTypeId: documentTypeIdOf(submitting),
                 fileAssetId,
                 docNumber: docNumber.trim() || undefined,
@@ -181,8 +202,8 @@ const RequiredDocumentsPanel: React.FC<RequiredDocumentsPanelProps> = ({
         }
         try {
             setReviewDecision(decision);
-            await reviewBusinessDocument(
-                businessId,
+            await onReview(
+                entityId,
                 reviewing.activeDocument._id,
                 decision,
                 decision === "rejected" ? rejectionReason.trim() : undefined,
@@ -213,7 +234,7 @@ const RequiredDocumentsPanel: React.FC<RequiredDocumentsPanelProps> = ({
             {loading && <LoadingState />}
             {!loading && error && <ErrorState label={error} onRetry={load} />}
             {!loading && !error && items.length === 0 && (
-                <EmptyState label="Loại hình kinh doanh này chưa có yêu cầu giấy tờ nào" />
+                <EmptyState label={emptyLabel} />
             )}
             {!loading && !error && items.length > 0 && (
                 <Box

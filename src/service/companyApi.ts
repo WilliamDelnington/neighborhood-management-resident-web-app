@@ -1,10 +1,25 @@
 import { API } from "@constants/common";
-import { Company, FileAsset, PaginatedData, VerificationStatus } from "@dts";
+import {
+    Company,
+    EntityRequiredDocumentsResult,
+    FileAsset,
+    PaginatedData,
+    RequiredDocumentRecord,
+    VerificationStatus,
+} from "@dts";
 import { request } from "./request";
+import {
+    fetchEntityRequiredDocuments,
+    reviewEntityDocument,
+    submitEntityDocument,
+    SubmitEntityDocumentInput,
+} from "./requiredDocumentApi";
 
 /**
- * Mirror cua businessApi.ts nhung khong co quy trinh giay to (Company khong co
- * BusinessDocument rieng) - xem models/Company.ts o backend.
+ * Mirror cua businessApi.ts - Company khong co businessType (dong luat
+ * requiredDocuments nam TRUC TIEP tren tung Company thay vi tren mot "Type"
+ * dung chung), va status KHONG tu tinh lai tu ket qua duyet giay to (khac
+ * Business) - xem models/Company.ts o backend.
  */
 export const fetchCompanies = (params: {
     search?: string;
@@ -56,3 +71,30 @@ export const updateCompanyStatus = (
     status: VerificationStatus,
 ): Promise<Company> =>
     request<Company>("PATCH", `${API.COMPANIES}/${id}/status`, { status });
+
+export const fetchCompanyRequiredDocuments = (
+    id: string,
+): Promise<EntityRequiredDocumentsResult> =>
+    fetchEntityRequiredDocuments(API.COMPANIES, id);
+
+export const submitCompanyDocument = (
+    id: string,
+    input: SubmitEntityDocumentInput,
+): Promise<RequiredDocumentRecord> =>
+    submitEntityDocument(API.COMPANIES, id, input);
+
+export const reviewCompanyDocument = (
+    id: string,
+    documentId: string,
+    decision: "approved" | "rejected",
+    rejectionReason?: string,
+    approvalNote?: string,
+): Promise<RequiredDocumentRecord> =>
+    reviewEntityDocument(
+        API.COMPANIES,
+        id,
+        documentId,
+        decision,
+        rejectionReason,
+        approvalNote,
+    );

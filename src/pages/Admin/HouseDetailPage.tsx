@@ -46,6 +46,7 @@ import {
     toCompanyInput,
 } from "@components/company";
 import { AttachmentUploader } from "@components/attachments";
+import RequiredDocumentsPanel from "@components/documents/RequiredDocumentsPanel";
 import HouseOwnershipSection from "@components/house/HouseOwnershipSection";
 import { useStore } from "@store";
 import {
@@ -63,6 +64,7 @@ import {
     House,
     HouseStatus,
     Household,
+    RequiredDocumentItem,
 } from "@dts";
 import {
     deleteHouse,
@@ -71,7 +73,10 @@ import {
     fetchHouseById,
     fetchHouseCompanies,
     fetchHouseHouseholds,
+    fetchHouseRequiredDocuments,
     deleteHouseAttachment,
+    reviewHouseDocument,
+    submitHouseDocument,
     updateHouse,
     updateHouseStatus,
 } from "@service/houseApi";
@@ -563,6 +568,17 @@ const HouseDetailContent: React.FC = () => {
         }
     }
 
+    const canReviewHouseDocument = (item: RequiredDocumentItem): boolean => {
+        if (!user) return false;
+        if (isAdmin) return true;
+        if (item.rule.reviewerRoles.length > 0) {
+            return item.rule.reviewerRoles.some(r =>
+                user.roles.includes(r as typeof user.roles[number]),
+            );
+        }
+        return canVerify;
+    };
+
     const canEditNow = canUpdate && (isAdmin || house?.status !== "locked");
     // Ho kinh doanh chi bi chan khai bao khi nha da bi tu choi hoac bi khoa
     // (xem backend assertHouseRecordAllowsDeclaration) - admin duoc bo qua
@@ -756,6 +772,23 @@ const HouseDetailContent: React.FC = () => {
                             deleteAttachmentFn={deleteHouseAttachment}
                         />
 
+                        <RequiredDocumentsPanel
+                            entityId={id}
+                            relatedModel="HouseDocument"
+                            fetchItems={fetchHouseRequiredDocuments}
+                            onSubmit={submitHouseDocument}
+                            onReview={reviewHouseDocument}
+                            canSubmit={
+                                isAdmin ||
+                                (isOwner &&
+                                    ["unverified", "pending"].includes(
+                                        house.status,
+                                    ))
+                            }
+                            canReview={canReviewHouseDocument}
+                            onChanged={load}
+                        />
+
                         {canViewHouseholds && (
                             <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
                                 <Box
@@ -931,6 +964,12 @@ const HouseDetailContent: React.FC = () => {
                                                         ]
                                                     }
                                                 />
+                                            }
+                                            onClick={() =>
+                                                navigate(
+                                                    `/admin/companies/${c._id}`,
+                                                    { animate: true },
+                                                )
                                             }
                                         />
                                     ))}

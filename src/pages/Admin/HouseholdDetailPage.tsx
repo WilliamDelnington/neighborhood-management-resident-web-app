@@ -31,17 +31,28 @@ import {
     isCitizenFormValid,
     toCitizenInput,
 } from "@components/citizen";
+import RequiredDocumentsPanel from "@components/documents/RequiredDocumentsPanel";
 import { useStore } from "@store";
 import {
     VERIFICATION_STATUS_LABEL,
     VERIFICATION_STATUS_TONE,
     LOAI_SO_HUU_LABEL,
 } from "@constants/domain";
-import { AppError, Citizen, House, Household, VerificationStatus } from "@dts";
+import {
+    AppError,
+    Citizen,
+    House,
+    Household,
+    RequiredDocumentItem,
+    VerificationStatus,
+} from "@dts";
 import {
     deleteHousehold,
     fetchHouseholdById,
     fetchHouseholdCitizens,
+    fetchHouseholdRequiredDocuments,
+    reviewHouseholdDocument,
+    submitHouseholdDocument,
     updateHousehold,
     updateHouseholdStatus,
 } from "@service/householdApi";
@@ -295,6 +306,19 @@ const HouseholdDetailContent: React.FC = () => {
         }
     }
 
+    const canReviewHouseholdDocument = (
+        item: RequiredDocumentItem,
+    ): boolean => {
+        if (!user) return false;
+        if (isAdmin) return true;
+        if (item.rule.reviewerRoles.length > 0) {
+            return item.rule.reviewerRoles.some(r =>
+                user.roles.includes(r as typeof user.roles[number]),
+            );
+        }
+        return canVerify;
+    };
+
     const canEditNow =
         canUpdate &&
         !!household &&
@@ -472,6 +496,23 @@ const HouseholdDetailContent: React.FC = () => {
                                 </>
                             )}
                         </Box>
+
+                        <RequiredDocumentsPanel
+                            entityId={id}
+                            relatedModel="HouseholdDocument"
+                            fetchItems={fetchHouseholdRequiredDocuments}
+                            onSubmit={submitHouseholdDocument}
+                            onReview={reviewHouseholdDocument}
+                            canSubmit={
+                                isAdmin ||
+                                (isOwner &&
+                                    ["unverified", "pending"].includes(
+                                        household.status,
+                                    ))
+                            }
+                            canReview={canReviewHouseholdDocument}
+                            onChanged={load}
+                        />
 
                         {canViewCitizens && (
                             <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
