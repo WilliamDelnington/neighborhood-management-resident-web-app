@@ -84,11 +84,22 @@ export async function request<T>(
 
     if (!resData.success) {
         if (response.status === 401) {
+            const hadToken = Boolean(store.getState().token);
             store.setState(state => ({
                 ...state,
                 token: undefined,
                 user: undefined,
             }));
+            // Chi bao "phien het han" khi truoc do dang co token (mot phien
+            // dang dang nhap vua bi tu choi) - tranh hien toast nay cho cac
+            // request 401 khac (vd sai OTP luc chua dang nhap).
+            if (hadToken) {
+                store.getState().setError({
+                    message:
+                        "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.",
+                    status: 401,
+                });
+            }
         }
         throw new RequestError(
             resData.error || resData.message || "Đã xảy ra lỗi",
