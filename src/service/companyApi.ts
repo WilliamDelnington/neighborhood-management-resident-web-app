@@ -17,9 +17,10 @@ import {
 
 /**
  * Mirror cua businessApi.ts - Company khong co businessType (dong luat
- * requiredDocuments nam TRUC TIEP tren tung Company thay vi tren mot "Type"
- * dung chung), va status KHONG tu tinh lai tu ket qua duyet giay to (khac
- * Business) - xem models/Company.ts o backend.
+ * requiredDocuments AP DUNG CHUNG cho toan bo Company qua RequiredDocumentSettings
+ * o backend, khong phai mot "Type" dung chung nhu Business), va status KHONG
+ * tu tinh lai tu ket qua duyet giay to (khac Business) - xem models/Company.ts
+ * o backend.
  */
 export const fetchCompanies = (params: {
     search?: string;

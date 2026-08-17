@@ -423,17 +423,17 @@ const HouseDetailContent: React.FC = () => {
     };
 
     const handleSaveHousehold = async () => {
-        if (!isHouseholdFormValid(householdForm)) {
+        if (!isHouseholdFormValid(householdForm, "create")) {
             openSnackbar({
                 type: "error",
-                text: "Vui lòng nhập đầy đủ địa chỉ và chủ hộ",
+                text: "Vui lòng nhập đầy đủ địa chỉ, chủ hộ, số điện thoại liên hệ (và tên người liên hệ nếu khác chủ hộ)",
             });
             return;
         }
         try {
             setHouseholdSubmitting(true);
             const household = await createHousehold(
-                toHouseholdInput(householdForm),
+                toHouseholdInput(householdForm, "create"),
             );
             let text = "Đã thêm hộ dân";
             if (householdForm.attachments.length > 0) {
@@ -1053,6 +1053,7 @@ const HouseDetailContent: React.FC = () => {
                         <HouseholdForm
                             values={householdForm}
                             onChange={setHouseholdForm}
+                            mode="create"
                         />
                     </Box>
                     <Box mt={3} flex style={{ gap: 8 }}>
