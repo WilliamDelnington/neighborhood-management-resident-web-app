@@ -65,6 +65,12 @@ export interface HouseholdInput {
     address: string;
     headOfHousehold: string;
     phone?: string;
+    // Chi dung khi tao moi ho dan (xem HouseholdForm mode="create") - danh dau
+    // nguoi lien he (phone o tren) co phai chinh chu ho khong. true = chi tao
+    // Citizen "Chủ hộ" mang phone nay; false = tao them mot Citizen
+    // "Người liên hệ" rieng mang ten contactName va phone nay.
+    contactIsHead?: boolean;
+    contactName?: string;
     memberCount?: number;
     ownershipType?: LoaiSoHuu;
     needsSupport?: boolean;

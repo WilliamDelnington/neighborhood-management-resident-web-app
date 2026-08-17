@@ -12,6 +12,10 @@ export interface HouseholdFormValues {
     address: string;
     headOfHousehold: string;
     phone: string;
+    // Chi dung o mode="create" (xem HouseholdFormProps.mode) - danh dau nguoi
+    // lien he (phone o tren) co phai chinh chu ho khong.
+    contactIsHead: boolean;
+    contactName: string;
     memberCount: string;
     ownershipType: LoaiSoHuu;
     needsSupport: boolean;
@@ -26,6 +30,8 @@ export const EMPTY_HOUSEHOLD_FORM: HouseholdFormValues = {
     address: "",
     headOfHousehold: "",
     phone: "",
+    contactIsHead: true,
+    contactName: "",
     memberCount: "",
     ownershipType: "chinh_chu",
     needsSupport: false,
@@ -35,8 +41,11 @@ export const EMPTY_HOUSEHOLD_FORM: HouseholdFormValues = {
     attachments: [],
 };
 
-export function toHouseholdInput(values: HouseholdFormValues): HouseholdInput {
-    return {
+export function toHouseholdInput(
+    values: HouseholdFormValues,
+    mode: "create" | "edit" = "edit",
+): HouseholdInput {
+    const base: HouseholdInput = {
         cluster: values.cluster.trim(),
         address: values.address.trim(),
         headOfHousehold: values.headOfHousehold.trim(),
@@ -49,14 +58,37 @@ export function toHouseholdInput(values: HouseholdFormValues): HouseholdInput {
         houseId: values.houseId || null,
         note: values.note.trim() || undefined,
     };
+    // contactIsHead/contactName chi co y nghia luc khai bao ho dan moi (quyet
+    // dinh tao them Citizen "Người liên hệ" o backend) - khong gui khi chinh
+    // sua ho dan da co san, vi luc do nhan khau da duoc quan ly rieng o man
+    // chi tiet (xem HouseholdDetailPage).
+    if (mode === "create") {
+        return {
+            ...base,
+            contactIsHead: values.contactIsHead,
+            contactName: values.contactIsHead
+                ? undefined
+                : values.contactName.trim() || undefined,
+        };
+    }
+    return base;
 }
 
-export function isHouseholdFormValid(values: HouseholdFormValues): boolean {
-    return !!(
+export function isHouseholdFormValid(
+    values: HouseholdFormValues,
+    mode: "create" | "edit" = "edit",
+): boolean {
+    const baseValid = !!(
         values.houseId.trim() &&
         values.cluster.trim() &&
         values.address.trim() &&
         values.headOfHousehold.trim()
+    );
+    if (mode !== "create") return baseValid;
+    return (
+        baseValid &&
+        !!values.phone.trim() &&
+        (values.contactIsHead || !!values.contactName.trim())
     );
 }
 
@@ -69,6 +101,14 @@ interface HouseholdFormProps {
      * nen khong can chon lai file trong Form (chi dung khi tao moi).
      */
     showAttachments?: boolean;
+    /**
+     * "create": hien phan "Người liên hệ" (checkbox + ten neu khac chu ho) -
+     * quyet dinh backend tao them mot Citizen rieng cho nguoi lien he hay chi
+     * gan phone cho Citizen "Chủ hộ" (xem toHouseholdInput).
+     * "edit" (mac dinh): chi hien truong "Số điện thoại" don gian nhu truoc -
+     * nhan khau da co san duoc quan ly rieng o man chi tiet ho dan.
+     */
+    mode?: "create" | "edit";
 }
 
 /**
@@ -78,6 +118,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
     values,
     onChange,
     showAttachments = true,
+    mode = "edit",
 }) => {
     const [housePickerVisible, setHousePickerVisible] = useState(false);
     const set = <K extends keyof HouseholdFormValues>(
@@ -131,11 +172,47 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                 value={values.headOfHousehold}
                 onChange={e => set("headOfHousehold", e.target.value)}
             />
-            <Input
-                label="Số điện thoại"
-                value={values.phone}
-                onChange={e => set("phone", e.target.value)}
-            />
+            {mode === "create" ? (
+                <Box
+                    className="bg-ng_10 rounded-lg p-3"
+                    style={{
+                        display: "flex",
+                        flexDirection: "column",
+                        gap: 10,
+                    }}
+                >
+                    <Text size="xSmall" className="text-text_2">
+                        Người liên hệ
+                    </Text>
+                    <Checkbox
+                        label="Người liên hệ là chủ hộ"
+                        value="contactIsHead"
+                        checked={values.contactIsHead}
+                        onChange={() =>
+                            set("contactIsHead", !values.contactIsHead)
+                        }
+                    />
+                    {!values.contactIsHead && (
+                        <Input
+                            label="Tên người liên hệ"
+                            placeholder="Họ tên người liên hệ"
+                            value={values.contactName}
+                            onChange={e => set("contactName", e.target.value)}
+                        />
+                    )}
+                    <Input
+                        label="Số điện thoại liên hệ"
+                        value={values.phone}
+                        onChange={e => set("phone", e.target.value)}
+                    />
+                </Box>
+            ) : (
+                <Input
+                    label="Số điện thoại"
+                    value={values.phone}
+                    onChange={e => set("phone", e.target.value)}
+                />
+            )}
             <Input
                 label="Số nhân khẩu"
                 type="number"

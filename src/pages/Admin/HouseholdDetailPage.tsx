@@ -80,6 +80,10 @@ const toFormValues = (h: Household): HouseholdFormValues => {
         address: h.address,
         headOfHousehold: h.headOfHousehold,
         phone: h.phone || "",
+        // contactIsHead/contactName chi dung o mode="create" (xem HouseholdForm) -
+        // man chi tiet luon o mode="edit" nen khong hien thi/gui hai truong nay.
+        contactIsHead: true,
+        contactName: "",
         memberCount: h.memberCount ? String(h.memberCount) : "",
         ownershipType: h.ownershipType,
         needsSupport: h.needsSupport,
