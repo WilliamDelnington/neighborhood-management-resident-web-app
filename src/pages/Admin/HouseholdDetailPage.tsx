@@ -420,7 +420,7 @@ const HouseholdDetailContent: React.FC = () => {
                                         )}
                                     />
                                     <InfoRow
-                                        label="Hình thức sở hữu"
+                                        label="Hình thức lưu trú"
                                         value={
                                             LOAI_SO_HUU_LABEL[
                                                 household.ownershipType

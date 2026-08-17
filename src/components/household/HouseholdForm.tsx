@@ -144,7 +144,7 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
             />
             <Box>
                 <Text size="xSmall" className="text-text_2 mb-1">
-                    Hình thức sở hữu
+                    Hình thức lưu trú
                 </Text>
                 <Box flex style={{ gap: 20 }}>
                     {(
