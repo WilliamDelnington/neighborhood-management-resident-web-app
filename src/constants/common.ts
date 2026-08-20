@@ -6,6 +6,17 @@ export const BASE_URL = import.meta.env.VITE_BASE_URL;
  */
 export const ADMIN_APP_URL = import.meta.env.VITE_ADMIN_APP_URL as string;
 
+/**
+ * File anh (News.coverImageUrl/images) duoc backend luu duong dan tuong doi
+ * (vd "/uploads/news/<id>/<file>.jpg"). Trinh duyet phai tai anh o goc
+ * BASE_URL (noi backend serve thu muc public/uploads) chu khong phai goc cua
+ * chinh Mini App nay - giong ly do resolveAssetUrl ben admin-web-app.
+ */
+export function resolveAssetUrl(url: string): string {
+    if (/^https?:\/\//i.test(url)) return url;
+    return new URL(url, BASE_URL || window.location.origin).toString();
+}
+
 export const API = {
     AUTH_ZALO_LOGIN: "/api/auth/zalo/login",
     AUTH_REGISTER: "/api/auth/register",
@@ -20,6 +31,9 @@ export const API = {
     USERS_ASSIGNABLE_STAFF: "/api/users/assignable-staff",
     HOUSES: "/api/houses",
     HOUSES_MINE: "/api/houses/mine",
+    HOUSES_GEO_AUTOCOMPLETE: "/api/houses/geo/autocomplete",
+    HOUSES_GEO_PLACE_DETAILS: "/api/houses/geo/place-details",
+    HOUSES_GEO_STATIC_MAP: "/api/houses/geo/static-map",
     NEIGHBORHOODS_MINE: "/api/neighborhoods/mine",
     DASHBOARD_MINE: "/api/dashboard/mine",
     ORGANIZATIONS: "/api/organizations",
@@ -42,6 +56,7 @@ export const API = {
     SUPPORT_TICKETS_MINE: "/api/support-tickets/mine",
 
     ANNOUNCEMENTS: "/api/announcements",
+    NEWS: "/api/news",
     CORRESPONDENCE_TYPES: "/api/correspondence-types",
     CORRESPONDENCES: "/api/correspondences",
     CHANGE_REQUESTS: "/api/change-requests",

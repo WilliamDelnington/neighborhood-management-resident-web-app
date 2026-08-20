@@ -103,11 +103,22 @@ export const fetchAppointmentDetail = (id: string): Promise<Appointment> =>
 
 export const cancelAppointment = (
     id: string,
-    reason?: string,
+    reason: string,
 ): Promise<Appointment> =>
     request<Appointment>("POST", `${API.APPOINTMENTS}/${id}/cancel`, {
         reason,
     });
+
+/**
+ * Doi lich hen sang ngay/khung gio khac - chi ap dung khi lich hen dang
+ * "da_xac_nhan" va chi chinh chu lich hen (citizenUserId/bookedByUserId) moi
+ * goi duoc, bat buoc phai co ly do. Xem POST /api/appointments/:id/reschedule.
+ */
+export const rescheduleAppointment = (
+    id: string,
+    params: { timeSlotId: string; appointedDate: string; reason: string },
+): Promise<Appointment> =>
+    request<Appointment>("POST", `${API.APPOINTMENTS}/${id}/reschedule`, params);
 
 /**
  * Danh gia buoi lam viec - chi goi duoc mot lan, va chi khi trang thai dang

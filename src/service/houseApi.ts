@@ -6,6 +6,7 @@ import {
     FileAsset,
     Household,
     House,
+    HouseGisSource,
     HouseLookupItem,
     HousePhysicalStatus,
     HouseStatus,
@@ -101,6 +102,13 @@ export interface HouseInput {
     note?: string;
     // Chi co y nghia luc tao moi (xem HouseForm.tsx / houseRecordService.createHouseRecord).
     organizationId?: string;
+    gisLatitude?: number | null;
+    gisLongitude?: number | null;
+    gisAccuracyMeters?: number | null;
+    gisSource?: HouseGisSource;
+    // Bat buoc = true khi gisSource la "address_lookup"/"device_gps" - backend
+    // tu choi 400 neu thieu (xem requiresGeoConsent trong validators/houseRecord.ts).
+    geoConsentAccepted?: boolean;
 }
 
 export const createHouse = (input: HouseInput): Promise<House> =>

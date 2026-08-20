@@ -42,6 +42,9 @@ const AnnouncementDetailPage = lazy(
     () => import("./Announcements/AnnouncementDetailPage"),
 );
 
+const NewsListPage = lazy(() => import("./News/NewsListPage"));
+const NewsDetailPage = lazy(() => import("./News/NewsDetailPage"));
+
 const CorrespondenceListPage = lazy(
     () => import("./Correspondences/CorrespondenceListPage"),
 );
@@ -176,6 +179,9 @@ const Routes: React.FC = () => (
                 path="/announcements/:id"
                 element={<AnnouncementDetailPage />}
             />
+
+            <Route path="/news" element={<NewsListPage />} />
+            <Route path="/news/:id" element={<NewsDetailPage />} />
 
             <Route
                 path="/correspondences"

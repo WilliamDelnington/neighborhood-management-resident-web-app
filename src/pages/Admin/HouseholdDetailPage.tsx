@@ -84,7 +84,6 @@ const toFormValues = (h: Household): HouseholdFormValues => {
         // man chi tiet luon o mode="edit" nen khong hien thi/gui hai truong nay.
         contactIsHead: true,
         contactName: "",
-        memberCount: h.memberCount ? String(h.memberCount) : "",
         ownershipType: h.ownershipType,
         needsSupport: h.needsSupport,
         houseId: typeof h.houseId === "string" ? h.houseId : house?._id || "",

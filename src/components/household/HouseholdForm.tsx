@@ -16,7 +16,6 @@ export interface HouseholdFormValues {
     // lien he (phone o tren) co phai chinh chu ho khong.
     contactIsHead: boolean;
     contactName: string;
-    memberCount: string;
     ownershipType: LoaiSoHuu;
     needsSupport: boolean;
     houseId: string;
@@ -32,7 +31,6 @@ export const EMPTY_HOUSEHOLD_FORM: HouseholdFormValues = {
     phone: "",
     contactIsHead: true,
     contactName: "",
-    memberCount: "",
     ownershipType: "chinh_chu",
     needsSupport: false,
     houseId: "",
@@ -50,9 +48,6 @@ export function toHouseholdInput(
         address: values.address.trim(),
         headOfHousehold: values.headOfHousehold.trim(),
         phone: values.phone.trim() || undefined,
-        memberCount: values.memberCount
-            ? Number(values.memberCount)
-            : undefined,
         ownershipType: values.ownershipType,
         needsSupport: values.needsSupport,
         houseId: values.houseId || null,
@@ -213,12 +208,6 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                     onChange={e => set("phone", e.target.value)}
                 />
             )}
-            <Input
-                label="Số nhân khẩu"
-                type="number"
-                value={values.memberCount}
-                onChange={e => set("memberCount", e.target.value)}
-            />
             <Box>
                 <Text size="xSmall" className="text-text_2 mb-1">
                     Hình thức lưu trú

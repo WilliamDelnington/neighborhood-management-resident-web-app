@@ -1,16 +1,32 @@
-import React, { useEffect, useState } from "react";
-import { Box, Icon, Text, useParams, useSnackbar } from "@components/ui";
+import React, { useEffect, useMemo, useState } from "react";
+import {
+    Box,
+    DatePicker,
+    Icon,
+    Text,
+    useNavigate,
+    useParams,
+    useSnackbar,
+} from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button, TextArea } from "@components/customized";
-import { ErrorState, LoadingState, StatusBadge } from "@components/admin";
+import {
+    EmptyState,
+    ErrorState,
+    LoadingState,
+    StatusBadge,
+} from "@components/admin";
 import { RequireAuth } from "@components/role";
 import AttachmentUploader from "@components/attachments/AttachmentUploader";
 import {
+    AppointmentAvailableSlot,
     cancelAppointment,
     fetchAppointmentAttachments,
     fetchAppointmentDetail,
+    fetchAvailableSlots,
     deleteAppointmentAttachment,
     rateAppointment,
+    rescheduleAppointment,
 } from "@service/appointmentApi";
 import {
     APPOINTMENT_STATUS_LABEL,
@@ -24,6 +40,20 @@ const CANCELLABLE_STATUSES: Appointment["status"][] = [
     "cho_xac_nhan",
     "da_xac_nhan",
 ];
+
+// Chi duoc doi lich hen dang o trang thai "da_xac_nhan" (Da xac nhan) - khac
+// CANCELLABLE_STATUSES (bao gom ca "cho_xac_nhan"), giong dieu kien
+// rescheduleAppointment o backend.
+const RESCHEDULABLE_STATUS: Appointment["status"] = "da_xac_nhan";
+
+// BR-01 (giong AppointmentBookingPage.tsx): chi duoc doi sang ngay tu ngay
+// mai (T+1) den toi da 30 ngay toi (T+30).
+const addDays = (date: Date, days: number): Date => {
+    const result = new Date(date);
+    result.setHours(0, 0, 0, 0);
+    result.setDate(result.getDate() + days);
+    return result;
+};
 
 // BR-03: cu dan chi duoc huy lich hen truoc gio hen it nhat 2 tieng - tinh
 // gan dung o client de phuc vu UX (khong bat buoc chinh xac tuyet doi, viec
@@ -45,6 +75,9 @@ const getAppointmentDateTime = (appointment: Appointment): Date => {
 const serviceLabel = (serviceId: Appointment["serviceId"]): string =>
     typeof serviceId === "string" ? serviceId : serviceId.name;
 
+const serviceIdOf = (serviceId: Appointment["serviceId"]): string =>
+    typeof serviceId === "string" ? serviceId : serviceId._id;
+
 const houseLabel = (houseId: Appointment["houseId"]): string => {
     if (typeof houseId === "string") return houseId;
     return houseId.address
@@ -60,6 +93,7 @@ const AppointmentDetailPage: React.FC = () => (
 
 const AppointmentDetailPageContent: React.FC = () => {
     const { id } = useParams();
+    const navigate = useNavigate();
     const { openSnackbar } = useSnackbar();
     const user = useStore(state => state.user);
     const [appointment, setAppointment] = useState<Appointment | null>(null);
@@ -69,6 +103,23 @@ const AppointmentDetailPageContent: React.FC = () => {
     const [cancelling, setCancelling] = useState(false);
     const [cancelReason, setCancelReason] = useState("");
     const [submittingCancel, setSubmittingCancel] = useState(false);
+
+    const [rescheduling, setRescheduling] = useState(false);
+    const [rescheduleDate, setRescheduleDate] = useState<Date | undefined>();
+    const [rescheduleSlots, setRescheduleSlots] = useState<
+        AppointmentAvailableSlot[]
+    >([]);
+    const [rescheduleSlotsLoading, setRescheduleSlotsLoading] =
+        useState(false);
+    const [rescheduleSlotsError, setRescheduleSlotsError] = useState(false);
+    const [selectedRescheduleSlotId, setSelectedRescheduleSlotId] = useState<
+        string | null
+    >(null);
+    const [rescheduleReason, setRescheduleReason] = useState("");
+    const [submittingReschedule, setSubmittingReschedule] = useState(false);
+
+    const rescheduleMinDate = useMemo(() => addDays(new Date(), 1), []);
+    const rescheduleMaxDate = useMemo(() => addDays(new Date(), 30), []);
 
     const [rating, setRating] = useState(0);
     const [ratingNote, setRatingNote] = useState("");
@@ -111,11 +162,27 @@ const AppointmentDetailPageContent: React.FC = () => {
             2 * 60 * 60 * 1000
     );
 
+    // Ap dung lai dung nguong BR-03 nhu canCancel (2 tieng truoc gio hen) -
+    // xem SELF_SERVICE_MIN_HOURS_BEFORE o backend (appointmentService.ts).
+    const canReschedule = !!(
+        appointment &&
+        appointment.status === RESCHEDULABLE_STATUS &&
+        getAppointmentDateTime(appointment).getTime() - Date.now() >
+            2 * 60 * 60 * 1000
+    );
+
     const handleCancel = async () => {
         if (!id) return;
+        if (!cancelReason.trim()) {
+            openSnackbar({
+                type: "error",
+                text: "Vui lòng nhập lý do hủy",
+            });
+            return;
+        }
         try {
             setSubmittingCancel(true);
-            await cancelAppointment(id, cancelReason.trim() || undefined);
+            await cancelAppointment(id, cancelReason.trim());
             openSnackbar({ type: "success", text: "Đã hủy lịch hẹn" });
             setCancelling(false);
             setCancelReason("");
@@ -127,6 +194,67 @@ const AppointmentDetailPageContent: React.FC = () => {
             });
         } finally {
             setSubmittingCancel(false);
+        }
+    };
+
+    useEffect(() => {
+        setSelectedRescheduleSlotId(null);
+        if (!appointment || !rescheduleDate) {
+            setRescheduleSlots([]);
+            return;
+        }
+        setRescheduleSlotsLoading(true);
+        setRescheduleSlotsError(false);
+        fetchAvailableSlots(
+            serviceIdOf(appointment.serviceId),
+            formatDate(rescheduleDate, "yyyy-mm-dd"),
+        )
+            .then(setRescheduleSlots)
+            .catch(() => setRescheduleSlotsError(true))
+            .finally(() => setRescheduleSlotsLoading(false));
+    }, [appointment, rescheduleDate]);
+
+    const closeReschedule = () => {
+        setRescheduling(false);
+        setRescheduleDate(undefined);
+        setSelectedRescheduleSlotId(null);
+        setRescheduleReason("");
+    };
+
+    const handleReschedule = async () => {
+        if (!id) return;
+        if (!rescheduleDate) {
+            openSnackbar({ type: "error", text: "Vui lòng chọn ngày hẹn mới" });
+            return;
+        }
+        if (!selectedRescheduleSlotId) {
+            openSnackbar({ type: "error", text: "Vui lòng chọn khung giờ mới" });
+            return;
+        }
+        if (!rescheduleReason.trim()) {
+            openSnackbar({
+                type: "error",
+                text: "Vui lòng nhập lý do đổi lịch",
+            });
+            return;
+        }
+        try {
+            setSubmittingReschedule(true);
+            await rescheduleAppointment(id, {
+                timeSlotId: selectedRescheduleSlotId,
+                appointedDate: formatDate(rescheduleDate, "yyyy-mm-dd"),
+                reason: rescheduleReason.trim(),
+            });
+            openSnackbar({ type: "success", text: "Đã đổi lịch hẹn" });
+            closeReschedule();
+            load();
+        } catch (err: any) {
+            openSnackbar({
+                type: "error",
+                text: err?.message || "Có lỗi xảy ra",
+            });
+        } finally {
+            setSubmittingReschedule(false);
         }
     };
 
@@ -248,13 +376,13 @@ const AppointmentDetailPageContent: React.FC = () => {
                             )}
 
                             {appointment.status === "tu_choi" &&
-                                appointment.cancelReason && (
+                                appointment.rejectReason && (
                                     <Text
                                         size="xSmall"
                                         className="text-red-600 mt-2"
                                     >
                                         Lý do từ chối:{" "}
-                                        {appointment.cancelReason}
+                                        {appointment.rejectReason}
                                     </Text>
                                 )}
                             {appointment.status === "da_huy" &&
@@ -266,26 +394,86 @@ const AppointmentDetailPageContent: React.FC = () => {
                                         Lý do hủy: {appointment.cancelReason}
                                     </Text>
                                 )}
+
+                            {appointment.rescheduledFromDate && (
+                                <Text
+                                    size="xSmall"
+                                    className="text-text_2 mt-2"
+                                >
+                                    Đã đổi từ{" "}
+                                    {formatDate(
+                                        new Date(
+                                            appointment.rescheduledFromDate,
+                                        ),
+                                    )}
+                                    {" · "}
+                                    {appointment.rescheduledFromStartTime} -{" "}
+                                    {appointment.rescheduledFromEndTime}
+                                    {appointment.rescheduleReason
+                                        ? ` — Lý do: ${appointment.rescheduleReason}`
+                                        : ""}
+                                </Text>
+                            )}
                         </Box>
+
+                        {isOwner && appointment.status === "tu_choi" && (
+                            <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                                <Button
+                                    fullWidth
+                                    onClick={() =>
+                                        navigate(
+                                            `/appointments/book/${
+                                                typeof appointment.serviceId ===
+                                                "object"
+                                                    ? appointment.serviceId._id
+                                                    : appointment.serviceId
+                                            }`,
+                                            { animate: true },
+                                        )
+                                    }
+                                >
+                                    Đặt lại lịch hẹn
+                                </Button>
+                            </Box>
+                        )}
 
                         {isOwner &&
                             CANCELLABLE_STATUSES.includes(
                                 appointment.status,
                             ) && (
                                 <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
-                                    {!cancelling ? (
-                                        <Button
-                                            variant="secondary"
-                                            fullWidth
-                                            disabled={!canCancel}
-                                            onClick={() => setCancelling(true)}
-                                        >
-                                            Hủy lịch hẹn
-                                        </Button>
-                                    ) : (
+                                    {!cancelling && !rescheduling && (
+                                        <Box flex style={{ gap: 8 }}>
+                                            {appointment.status ===
+                                                RESCHEDULABLE_STATUS && (
+                                                <Button
+                                                    variant="secondary"
+                                                    fullWidth
+                                                    disabled={!canReschedule}
+                                                    onClick={() =>
+                                                        setRescheduling(true)
+                                                    }
+                                                >
+                                                    Đổi lịch hẹn
+                                                </Button>
+                                            )}
+                                            <Button
+                                                variant="secondary"
+                                                fullWidth
+                                                disabled={!canCancel}
+                                                onClick={() =>
+                                                    setCancelling(true)
+                                                }
+                                            >
+                                                Hủy lịch hẹn
+                                            </Button>
+                                        </Box>
+                                    )}
+
+                                    {cancelling && (
                                         <>
                                             <TextArea
-                                                label="Lý do hủy (không bắt buộc)"
+                                                label="Lý do hủy (bắt buộc)"
                                                 value={cancelReason}
                                                 onChange={e =>
                                                     setCancelReason(
@@ -315,15 +503,163 @@ const AppointmentDetailPageContent: React.FC = () => {
                                             </Box>
                                         </>
                                     )}
-                                    {!canCancel && !cancelling && (
-                                        <Text
-                                            size="xxSmall"
-                                            className="text-text_2 mt-2"
-                                        >
-                                            Chỉ có thể hủy trước giờ hẹn ít nhất
-                                            2 tiếng.
-                                        </Text>
+
+                                    {rescheduling && (
+                                        <>
+                                            <Text.Title
+                                                size="small"
+                                                className="mb-2"
+                                            >
+                                                Chọn ngày/giờ hẹn mới
+                                            </Text.Title>
+                                            <DatePicker
+                                                title="Chọn ngày hẹn mới"
+                                                placeholder="Chọn ngày hẹn mới (từ ngày mai)"
+                                                value={rescheduleDate}
+                                                min={rescheduleMinDate}
+                                                max={rescheduleMaxDate}
+                                                onChange={d =>
+                                                    setRescheduleDate(d)
+                                                }
+                                            />
+                                            <Text
+                                                size="xxSmall"
+                                                className="text-text_2 mt-1.5 mb-2"
+                                            >
+                                                Chỉ có thể đổi sang ngày từ
+                                                ngày mai đến trong vòng 30
+                                                ngày tới.
+                                            </Text>
+
+                                            {rescheduleDate &&
+                                                rescheduleSlotsLoading && (
+                                                    <LoadingState />
+                                                )}
+                                            {rescheduleDate &&
+                                                !rescheduleSlotsLoading &&
+                                                rescheduleSlotsError && (
+                                                    <ErrorState
+                                                        label="Không thể tải khung giờ"
+                                                        onRetry={() =>
+                                                            setRescheduleDate(
+                                                                new Date(
+                                                                    rescheduleDate,
+                                                                ),
+                                                            )
+                                                        }
+                                                    />
+                                                )}
+                                            {rescheduleDate &&
+                                                !rescheduleSlotsLoading &&
+                                                !rescheduleSlotsError &&
+                                                rescheduleSlots.length ===
+                                                    0 && (
+                                                    <EmptyState label="Không có khung giờ nào cho ngày này" />
+                                                )}
+                                            {rescheduleDate &&
+                                                !rescheduleSlotsLoading &&
+                                                !rescheduleSlotsError &&
+                                                rescheduleSlots.map(slot => {
+                                                    const selected =
+                                                        selectedRescheduleSlotId ===
+                                                        slot.slot_id;
+                                                    let slotClassName =
+                                                        "bg-ng_10 rounded-xl";
+                                                    if (!slot.is_available) {
+                                                        slotClassName =
+                                                            "bg-ng_10 rounded-xl opacity-50";
+                                                    } else if (selected) {
+                                                        slotClassName =
+                                                            "bg-blue_10 rounded-xl";
+                                                    }
+                                                    return (
+                                                        <Box
+                                                            key={slot.slot_id}
+                                                            flex
+                                                            justifyContent="space-between"
+                                                            alignItems="center"
+                                                            p={3}
+                                                            mb={2}
+                                                            className={
+                                                                slotClassName
+                                                            }
+                                                            onClick={() =>
+                                                                slot.is_available &&
+                                                                setSelectedRescheduleSlotId(
+                                                                    slot.slot_id,
+                                                                )
+                                                            }
+                                                        >
+                                                            <Text
+                                                                size="small"
+                                                                bold
+                                                            >
+                                                                {
+                                                                    slot.start_time
+                                                                }{" "}
+                                                                -{" "}
+                                                                {
+                                                                    slot.end_time
+                                                                }
+                                                            </Text>
+                                                            <Text
+                                                                size="xxSmall"
+                                                                className="text-text_2"
+                                                            >
+                                                                {slot.is_available
+                                                                    ? `${slot.booked_count}/${slot.max_capacity} đã đặt`
+                                                                    : "Hết chỗ"}
+                                                            </Text>
+                                                        </Box>
+                                                    );
+                                                })}
+
+                                            <Box mt={2}>
+                                                <TextArea
+                                                    label="Lý do đổi lịch (bắt buộc)"
+                                                    value={rescheduleReason}
+                                                    onChange={e =>
+                                                        setRescheduleReason(
+                                                            e.target.value,
+                                                        )
+                                                    }
+                                                    rows={3}
+                                                />
+                                            </Box>
+                                            <Box mt={2} flex style={{ gap: 8 }}>
+                                                <Button
+                                                    variant="secondary"
+                                                    fullWidth
+                                                    onClick={closeReschedule}
+                                                >
+                                                    Đóng
+                                                </Button>
+                                                <Button
+                                                    fullWidth
+                                                    loading={
+                                                        submittingReschedule
+                                                    }
+                                                    onClick={handleReschedule}
+                                                >
+                                                    Xác nhận đổi lịch
+                                                </Button>
+                                            </Box>
+                                        </>
                                     )}
+
+                                    {!canCancel &&
+                                        !cancelling &&
+                                        !rescheduling && (
+                                            <Text
+                                                size="xxSmall"
+                                                className="text-text_2 mt-2"
+                                            >
+                                                {appointment.status ===
+                                                RESCHEDULABLE_STATUS
+                                                    ? "Chỉ có thể hủy hoặc đổi lịch hẹn trước giờ hẹn ít nhất 2 tiếng."
+                                                    : "Chỉ có thể hủy trước giờ hẹn ít nhất 2 tiếng."}
+                                            </Text>
+                                        )}
                                 </Box>
                             )}
 

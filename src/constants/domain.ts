@@ -5,6 +5,7 @@ import type {
     GioiTinh,
     HouseOwnershipRelationshipType,
     HouseOwnershipVerificationStatus,
+    HouseGisSource,
     HousePhysicalStatus,
     HouseStatus,
     HouseUsageType,
@@ -12,6 +13,7 @@ import type {
     LoaiCuTru,
     LoaiSoHuu,
     LoaiThongBao,
+    LoaiTinTuc,
     LoaiYeuCauHoTro,
     MucDoAnNinh,
     MucNguyCoPccc,
@@ -165,6 +167,14 @@ export const HOUSE_PHYSICAL_STATUS_LABEL: Record<HousePhysicalStatus, string> =
         damaged: "Xuống cấp",
     };
 
+export const HOUSE_GIS_SOURCE_LABEL: Record<HouseGisSource, string> = {
+    unavailable: "Chưa có tọa độ",
+    device_gps: "Định vị GPS",
+    manual: "Nhập thủ công",
+    external_gis: "Hệ thống GIS khác",
+    address_lookup: "Tra cứu địa chỉ",
+};
+
 export const HOUSE_USAGE_TYPE_LABEL: Record<HouseUsageType, string> = {
     household: "Hộ dân",
     business: "Hộ kinh doanh",
@@ -275,6 +285,35 @@ export const LOAI_THONG_BAO_LABEL: Record<LoaiThongBao, string> = {
     ve_sinh_moi_truong: "Vệ sinh môi trường",
     an_ninh_trat_tu: "An ninh trật tự",
     khac: "Khác",
+};
+
+export const LOAI_THONG_BAO_TONE: Record<
+    LoaiThongBao,
+    "gray" | "blue" | "yellow" | "green" | "red"
+> = {
+    chung: "blue",
+    hop_dan: "blue",
+    pccc: "red",
+    ve_sinh_moi_truong: "green",
+    an_ninh_trat_tu: "yellow",
+    khac: "gray",
+};
+
+export const LOAI_TIN_TUC_LABEL: Record<LoaiTinTuc, string> = {
+    chung: "Tin chung",
+    hoat_dong: "Hoạt động cộng đồng",
+    an_ninh_trat_tu: "An ninh trật tự",
+    khac: "Khác",
+};
+
+export const LOAI_TIN_TUC_TONE: Record<
+    LoaiTinTuc,
+    "gray" | "blue" | "yellow" | "green" | "red"
+> = {
+    chung: "blue",
+    hoat_dong: "green",
+    an_ninh_trat_tu: "yellow",
+    khac: "gray",
 };
 
 export const DANG_KY_HOP_LABEL: Record<DangKyHop, string> = {

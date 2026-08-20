@@ -1,12 +1,15 @@
 import React, { useEffect, useState } from "react";
 import { Box, Text, useNavigate } from "@components/ui";
 import { HomeHeader, AppBottomNav, PageLayout } from "@components/layout";
+import { StatusBadge } from "@components/admin";
 import {
     HomeInfoBanner,
     EmergencyContactBox,
     ContactInfoBox,
     FeaturesCard,
     UtilityAppsRow,
+    TaskSummaryGrid,
+    MyRequestsPreview,
 } from "@components/home";
 import { hasPermission } from "@components/role";
 import {
@@ -17,24 +20,27 @@ import {
     resolveFeatureOrder,
 } from "@constants/utinities";
 import { fetchPublicAnnouncements } from "@service/announcementApi";
+import { fetchPublicNews } from "@service/newsApi";
 import { fetchPublicSettings } from "@service/settingsApi";
 import { fetchMyDashboard } from "@service/dashboardApi";
+import { fetchMyHouses } from "@service/myHouseApi";
 import {
     LOAI_THONG_BAO_LABEL,
+    LOAI_THONG_BAO_TONE,
+    LOAI_TIN_TUC_LABEL,
+    LOAI_TIN_TUC_TONE,
+    HOUSE_STATUS_LABEL,
     APP_NAME_DEFAULT,
     APP_NAME_HOUSE_OWNER,
 } from "@constants/domain";
-import { Announcement, MyHouseDashboard } from "@dts";
+import { resolveAssetUrl } from "@constants/common";
+import {
+    Announcement,
+    MyHouseDashboard,
+    MyHouseOverviewItem,
+    News,
+} from "@dts";
 import { useStore } from "@store";
-
-const getRequestAttentionSuffix = (
-    overdue: number,
-    dueSoon: number,
-): string => {
-    if (overdue > 0) return " (có việc quá hạn)";
-    if (dueSoon > 0) return " (sắp hết hạn)";
-    return "";
-};
 
 const HomePage: React.FunctionComponent = () => {
     const navigate = useNavigate();
@@ -44,10 +50,13 @@ const HomePage: React.FunctionComponent = () => {
     );
     const [announcements, setAnnouncements] = useState<Announcement[]>([]);
     const [loading, setLoading] = useState(true);
+    const [news, setNews] = useState<News[]>([]);
+    const [newsLoading, setNewsLoading] = useState(true);
     const [featureConfig, setFeatureConfig] = useState<
         MiniAppFeatureConfigEntry[] | undefined
     >(undefined);
     const [dashboard, setDashboard] = useState<MyHouseDashboard | null>(null);
+    const [myHouse, setMyHouse] = useState<MyHouseOverviewItem | null>(null);
 
     const appName =
         user?.primaryRole === "house_owner"
@@ -79,13 +88,24 @@ const HomePage: React.FunctionComponent = () => {
     }, []);
 
     useEffect(() => {
+        fetchPublicNews(1, 3)
+            .then(res => setNews(res.items))
+            .catch(() => setNews([]))
+            .finally(() => setNewsLoading(false));
+    }, []);
+
+    useEffect(() => {
         if (!user) {
             setDashboard(null);
+            setMyHouse(null);
             return;
         }
         fetchMyDashboard()
             .then(setDashboard)
             .catch(() => setDashboard(null));
+        fetchMyHouses()
+            .then(items => setMyHouse(items[0] ?? null))
+            .catch(() => setMyHouse(null));
     }, [user]);
 
     useEffect(() => {
@@ -100,6 +120,10 @@ const HomePage: React.FunctionComponent = () => {
             .catch(() => setFeatureConfig(undefined));
     }, []);
 
+    const primaryOwnership = myHouse?.ownerships.find(
+        o => o.active && o.relationshipType === "primary_owner",
+    ) ?? myHouse?.ownerships.find(o => o.active);
+
     return (
         <PageLayout
             id="home-page"
@@ -109,119 +133,35 @@ const HomePage: React.FunctionComponent = () => {
             <HomeInfoBanner
                 title={appName}
                 address="Phường Dương Nội, TP Hà Nội"
+                house={
+                    myHouse
+                        ? {
+                              code: myHouse.house.code,
+                              address: myHouse.house.address,
+                              statusLabel:
+                                  HOUSE_STATUS_LABEL[myHouse.house.status],
+                              verified: myHouse.house.status === "verified",
+                              ownerName: primaryOwnership?.ownerDisplayName,
+                          }
+                        : undefined
+                }
+                onViewDetail={
+                    myHouse ? () => navigate("/house/mine") : undefined
+                }
             />
 
             {dashboard && (
                 <Box className="bg-white mt-2 p-4">
-                    <Text.Title size="small" className="mb-2">
-                        Việc cần chú ý
+                    <Text.Title size="small" className="mb-3">
+                        Việc cần xử lý
                     </Text.Title>
-                    {dashboard.unreadNotifications === 0 &&
-                        dashboard.myRequestCounts.inProgress === 0 &&
-                        dashboard.myRequestCounts.dueSoon === 0 &&
-                        dashboard.myRequestCounts.overdue === 0 &&
-                        dashboard.activeComplaints === 0 &&
-                        dashboard.openSupportTickets === 0 &&
-                        dashboard.pendingSurveys === 0 &&
-                        dashboard.upcomingMeetings.length === 0 && (
-                            <Text size="xSmall" className="text-text_2">
-                                Không có việc cần xử lý.
-                            </Text>
-                        )}
-                    {dashboard.unreadNotifications > 0 && (
-                        <Box
-                            flex
-                            justifyContent="space-between"
-                            className="py-1"
-                            onClick={() => navigate("/notifications")}
-                        >
-                            <Text size="xSmall">Thông báo chưa đọc</Text>
-                            <Text size="xSmall" className="text-main">
-                                {dashboard.unreadNotifications}
-                            </Text>
-                        </Box>
-                    )}
-                    {(dashboard.myRequestCounts.overdue > 0 ||
-                        dashboard.myRequestCounts.dueSoon > 0 ||
-                        dashboard.myRequestCounts.inProgress > 0) && (
-                        <Box
-                            flex
-                            justifyContent="space-between"
-                            className="py-1"
-                            onClick={() => navigate("/requests/mine")}
-                        >
-                            <Text size="xSmall">
-                                Nhiệm vụ cần thực hiện
-                                {getRequestAttentionSuffix(
-                                    dashboard.myRequestCounts.overdue,
-                                    dashboard.myRequestCounts.dueSoon,
-                                )}
-                            </Text>
-                            <Text size="xSmall" className="text-main">
-                                {dashboard.myRequestCounts.overdue +
-                                    dashboard.myRequestCounts.dueSoon +
-                                    dashboard.myRequestCounts.inProgress}
-                            </Text>
-                        </Box>
-                    )}
-                    {dashboard.activeComplaints > 0 && (
-                        <Box
-                            flex
-                            justifyContent="space-between"
-                            className="py-1"
-                            onClick={() => navigate("/complaints/lookup")}
-                        >
-                            <Text size="xSmall">Phản ánh đang xử lý</Text>
-                            <Text size="xSmall" className="text-main">
-                                {dashboard.activeComplaints}
-                            </Text>
-                        </Box>
-                    )}
-                    {dashboard.openSupportTickets > 0 && (
-                        <Box
-                            flex
-                            justifyContent="space-between"
-                            className="py-1"
-                            onClick={() => navigate("/support")}
-                        >
-                            <Text size="xSmall">Yêu cầu hỗ trợ đang xử lý</Text>
-                            <Text size="xSmall" className="text-main">
-                                {dashboard.openSupportTickets}
-                            </Text>
-                        </Box>
-                    )}
-                    {dashboard.pendingSurveys > 0 && (
-                        <Box
-                            flex
-                            justifyContent="space-between"
-                            className="py-1"
-                            onClick={() => navigate("/surveys")}
-                        >
-                            <Text size="xSmall">Khảo sát chưa trả lời</Text>
-                            <Text size="xSmall" className="text-main">
-                                {dashboard.pendingSurveys}
-                            </Text>
-                        </Box>
-                    )}
-                    {dashboard.upcomingMeetings.length > 0 && (
-                        <Box
-                            flex
-                            justifyContent="space-between"
-                            className="py-1"
-                            onClick={() => navigate("/meetings")}
-                        >
-                            <Text size="xSmall">
-                                Cuộc họp sắp tới chưa đăng ký
-                            </Text>
-                            <Text size="xSmall" className="text-main">
-                                {dashboard.upcomingMeetings.length}
-                            </Text>
-                        </Box>
-                    )}
+                    <TaskSummaryGrid dashboard={dashboard} />
                 </Box>
             )}
 
             <FeaturesCard features={features} />
+
+            {user && <MyRequestsPreview />}
 
             <Box className="bg-white mt-2 p-4">
                 <Box
@@ -262,14 +202,89 @@ const HomePage: React.FunctionComponent = () => {
                             })
                         }
                     >
-                        <Text size="small" className="font-medium">
+                        <Box
+                            flex
+                            justifyContent="space-between"
+                            alignItems="center"
+                        >
+                            <StatusBadge
+                                label={LOAI_THONG_BAO_LABEL[item.category]}
+                                tone={LOAI_THONG_BAO_TONE[item.category]}
+                            />
+                            <Text size="xxSmall" className="text-text_3">
+                                {new Date(item.createdAt).toLocaleDateString(
+                                    "vi-VN",
+                                )}
+                            </Text>
+                        </Box>
+                        <Text size="small" className="font-medium mt-1">
                             {item.isUrgent ? "🔴 " : ""}
                             {item.pinned ? "📌 " : ""}
                             {item.title}
                         </Text>
-                        <Text size="xxSmall" className="text-text_2">
-                            {LOAI_THONG_BAO_LABEL[item.category]}
-                        </Text>
+                    </Box>
+                ))}
+            </Box>
+
+            <Box className="bg-white mt-2 p-4">
+                <Box
+                    flex
+                    justifyContent="space-between"
+                    alignItems="center"
+                    mb={2}
+                >
+                    <Text.Title size="small">Tin tức mới nhất</Text.Title>
+                    <Text
+                        size="xSmall"
+                        className="text-main"
+                        onClick={() =>
+                            navigate("/news", { animate: true })
+                        }
+                    >
+                        Xem tất cả
+                    </Text>
+                </Box>
+
+                {!newsLoading && news.length === 0 && (
+                    <Text size="xSmall" className="text-text_2">
+                        Chưa có tin tức nào.
+                    </Text>
+                )}
+
+                {news.map(item => (
+                    <Box
+                        key={item._id}
+                        flex
+                        py={2}
+                        style={{ gap: 8 }}
+                        className="border-b border-divider_01 last:border-0"
+                        onClick={() =>
+                            navigate(`/news/${item._id}`, { animate: true })
+                        }
+                    >
+                        {item.coverImageUrl && (
+                            <img
+                                src={resolveAssetUrl(item.coverImageUrl)}
+                                alt=""
+                                style={{
+                                    width: 56,
+                                    height: 56,
+                                    borderRadius: 8,
+                                    objectFit: "cover",
+                                    flexShrink: 0,
+                                }}
+                            />
+                        )}
+                        <Box style={{ flex: 1, minWidth: 0 }}>
+                            <StatusBadge
+                                label={LOAI_TIN_TUC_LABEL[item.category]}
+                                tone={LOAI_TIN_TUC_TONE[item.category]}
+                            />
+                            <Text size="small" className="font-medium mt-1">
+                                {item.pinned ? "📌 " : ""}
+                                {item.title}
+                            </Text>
+                        </Box>
                     </Box>
                 ))}
             </Box>

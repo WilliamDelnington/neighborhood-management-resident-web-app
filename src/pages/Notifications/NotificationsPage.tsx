@@ -15,7 +15,8 @@ import { useStore } from "@store";
 
 /**
  * Cac loai doi tuong lien quan co the dieu huong den man hinh chi tiet tuong ung
- * khi nguoi dung bam vao mot thong bao (giu dong bo voi ten model o backend).
+ * khi nguoi dung bam vao mot thong bao (giu dong bo voi ten model o backend) -
+ * dieu huong toi `${path}/${relatedId}`.
  */
 const RELATED_MODEL_PATH: Record<string, string> = {
     Complaint: "/complaints",
@@ -25,6 +26,24 @@ const RELATED_MODEL_PATH: Record<string, string> = {
     HouseRecord: "/admin/houses",
     Correspondence: "/correspondences",
     InspectionTarget: "/inspections/self-declarations",
+    Appointment: "/appointments",
+    Business: "/admin/businesses",
+    Company: "/admin/companies",
+    Household: "/admin/households",
+    InspectionCampaign: "/inspections",
+    SupportTicket: "/support/tickets",
+};
+
+/**
+ * Cac loai doi tuong khong co man hinh chi tiet rieng theo id (chi co man
+ * hinh danh sach/co dinh) - dieu huong thang toi duong dan nay, bo qua
+ * relatedId, thay vi ghep `${path}/${relatedId}` nhu RELATED_MODEL_PATH.
+ */
+const RELATED_MODEL_FIXED_PATH: Record<string, string> = {
+    Neighborhood: "/neighborhood/mine",
+    User: "/account",
+    ChangeRequest: "/change-requests/mine",
+    Request: "/requests/mine",
 };
 
 /**
@@ -130,6 +149,13 @@ const PersonalNotificationsTab: React.FC = () => {
             );
         }
         const { relatedModel, relatedId } = item.notification;
+        const fixedPath = relatedModel
+            ? RELATED_MODEL_FIXED_PATH[relatedModel]
+            : undefined;
+        if (fixedPath) {
+            navigate(fixedPath, { animate: true });
+            return;
+        }
         const basePath = relatedModel
             ? RELATED_MODEL_PATH[relatedModel]
             : undefined;

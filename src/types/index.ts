@@ -93,6 +93,18 @@ export type HousePhysicalStatus =
 // Nha so co the thuoc ca nhan hoac to chuc - xem Organization ben duoi.
 export type OwnerType = "user" | "organization";
 
+// Nguon toa do GIS cua Nha so - khop voi HOUSE_GIS_SOURCES o backend
+// (types/index.ts). "unavailable" la gia tri co nghia nghiep vu (chua co toa
+// do), khong phai trang thai loi.
+export const HOUSE_GIS_SOURCES = [
+    "unavailable",
+    "device_gps",
+    "manual",
+    "external_gis",
+    "address_lookup",
+] as const;
+export type HouseGisSource = typeof HOUSE_GIS_SOURCES[number];
+
 export type Street = {
     _id: string;
     name: string;
@@ -153,6 +165,11 @@ export type House = {
     denialReason?: string;
     needsUpdateNote?: string;
     residenceDeclarationNumber?: string;
+    gisLatitude?: number | null;
+    gisLongitude?: number | null;
+    gisAccuracyMeters?: number | null;
+    gisSource?: HouseGisSource;
+    gisCapturedAt?: string | null;
     createdAt: string;
     updatedAt: string;
 };
@@ -677,6 +694,21 @@ export type Announcement = {
     createdAt: string;
 };
 
+export type LoaiTinTuc = "chung" | "hoat_dong" | "an_ninh_trat_tu" | "khac";
+
+export type News = {
+    _id: string;
+    title: string;
+    content: string;
+    category: LoaiTinTuc;
+    status: "nhap" | "da_dang";
+    pinned: boolean;
+    coverImageUrl?: string;
+    images: string[];
+    publishedAt?: string;
+    createdAt: string;
+};
+
 export type DangKyHop = "co" | "khong" | "uy_quyen";
 
 export type Meeting = {
@@ -974,8 +1006,16 @@ export type Appointment = {
     note?: string;
     status: AppointmentStatus;
     cancelReason?: string;
+    rejectReason?: string;
     checkinTime?: string;
     completedTime?: string;
+    // Ghi lai lan doi lich GAN NHAT (chi cong dan/nguoi dat duoc doi, chi khi
+    // dang "da_xac_nhan" - xem rescheduleAppointment o backend).
+    rescheduledFromDate?: string;
+    rescheduledFromStartTime?: string;
+    rescheduledFromEndTime?: string;
+    rescheduleReason?: string;
+    rescheduledAt?: string;
     rating?: number;
     ratingNote?: string;
     createdAt: string;

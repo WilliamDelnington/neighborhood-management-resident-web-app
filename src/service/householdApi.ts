@@ -71,7 +71,6 @@ export interface HouseholdInput {
     // "Người liên hệ" rieng mang ten contactName va phone nay.
     contactIsHead?: boolean;
     contactName?: string;
-    memberCount?: number;
     ownershipType?: LoaiSoHuu;
     needsSupport?: boolean;
     houseId?: string | null;

@@ -101,28 +101,51 @@ const HOUSE_PROTECTED_FIELDS = [
     "otherUsageNote",
 ] as const;
 
-const toFormValues = (h: House): HouseFormValues => ({
-    cluster: h.cluster,
-    streetId:
-        h.streetId && typeof h.streetId !== "string" ? h.streetId._id : "",
-    streetLabel:
-        h.streetId && typeof h.streetId !== "string" ? h.streetId.name : "",
-    neighborhoodId:
-        h.neighborhoodId && typeof h.neighborhoodId !== "string"
-            ? h.neighborhoodId._id
-            : "",
-    neighborhoodLabel:
-        h.neighborhoodId && typeof h.neighborhoodId !== "string"
-            ? h.neighborhoodId.name
-            : "",
-    address: h.address,
-    physicalStatus: h.physicalStatus || "",
-    usageTypes: h.usageTypes || [],
-    otherUsageNote: h.otherUsageNote || "",
-    note: h.note || "",
-    organizationId: "",
-    organizationLabel: "",
-});
+// gisSource "address_lookup"/"device_gps" anh xa thang ve geoMode tuong ung;
+// cac nguon khac (manual/external_gis) nhung van co toa do duoc coi la
+// "manual" trong form sua (nguoi dung co the giu nguyen hoac nhap lai); chua
+// co toa do thi mac dinh "skip".
+function resolveGeoMode(h: House): HouseFormValues["geoMode"] {
+    if (h.gisSource === "address_lookup") return "address";
+    if (h.gisSource === "device_gps") return "gps";
+    if (h.gisLatitude != null && h.gisLongitude != null) return "manual";
+    return "skip";
+}
+
+// Voi address/gps da co toa do san, coi nhu dong y (geoConsentAccepted=true)
+// da duoc ghi nhan tu luc tao/sua truoc do - khong bat nguoi dung dong y lai
+// chi vi mo lai form sua khong doi vi tri.
+const toFormValues = (h: House): HouseFormValues => {
+    const geoMode = resolveGeoMode(h);
+    return {
+        cluster: h.cluster,
+        streetId:
+            h.streetId && typeof h.streetId !== "string" ? h.streetId._id : "",
+        streetLabel:
+            h.streetId && typeof h.streetId !== "string" ? h.streetId.name : "",
+        neighborhoodId:
+            h.neighborhoodId && typeof h.neighborhoodId !== "string"
+                ? h.neighborhoodId._id
+                : "",
+        neighborhoodLabel:
+            h.neighborhoodId && typeof h.neighborhoodId !== "string"
+                ? h.neighborhoodId.name
+                : "",
+        address: h.address,
+        physicalStatus: h.physicalStatus || "",
+        usageTypes: h.usageTypes || [],
+        otherUsageNote: h.otherUsageNote || "",
+        note: h.note || "",
+        organizationId: "",
+        organizationLabel: "",
+        geoMode,
+        gisLatitude: h.gisLatitude ?? null,
+        gisLongitude: h.gisLongitude ?? null,
+        gisAccuracyMeters: h.gisAccuracyMeters ?? null,
+        gisSource: h.gisSource || "",
+        geoConsentAccepted: geoMode === "address" || geoMode === "gps",
+    };
+};
 
 const streetName = (streetId: House["streetId"]): string | null => {
     if (!streetId) return null;

@@ -4,6 +4,11 @@ import { Checkbox, Input, TextArea, Radio } from "@components/customized";
 import NeighborhoodPickerSheet from "@components/household/NeighborhoodPickerSheet";
 import OrganizationPickerSheet from "@components/house/OrganizationPickerSheet";
 import StreetPickerSheet from "@components/house/StreetPickerSheet";
+import HouseLocationPicker, {
+    EMPTY_HOUSE_GEO,
+    HouseGeoValues,
+    isHouseGeoValid,
+} from "@components/house/HouseLocationPicker";
 import { hasPermission } from "@components/role";
 import { useStore } from "@store";
 import {
@@ -24,7 +29,7 @@ const HOUSE_PHYSICAL_STATUS_ENTRIES = Object.entries(
     HOUSE_PHYSICAL_STATUS_LABEL,
 ) as [HousePhysicalStatus, string][];
 
-export interface HouseFormValues {
+export interface HouseFormValues extends HouseGeoValues {
     cluster: string;
     // "" = chua chon duong/pho chinh thuc, dung cluster tu do (fallback khi
     // khong co quyen "streets.read" - xem canPickStreet ben duoi).
@@ -53,6 +58,7 @@ export interface HouseFormValues {
 }
 
 export const EMPTY_HOUSE_FORM: HouseFormValues = {
+    ...EMPTY_HOUSE_GEO,
     cluster: "",
     streetId: "",
     streetLabel: "",
@@ -78,6 +84,19 @@ export function toHouseInput(values: HouseFormValues): HouseInput {
         otherUsageNote: values.otherUsageNote.trim() || undefined,
         note: values.note.trim() || undefined,
         organizationId: values.organizationId || undefined,
+        gisLatitude:
+            values.geoMode === "skip" ? undefined : values.gisLatitude ?? undefined,
+        gisLongitude:
+            values.geoMode === "skip"
+                ? undefined
+                : values.gisLongitude ?? undefined,
+        gisAccuracyMeters:
+            values.geoMode === "skip"
+                ? undefined
+                : values.gisAccuracyMeters ?? undefined,
+        gisSource: values.geoMode === "skip" ? undefined : values.gisSource || undefined,
+        geoConsentAccepted:
+            values.geoMode === "skip" ? undefined : values.geoConsentAccepted,
     };
 }
 
@@ -85,7 +104,8 @@ export function isHouseFormValid(values: HouseFormValues): boolean {
     return !!(
         (values.cluster.trim() || values.streetId) &&
         values.address.trim() &&
-        values.usageTypes.length > 0
+        values.usageTypes.length > 0 &&
+        isHouseGeoValid(values)
     );
 }
 
@@ -201,6 +221,10 @@ const HouseForm: React.FC<HouseFormProps> = ({
                 placeholder="Số nhà, ngõ, đường..."
                 value={values.address}
                 onChange={e => set("address", e.target.value)}
+            />
+            <HouseLocationPicker
+                values={values}
+                onChange={geo => onChange({ ...values, ...geo })}
             />
             <Box>
                 <Text size="xSmall" className="text-text_2 mb-1">
