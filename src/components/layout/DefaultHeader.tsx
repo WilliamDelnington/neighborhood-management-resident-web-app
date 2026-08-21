@@ -14,7 +14,7 @@ const HeaderContainer = styled(Header)`
     height: calc(48px + var(--zaui-safe-area-inset-top, 0px));
     padding-top: var(--zaui-safe-area-inset-top, 0px);
     z-index: 1;
-    background: linear-gradient(135deg, #3b82f6, #2563eb);
+    background: linear-gradient(135deg, #05aac0, #0891b2);
     .zaui-btn-icon {
         ${tw`text-white`}
     }

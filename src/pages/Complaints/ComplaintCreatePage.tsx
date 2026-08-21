@@ -312,93 +312,109 @@ const ComplaintCreatePageContent: React.FC = () => {
             }
         >
             <Box p={4}>
-                <Text size="xSmall" className="font-medium text-text_1 mb-2">
-                    Nhóm phản ánh
-                </Text>
-                <Select
-                    placeholder="Chọn nhóm phản ánh"
-                    value={category}
-                    onChange={value => setCategory(value as NhomPhanAnh)}
-                    closeOnSelect
-                >
-                    {categoryOptions.map(({ key, label }) => (
-                        <Select.Option key={key} value={key} title={label} />
-                    ))}
-                </Select>
-
-                <Box mt={3}>
-                    <Input
-                        label="Tiêu đề"
-                        placeholder="VD: Đèn đường ngõ 12 bị hỏng"
-                        value={title}
-                        onChange={e => setTitle(e.target.value)}
-                    />
-                </Box>
-
-                <Box mt={3}>
-                    <TextArea
-                        label="Nội dung"
-                        placeholder="Mô tả chi tiết sự việc..."
-                        value={content}
-                        onChange={e => setContent(e.target.value)}
-                        rows={4}
-                    />
-                </Box>
-
-                <Box mt={3}>
-                    <Input
-                        label="Địa chỉ/khu vực (không bắt buộc)"
-                        placeholder="VD: Ngõ 12, cụm 3"
-                        value={area}
-                        onChange={e => setArea(e.target.value)}
-                    />
-                </Box>
-
-                <Box mt={3}>
+                <Box className="bg-white rounded-2xl p-5 shadow-card">
                     <Text
                         size="xSmall"
                         className="font-medium text-text_1 mb-2"
                     >
-                        Nhà số liên quan (không bắt buộc)
+                        Nhóm phản ánh
                     </Text>
-                    {targetHouse ? (
-                        <Box
-                            flex
-                            alignItems="center"
-                            justifyContent="space-between"
-                            p={3}
-                            className="bg-ng_10 rounded-xl"
+                    <Select
+                        placeholder="Chọn nhóm phản ánh"
+                        value={category}
+                        onChange={value => setCategory(value as NhomPhanAnh)}
+                        closeOnSelect
+                    >
+                        {categoryOptions.map(({ key, label }) => (
+                            <Select.Option
+                                key={key}
+                                value={key}
+                                title={label}
+                            />
+                        ))}
+                    </Select>
+
+                    <Box mt={4}>
+                        <Input
+                            label="Tiêu đề"
+                            placeholder="VD: Đèn đường ngõ 12 bị hỏng"
+                            value={title}
+                            onChange={e => setTitle(e.target.value)}
+                        />
+                    </Box>
+
+                    <Box mt={4}>
+                        <TextArea
+                            label="Nội dung"
+                            placeholder="Mô tả chi tiết sự việc..."
+                            value={content}
+                            onChange={e => setContent(e.target.value)}
+                            rows={4}
+                        />
+                    </Box>
+
+                    <Box mt={4}>
+                        <Input
+                            label="Địa chỉ/khu vực (không bắt buộc)"
+                            placeholder="VD: Ngõ 12, cụm 3"
+                            value={area}
+                            onChange={e => setArea(e.target.value)}
+                        />
+                    </Box>
+
+                    <Box mt={4}>
+                        <Text
+                            size="xSmall"
+                            className="font-medium text-text_1 mb-2"
                         >
-                            <Box style={{ minWidth: 0, flex: 1 }}>
-                                <Text size="small" bold className="truncate">
-                                    {targetHouse.code}
-                                    {targetHouse.address
-                                        ? ` — ${targetHouse.address}`
-                                        : ""}
-                                </Text>
-                            </Box>
+                            Nhà số liên quan (không bắt buộc)
+                        </Text>
+                        {targetHouse ? (
                             <Box
-                                onClick={() => setTargetHouse(null)}
-                                pl={3}
-                                style={{ flexShrink: 0 }}
+                                flex
+                                alignItems="center"
+                                justifyContent="space-between"
+                                p={3}
+                                className="bg-ng_10 border border-ng_20 rounded-xl"
                             >
-                                <Icon icon="zi-close" className="text-text_3" />
+                                <Box style={{ minWidth: 0, flex: 1 }}>
+                                    <Text
+                                        size="small"
+                                        bold
+                                        className="truncate"
+                                    >
+                                        {targetHouse.code}
+                                        {targetHouse.address
+                                            ? ` — ${targetHouse.address}`
+                                            : ""}
+                                    </Text>
+                                </Box>
+                                <Box
+                                    onClick={() => setTargetHouse(null)}
+                                    pl={3}
+                                    style={{ flexShrink: 0 }}
+                                >
+                                    <Icon
+                                        icon="zi-close"
+                                        className="text-text_3"
+                                    />
+                                </Box>
                             </Box>
-                        </Box>
-                    ) : (
-                        <Button
-                            variant="secondary"
-                            fullWidth
-                            onClick={() => setHousePickerVisible(true)}
-                        >
-                            Chọn nhà số
-                        </Button>
-                    )}
-                    <Text size="xSmall" className="text-text_2 mt-1.5">
-                        Có thể chọn bất kỳ nhà số nào liên quan đến phản ánh,
-                        không nhất thiết là nhà của bạn. Nếu chọn, phản ánh sẽ
-                        được gửi tới Tổ trưởng phụ trách nhà số đó.
-                    </Text>
+                        ) : (
+                            <Button
+                                variant="secondary"
+                                fullWidth
+                                onClick={() => setHousePickerVisible(true)}
+                            >
+                                Chọn nhà số
+                            </Button>
+                        )}
+                        <Text size="xSmall" className="text-text_2 mt-1.5">
+                            Có thể chọn bất kỳ nhà số nào liên quan đến phản
+                            ánh, không nhất thiết là nhà của bạn. Nếu chọn, phản
+                            ánh sẽ được gửi tới Tổ trưởng phụ trách nhà số đó.
+                        </Text>
+                    </Box>
                 </Box>
 
                 <HouseTargetPickerSheet

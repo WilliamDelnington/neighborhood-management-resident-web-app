@@ -271,7 +271,7 @@ const BusinessTypeListContent: React.FC = () => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        boxShadow: "0 4px 12px rgba(59,130,246,0.4)",
+                        boxShadow: "0 4px 12px rgba(5,170,192,0.4)",
                         zIndex: 20,
                     }}
                     onClick={openCreate}

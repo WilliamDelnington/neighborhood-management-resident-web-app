@@ -24,9 +24,9 @@ const Wrapper = styled.div`
     ${tw`rounded-2xl text-white relative overflow-hidden`};
     margin: 16px;
     padding: 20px;
-    background: linear-gradient(135deg, #3b82f6 0%, #2563eb 55%, #1d4ed8 100%);
-    box-shadow: 0 16px 28px -14px rgba(37, 99, 235, 0.55),
-        0 2px 4px -1px rgba(37, 99, 235, 0.16);
+    background: linear-gradient(135deg, #05aac0 0%, #0891b2 55%, #0e7490 100%);
+    box-shadow: 0 16px 28px -14px rgba(8, 145, 178, 0.5),
+        0 2px 4px -1px rgba(8, 145, 178, 0.16);
 `;
 
 const Glow = styled.div`

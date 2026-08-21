@@ -2,6 +2,7 @@ import React, { FC } from "react";
 import {
     ChevronRight,
     ChevronLeft,
+    ChevronDown,
     Plus,
     Clock,
     MapPin,
@@ -27,6 +28,7 @@ import {
 const ICON_MAP: Record<string, FC<LucideProps>> = {
     "zi-chevron-right": ChevronRight,
     "zi-chevron-left": ChevronLeft,
+    "zi-chevron-down": ChevronDown,
     "zi-plus": Plus,
     "zi-clock-1": Clock,
     "zi-location": MapPin,

@@ -17,23 +17,25 @@ module.exports = {
                 ],
             },
             colors: {
-                // Primary blue scale — same hue as before, now with a full ramp
-                // for hover/active/subtle-background states.
+                // Primary teal scale — matches the app logo's cyan/teal tone
+                // (sampled ~#05AAC0), with a full ramp for hover/active/subtle
+                // backgrounds. Capped at 700 for gradients so headers/hero
+                // cards don't read as too dark.
                 primary: {
-                    50: "#EFF6FF",
-                    100: "#DBEAFE",
-                    200: "#BFDBFE",
-                    300: "#93C5FD",
-                    400: "#60A5FA",
-                    500: "#3B82F6",
-                    600: "#2563EB",
-                    700: "#1D4ED8",
-                    800: "#1E40AF",
-                    900: "#1E3A8A",
-                    DEFAULT: "#3B82F6",
+                    50: "#ECFEFF",
+                    100: "#CFFAFE",
+                    200: "#A5F3FC",
+                    300: "#67E8F9",
+                    400: "#22D3EE",
+                    500: "#05AAC0",
+                    600: "#0891B2",
+                    700: "#0E7490",
+                    800: "#155E75",
+                    900: "#164E63",
+                    DEFAULT: "#05AAC0",
                 },
-                "primary-dark": "#2563EB",
-                main: "#3B82F6",
+                "primary-dark": "#0891B2",
+                main: "#05AAC0",
                 "app-bg": "#F5F7FA",
                 wth_a70: "rgba(255, 255, 255, 0.7)",
                 ui_bg: "#FFFFFF",
@@ -42,7 +44,7 @@ module.exports = {
                 text_3: "#9CA3AF",
                 devider_1: "#E5E7EB",
                 icon_bg: "#F5F9FC",
-                blue_10: "#EBF4FF",
+                blue_10: "#ECFEFF",
                 ng_10: "#F4F5F6",
                 ng_20: "#E9EBED",
                 blk_a70: "rgba(0, 0, 0, 0.7)",

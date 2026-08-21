@@ -112,8 +112,8 @@ const TaskSummaryGrid: FC<TaskSummaryGridProps> = ({ dashboard }) => {
             label: "Cuộc họp sắp tới",
             count: dashboard.upcomingMeetings.length,
             icon: Icon.CalendarIcon,
-            color: "#2563EB",
-            bgColor: "#DBEAFE",
+            color: "#0891B2",
+            bgColor: "#CFFAFE",
             onClick: () => navigate("/meetings"),
         },
     ].filter((tile): tile is Tone => Boolean(tile));
