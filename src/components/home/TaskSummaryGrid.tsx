@@ -11,7 +11,10 @@ export interface TaskSummaryGridProps {
 
 const Grid = styled.div`
     display: grid;
-    grid-template-columns: repeat(2, 1fr);
+    /* auto-fit collapses unused tracks - a single tile stretches full width
+       instead of leaving an empty second column (repeat(2, 1fr) always
+       reserved 2 columns even with 1 tile). */
+    grid-template-columns: repeat(auto-fit, minmax(150px, 1fr));
     gap: 12px;
 `;
 
@@ -20,14 +23,20 @@ const Tile = styled.div`
     padding: 14px;
 `;
 
-const IconCircle = styled.div<{ $bg: string }>`
+const WideTile = styled.div`
+    ${tw`flex flex-row items-center bg-ng_10 rounded-2xl`};
+    padding: 12px 14px;
+    gap: 12px;
+`;
+
+const IconCircle = styled.div<{ $bg: string; $size?: number }>`
     ${tw`rounded-full flex items-center justify-center flex-shrink-0`};
-    width: 36px;
-    height: 36px;
+    width: ${({ $size }) => $size || 36}px;
+    height: ${({ $size }) => $size || 36}px;
     background: ${({ $bg }) => $bg};
     svg {
-        width: 20px;
-        height: 20px;
+        width: ${({ $size }) => ($size ? $size - 16 : 20)}px;
+        height: ${({ $size }) => ($size ? $size - 16 : 20)}px;
     }
 `;
 
@@ -123,6 +132,31 @@ const TaskSummaryGrid: FC<TaskSummaryGridProps> = ({ dashboard }) => {
             <Text size="xSmall" className="text-text_2">
                 Không có việc cần xử lý.
             </Text>
+        );
+    }
+
+    // Chi 1 muc: mot the doc chiem nua luoi rong se de lai mot khoang trong
+    // lon ben canh - hien thi ngang (icon - nhan - so) chiem tron chieu rong
+    // cho gon hon la ep vao bo cuc luoi.
+    if (tiles.length === 1) {
+        const [tile] = tiles;
+        const TileIcon = tile.icon;
+        return (
+            <WideTile onClick={tile.onClick}>
+                <IconCircle $bg={tile.bgColor} $size={44}>
+                    <TileIcon color={tile.color} />
+                </IconCircle>
+                <Text
+                    size="xSmall"
+                    className="text-text_2"
+                    style={{ flex: 1, minWidth: 0 }}
+                >
+                    {tile.label}
+                </Text>
+                <Count $color={tile.color} style={{ marginTop: 0 }}>
+                    {tile.count}
+                </Count>
+            </WideTile>
         );
     }
 
