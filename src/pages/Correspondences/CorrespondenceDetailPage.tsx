@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { MessageSquare, Paperclip } from "lucide-react";
 import { Box, Text, useParams, useSnackbar } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button, TextArea } from "@components/customized";
@@ -102,7 +103,7 @@ const CorrespondenceDetailContent: React.FC = () => {
                 )}
                 {!loading && !errorMessage && doc && (
                     <>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Box flex alignItems="center" style={{ gap: 8 }}>
                                 {typeName && (
                                     <StatusBadge label={typeName} tone="blue" />
@@ -138,12 +139,16 @@ const CorrespondenceDetailContent: React.FC = () => {
                             </Text>
                         </Box>
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Text.Title size="small" className="mb-2">
                                 Tệp đính kèm
                             </Text.Title>
                             {attachments.length === 0 && (
-                                <EmptyState label="Không có file đính kèm" />
+                                <EmptyState
+                                    label="Không có file đính kèm"
+                                    icon={Paperclip}
+                                    tone="primary"
+                                />
                             )}
                             {attachments.map(a => (
                                 <Box
@@ -159,12 +164,16 @@ const CorrespondenceDetailContent: React.FC = () => {
                             ))}
                         </Box>
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Text.Title size="small" className="mb-2">
                                 Phản hồi
                             </Text.Title>
                             {replies.length === 0 && (
-                                <EmptyState label="Chưa có phản hồi nào" />
+                                <EmptyState
+                                    label="Chưa có phản hồi nào"
+                                    icon={MessageSquare}
+                                    tone="info"
+                                />
                             )}
                             {replies.map(r => {
                                 const actor =

@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { CalendarX, Home } from "lucide-react";
 import {
     Box,
     DatePicker,
@@ -379,7 +380,7 @@ const AppointmentBookingPageContent: React.FC = () => {
 
                 {!serviceLoading && !serviceError && service && (
                     <>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Text.Title size="small">{service.name}</Text.Title>
                             {service.description && (
                                 <Text
@@ -407,7 +408,7 @@ const AppointmentBookingPageContent: React.FC = () => {
                                 flex
                                 justifyContent="space-between"
                                 alignItems="center"
-                                className="bg-white rounded-2xl p-4 shadow-sm mt-3"
+                                className="bg-white rounded-2xl p-4 shadow-card mt-3"
                             >
                                 <Box style={{ flex: 1, minWidth: 0 }} pr={3}>
                                     <Text.Title size="small">
@@ -431,7 +432,7 @@ const AppointmentBookingPageContent: React.FC = () => {
                             </Box>
                         )}
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Text.Title size="small" className="mb-2">
                                 Nhà số
                             </Text.Title>
@@ -514,7 +515,11 @@ const AppointmentBookingPageContent: React.FC = () => {
                                     {ownHousesLoading && <LoadingState />}
                                     {!ownHousesLoading &&
                                         verifiedOwnHouses.length === 0 && (
-                                            <EmptyState label="Bạn chưa có nhà số nào đã xác thực để đặt lịch hẹn. Vui lòng liên hệ Tổ dân phố để được hỗ trợ." />
+                                            <EmptyState
+                                                label="Bạn chưa có nhà số nào đã xác thực để đặt lịch hẹn. Vui lòng liên hệ Tổ dân phố để được hỗ trợ."
+                                                icon={Home}
+                                                tone="primary"
+                                            />
                                         )}
                                     {!ownHousesLoading &&
                                         verifiedOwnHouses.length > 0 &&
@@ -545,7 +550,7 @@ const AppointmentBookingPageContent: React.FC = () => {
                             )}
                         </Box>
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Text.Title size="small" className="mb-2">
                                 Ngày hẹn
                             </Text.Title>
@@ -563,7 +568,7 @@ const AppointmentBookingPageContent: React.FC = () => {
                             </Text>
                         </Box>
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Text.Title size="small" className="mb-2">
                                 Khung giờ
                             </Text.Title>
@@ -583,7 +588,11 @@ const AppointmentBookingPageContent: React.FC = () => {
                                 !slotsLoading &&
                                 !slotsError &&
                                 slots.length === 0 && (
-                                    <EmptyState label="Không có khung giờ nào cho ngày này" />
+                                    <EmptyState
+                                        label="Không có khung giờ nào cho ngày này"
+                                        icon={CalendarX}
+                                        tone="primary"
+                                    />
                                 )}
                             {date &&
                                 !slotsLoading &&
@@ -639,7 +648,7 @@ const AppointmentBookingPageContent: React.FC = () => {
                             />
                         </Box>
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Box
                                 flex
                                 justifyContent="space-between"

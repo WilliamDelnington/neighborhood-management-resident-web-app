@@ -2,6 +2,12 @@
 import React from "react";
 import { createRoot } from "react-dom/client";
 
+// Import self-hosted font (Vietnamese + Latin subsets included)
+import "@fontsource/be-vietnam-pro/400.css";
+import "@fontsource/be-vietnam-pro/500.css";
+import "@fontsource/be-vietnam-pro/600.css";
+import "@fontsource/be-vietnam-pro/700.css";
+
 // Import tailwind styles
 import "./css/tailwind.css";
 

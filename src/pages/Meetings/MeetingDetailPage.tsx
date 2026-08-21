@@ -54,7 +54,7 @@ const MeetingDetailPage: React.FC = () => {
 
                 {!loading && !errorMessage && meeting && (
                     <>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Text.Title size="small">
                                 {meeting.title}
                             </Text.Title>
@@ -198,7 +198,7 @@ const MeetingRsvpSection: React.FC<{ meetingId: string }> = ({ meetingId }) => {
     };
 
     return (
-        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+        <Box className="bg-white rounded-2xl p-4 shadow-card">
             <Text.Title size="small" className="mb-2">
                 Đăng ký tham dự
             </Text.Title>

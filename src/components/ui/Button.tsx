@@ -4,7 +4,8 @@ import Spinner from "./Spinner";
 
 const VARIANT_CLASS: Record<string, string> = {
     primary: "bg-main text-white disabled:bg-ng_20 disabled:text-text_3",
-    secondary: "bg-blue_10 text-main disabled:bg-ng_20 disabled:text-text_3",
+    secondary:
+        "bg-blue_10 text-main border border-primary-100 hover:bg-primary-100 disabled:bg-ng_20 disabled:text-text_3 disabled:border-transparent",
     tertiary: "bg-transparent text-main disabled:text-text_3",
 };
 

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Building2 } from "lucide-react";
 import { Box, Sheet, Text } from "@components/ui";
 import { Input } from "@components/customized";
 import { LoadingState, EmptyState } from "@components/admin";
@@ -55,7 +56,11 @@ const OrganizationPickerSheet: React.FC<OrganizationPickerSheetProps> = ({
                 <Box mt={3}>
                     {loading && <LoadingState />}
                     {!loading && items.length === 0 && (
-                        <EmptyState label="Bạn chưa là người đại diện của tổ chức nào" />
+                        <EmptyState
+                            label="Bạn chưa là người đại diện của tổ chức nào"
+                            icon={Building2}
+                            tone="info"
+                        />
                     )}
                     {!loading &&
                         items.map(organization => (

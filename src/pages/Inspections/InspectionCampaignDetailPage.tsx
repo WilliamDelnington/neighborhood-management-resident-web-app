@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { SearchX } from "lucide-react";
 import { Box, Text, useNavigate, useParams } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { RequireAuth, hasPermission } from "@components/role";
@@ -93,7 +94,7 @@ const InspectionCampaignDetailContent: React.FC = () => {
                 {!loading && error && <ErrorState onRetry={load} />}
                 {!loading && !error && campaign && (
                     <>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Text.Title size="small">
                                 {campaign.name}
                             </Text.Title>
@@ -131,7 +132,7 @@ const InspectionCampaignDetailContent: React.FC = () => {
                                 </Box>
                             )}
                         </Box>
-                        <Box className="bg-white rounded-2xl p-3 mt-3 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-3 mt-3 shadow-card">
                             <Text size="xxSmall" className="text-text_2">
                                 Lọc kết quả
                             </Text>
@@ -153,7 +154,11 @@ const InspectionCampaignDetailContent: React.FC = () => {
                         </Box>
                         <Box mt={3}>
                             {targets.length === 0 && (
-                                <EmptyState label="Không có Nhà số phù hợp" />
+                                <EmptyState
+                                    label="Không có Nhà số phù hợp"
+                                    icon={SearchX}
+                                    tone="success"
+                                />
                             )}
                             {targets.map(target => {
                                 const house =
@@ -163,7 +168,7 @@ const InspectionCampaignDetailContent: React.FC = () => {
                                 return (
                                     <Box
                                         key={target._id}
-                                        className="bg-white rounded-2xl p-4 mb-3 shadow-sm"
+                                        className="bg-white rounded-2xl p-4 mb-3 shadow-card"
                                     >
                                         <Box
                                             flex

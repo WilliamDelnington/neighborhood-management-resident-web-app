@@ -23,13 +23,8 @@ const MyRequestsPreview: FC = () => {
     if (items.length === 0) return null;
 
     return (
-        <Box className="bg-white mt-2 p-4">
-            <Box
-                flex
-                justifyContent="space-between"
-                alignItems="center"
-                mb={2}
-            >
+        <Box className="bg-white mx-4 mt-3 p-4 rounded-2xl shadow-card">
+            <Box flex justifyContent="space-between" alignItems="center" mb={2}>
                 <Text.Title size="small">Nhiệm vụ của tôi</Text.Title>
                 <Text
                     size="xSmall"

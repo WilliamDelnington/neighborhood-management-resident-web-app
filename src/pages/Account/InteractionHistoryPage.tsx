@@ -21,7 +21,7 @@ const HistoryLink: React.FC<HistoryLinkProps> = ({
     onClick,
 }) => (
     <Box
-        className="bg-white rounded-2xl p-4 shadow-sm mt-3"
+        className="bg-white rounded-2xl p-4 shadow-card mt-3"
         flex
         justifyContent="space-between"
         alignItems="center"

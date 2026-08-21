@@ -22,7 +22,7 @@ const UtilityAppsRow: React.FC = () => {
     if (apps.length === 0) return null;
 
     return (
-        <Box className="bg-white mt-2 p-4">
+        <Box className="bg-white mx-4 mt-3 p-4 rounded-2xl shadow-card">
             <Text.Title size="small" className="mb-3">
                 Tiện ích
             </Text.Title>

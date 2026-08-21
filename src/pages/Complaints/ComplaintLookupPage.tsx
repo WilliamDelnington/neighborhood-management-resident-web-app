@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { MessageSquareWarning } from "lucide-react";
 import { Box, Icon, Text, useNavigate } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { Button, Input } from "@components/customized";
@@ -82,7 +83,7 @@ const ComplaintLookupPage: React.FC = () => {
             bottomNav={<AppBottomNav />}
         >
             <Box p={4}>
-                <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                <Box className="bg-white rounded-2xl p-4 shadow-card">
                     <Text.Title size="small" className="mb-2">
                         Tra cứu theo mã phản ánh
                     </Text.Title>
@@ -117,7 +118,7 @@ const ComplaintLookupPage: React.FC = () => {
                 )}
 
                 {token && (
-                    <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                    <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                         <Text.Title size="small" className="mb-2">
                             Phản ánh của tôi
                         </Text.Title>
@@ -129,7 +130,11 @@ const ComplaintLookupPage: React.FC = () => {
                         {!myLoading &&
                             !myError &&
                             myComplaints.length === 0 && (
-                                <EmptyState label="Bạn chưa gửi phản ánh nào" />
+                                <EmptyState
+                                    label="Bạn chưa gửi phản ánh nào"
+                                    icon={MessageSquareWarning}
+                                    tone="danger"
+                                />
                             )}
                         {!myLoading &&
                             !myError &&

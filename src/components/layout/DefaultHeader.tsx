@@ -2,7 +2,6 @@ import React, { FC } from "react";
 import { Header, Icon } from "@components/ui";
 import styled from "styled-components";
 import tw from "twin.macro";
-import Background from "@assets/header-background.png";
 
 export interface DefaultHeaderProps {
     title?: string;
@@ -11,18 +10,11 @@ export interface DefaultHeaderProps {
 }
 
 const HeaderContainer = styled(Header)`
-    ${tw`flex flex-row items-center bg-main fixed top-0 left-0 w-full text-white px-4`};
+    ${tw`flex flex-row items-center fixed top-0 left-0 w-full text-white px-4`};
     height: calc(48px + var(--zaui-safe-area-inset-top, 0px));
     padding-top: var(--zaui-safe-area-inset-top, 0px);
     z-index: 1;
-    background: linear-gradient(
-            0deg,
-            rgba(59, 130, 246, 0.92),
-            rgba(59, 130, 246, 0.92)
-        ),
-        url(${Background});
-    background-size: cover;
-    background-position: center;
+    background: linear-gradient(135deg, #3b82f6, #2563eb);
     .zaui-btn-icon {
         ${tw`text-white`}
     }

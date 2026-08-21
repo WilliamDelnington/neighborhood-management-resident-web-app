@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { useNavigate } from "@components/ui";
+import { Icon, useNavigate } from "@components/ui";
 import styled from "styled-components";
 import tw from "twin.macro";
 import { PhoneIcon } from "@components/icons";
@@ -15,8 +15,8 @@ export interface EmergencyContactBoxProps {
 }
 
 const Wrapper = styled.div`
-    ${tw`flex flex-row items-center bg-red-50 rounded-2xl`};
-    margin: 8px 16px 0;
+    ${tw`flex flex-row items-center bg-red-50 border border-red-100 rounded-2xl shadow-card`};
+    margin: 12px 16px 0;
     padding: 12px 16px;
 `;
 
@@ -63,7 +63,7 @@ const EmergencyContactBox: FC<EmergencyContactBoxProps> = props => {
             <IconCircle>
                 <PhoneIcon />
             </IconCircle>
-            <div>
+            <div style={{ flex: 1, minWidth: 0 }}>
                 <Title>Liên hệ khẩn cấp</Title>
                 <HotlineRow>
                     {hotlines.map((item, index) => (
@@ -80,6 +80,7 @@ const EmergencyContactBox: FC<EmergencyContactBoxProps> = props => {
                     ))}
                 </HotlineRow>
             </div>
+            <Icon icon="zi-chevron-right" size={16} className="text-red-300" />
         </Wrapper>
     );
 };

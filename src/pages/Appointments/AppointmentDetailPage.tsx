@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { CalendarX } from "lucide-react";
 import {
     Box,
     DatePicker,
@@ -109,8 +110,7 @@ const AppointmentDetailPageContent: React.FC = () => {
     const [rescheduleSlots, setRescheduleSlots] = useState<
         AppointmentAvailableSlot[]
     >([]);
-    const [rescheduleSlotsLoading, setRescheduleSlotsLoading] =
-        useState(false);
+    const [rescheduleSlotsLoading, setRescheduleSlotsLoading] = useState(false);
     const [rescheduleSlotsError, setRescheduleSlotsError] = useState(false);
     const [selectedRescheduleSlotId, setSelectedRescheduleSlotId] = useState<
         string | null
@@ -228,7 +228,10 @@ const AppointmentDetailPageContent: React.FC = () => {
             return;
         }
         if (!selectedRescheduleSlotId) {
-            openSnackbar({ type: "error", text: "Vui lòng chọn khung giờ mới" });
+            openSnackbar({
+                type: "error",
+                text: "Vui lòng chọn khung giờ mới",
+            });
             return;
         }
         if (!rescheduleReason.trim()) {
@@ -291,7 +294,7 @@ const AppointmentDetailPageContent: React.FC = () => {
                 )}
                 {!loading && !errorMessage && appointment && (
                     <>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Box
                                 flex
                                 justifyContent="space-between"
@@ -407,8 +410,9 @@ const AppointmentDetailPageContent: React.FC = () => {
                                         ),
                                     )}
                                     {" · "}
-                                    {appointment.rescheduledFromStartTime} -{" "}
-                                    {appointment.rescheduledFromEndTime}
+                                    {
+                                        appointment.rescheduledFromStartTime
+                                    } - {appointment.rescheduledFromEndTime}
                                     {appointment.rescheduleReason
                                         ? ` — Lý do: ${appointment.rescheduleReason}`
                                         : ""}
@@ -417,7 +421,7 @@ const AppointmentDetailPageContent: React.FC = () => {
                         </Box>
 
                         {isOwner && appointment.status === "tu_choi" && (
-                            <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                            <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                                 <Button
                                     fullWidth
                                     onClick={() =>
@@ -441,7 +445,7 @@ const AppointmentDetailPageContent: React.FC = () => {
                             CANCELLABLE_STATUSES.includes(
                                 appointment.status,
                             ) && (
-                                <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                                <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                                     {!cancelling && !rescheduling && (
                                         <Box flex style={{ gap: 8 }}>
                                             {appointment.status ===
@@ -526,9 +530,8 @@ const AppointmentDetailPageContent: React.FC = () => {
                                                 size="xxSmall"
                                                 className="text-text_2 mt-1.5 mb-2"
                                             >
-                                                Chỉ có thể đổi sang ngày từ
-                                                ngày mai đến trong vòng 30
-                                                ngày tới.
+                                                Chỉ có thể đổi sang ngày từ ngày
+                                                mai đến trong vòng 30 ngày tới.
                                             </Text>
 
                                             {rescheduleDate &&
@@ -554,7 +557,11 @@ const AppointmentDetailPageContent: React.FC = () => {
                                                 !rescheduleSlotsError &&
                                                 rescheduleSlots.length ===
                                                     0 && (
-                                                    <EmptyState label="Không có khung giờ nào cho ngày này" />
+                                                    <EmptyState
+                                                        label="Không có khung giờ nào cho ngày này"
+                                                        icon={CalendarX}
+                                                        tone="primary"
+                                                    />
                                                 )}
                                             {rescheduleDate &&
                                                 !rescheduleSlotsLoading &&
@@ -598,9 +605,7 @@ const AppointmentDetailPageContent: React.FC = () => {
                                                                     slot.start_time
                                                                 }{" "}
                                                                 -{" "}
-                                                                {
-                                                                    slot.end_time
-                                                                }
+                                                                {slot.end_time}
                                                             </Text>
                                                             <Text
                                                                 size="xxSmall"
@@ -664,7 +669,7 @@ const AppointmentDetailPageContent: React.FC = () => {
                             )}
 
                         {isOwner && appointment.status === "hoan_thanh" && (
-                            <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                            <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                                 <Text.Title size="small" className="mb-2">
                                     Đánh giá buổi làm việc
                                 </Text.Title>

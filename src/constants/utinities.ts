@@ -48,8 +48,8 @@ export const MORE_FEATURES: Array<Utinity> = [
         key: "my-house",
         label: "Nhà của tôi",
         icon: Icon.HouseIcon,
-        color: "#0891B2",
-        bgColor: "#CFFAFE",
+        color: "#06B6D4",
+        bgColor: "#ECFEFF",
         path: "/house/mine",
     },
     {
@@ -64,7 +64,7 @@ export const MORE_FEATURES: Array<Utinity> = [
     {
         key: "inspection-self-declarations",
         label: "Biểu mẫu tự khai",
-        icon: Icon.QAndAIcon,
+        icon: Icon.ClipboardCheckIcon,
         color: "#0F766E",
         bgColor: "#CCFBF1",
         path: "/inspections/self-declarations",
@@ -90,7 +90,7 @@ export const MORE_FEATURES: Array<Utinity> = [
     {
         key: "inspections",
         label: "Rà soát chiến dịch",
-        icon: Icon.QAndAIcon,
+        icon: Icon.SearchReviewIcon,
         color: "#3B82F6",
         bgColor: "#DBEAFE",
         path: "/inspections",

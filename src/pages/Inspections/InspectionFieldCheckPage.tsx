@@ -248,7 +248,7 @@ const InspectionFieldCheckContent: React.FC = () => {
             title={`Nhà ${house?.code || "—"}`}
         >
             <Box p={4} className={mutable ? "pb-28" : ""}>
-                <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                <Box className="bg-white rounded-2xl p-4 shadow-card">
                     <Box
                         flex
                         justifyContent="space-between"
@@ -289,7 +289,7 @@ const InspectionFieldCheckContent: React.FC = () => {
                     )}
                 </Box>
 
-                <Box className="bg-white rounded-2xl p-4 mt-3 shadow-sm">
+                <Box className="bg-white rounded-2xl p-4 mt-3 shadow-card">
                     <Text.Title size="small">Checklist</Text.Title>
                     {campaign.checklistTemplate.map((item, index) => (
                         <Box key={item.itemId} mt={4}>
@@ -422,7 +422,7 @@ const InspectionFieldCheckContent: React.FC = () => {
                     ))}
                 </Box>
 
-                <Box className="bg-white rounded-2xl p-4 mt-3 shadow-sm">
+                <Box className="bg-white rounded-2xl p-4 mt-3 shadow-card">
                     <Text.Title size="small">Ghi chú và kết luận</Text.Title>
                     <Box mt={3}>
                         <TextArea
@@ -465,7 +465,7 @@ const InspectionFieldCheckContent: React.FC = () => {
                     </Box>
                 </Box>
 
-                <Box className="bg-white rounded-2xl p-4 mt-3 shadow-sm">
+                <Box className="bg-white rounded-2xl p-4 mt-3 shadow-card">
                     <Text.Title size="small">Ảnh / tệp minh chứng</Text.Title>
                     <Text size="xxSmall" className="text-text_2 mt-1">
                         JPG, PNG hoặc PDF; tối đa 10MB.

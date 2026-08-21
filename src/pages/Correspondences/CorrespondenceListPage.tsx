@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Mail } from "lucide-react";
 import { Box, useNavigate } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { Button } from "@components/customized";
@@ -101,10 +102,14 @@ const CorrespondenceListContent: React.FC = () => {
                     <ErrorState onRetry={() => load(1, false)} />
                 )}
                 {!loading && !error && items.length === 0 && (
-                    <EmptyState label="Chưa có văn bản nào" />
+                    <EmptyState
+                        label="Chưa có văn bản nào"
+                        icon={Mail}
+                        tone="info"
+                    />
                 )}
                 {!loading && !error && items.length > 0 && (
-                    <Box className="bg-white rounded-2xl p-2 shadow-sm">
+                    <Box className="bg-white rounded-2xl p-2 shadow-card">
                         {items.map(item => (
                             <ListRow
                                 key={item._id}

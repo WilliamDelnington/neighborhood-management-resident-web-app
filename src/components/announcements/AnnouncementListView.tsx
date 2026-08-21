@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Megaphone } from "lucide-react";
 import { Box, useNavigate } from "@components/ui";
 import {
     EmptyState,
@@ -28,11 +29,15 @@ const AnnouncementListView: React.FC = () => {
     useEffect(load, []);
 
     return (
-        <Box className="bg-white mt-2">
+        <Box className="bg-white mt-2" style={{ minHeight: "60vh" }}>
             {loading && <LoadingState />}
             {!loading && error && <ErrorState onRetry={load} />}
             {!loading && !error && items.length === 0 && (
-                <EmptyState label="Chưa có thông báo nào" />
+                <EmptyState
+                    label="Chưa có thông báo nào"
+                    icon={Megaphone}
+                    tone="primary"
+                />
             )}
             {!loading && !error && (
                 <Box px={4}>

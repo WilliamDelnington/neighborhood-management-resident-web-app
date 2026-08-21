@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Building2, Store, Users } from "lucide-react";
 import {
     Box,
     Modal,
@@ -623,7 +624,7 @@ const HouseDetailContent: React.FC = () => {
 
                 {!loading && !error && house && form && (
                     <>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Box
                                 flex
                                 justifyContent="space-between"
@@ -813,7 +814,7 @@ const HouseDetailContent: React.FC = () => {
                         />
 
                         {canViewHouseholds && (
-                            <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                            <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                                 <Box
                                     flex
                                     justifyContent="space-between"
@@ -842,7 +843,11 @@ const HouseDetailContent: React.FC = () => {
                                 {householdsLoading && <LoadingState />}
                                 {!householdsLoading &&
                                     households.length === 0 && (
-                                        <EmptyState label="Chưa có hộ dân nào trong nhà này" />
+                                        <EmptyState
+                                            label="Chưa có hộ dân nào trong nhà này"
+                                            icon={Users}
+                                            tone="info"
+                                        />
                                     )}
                                 {!householdsLoading &&
                                     households.map(h => (
@@ -876,7 +881,7 @@ const HouseDetailContent: React.FC = () => {
                         )}
 
                         {canViewBusinesses && (
-                            <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                            <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                                 <Box
                                     flex
                                     justifyContent="space-between"
@@ -904,7 +909,11 @@ const HouseDetailContent: React.FC = () => {
                                 {businessesLoading && <LoadingState />}
                                 {!businessesLoading &&
                                     businesses.length === 0 && (
-                                        <EmptyState label="Chưa có hộ kinh doanh nào trong nhà này" />
+                                        <EmptyState
+                                            label="Chưa có hộ kinh doanh nào trong nhà này"
+                                            icon={Store}
+                                            tone="warning"
+                                        />
                                     )}
                                 {!businessesLoading &&
                                     businesses.map(b => (
@@ -938,7 +947,7 @@ const HouseDetailContent: React.FC = () => {
                         )}
 
                         {canViewCompanies && (
-                            <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                            <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                                 <Box
                                     flex
                                     justifyContent="space-between"
@@ -966,7 +975,11 @@ const HouseDetailContent: React.FC = () => {
                                 {companiesLoading && <LoadingState />}
                                 {!companiesLoading &&
                                     companies.length === 0 && (
-                                        <EmptyState label="Chưa có công ty nào trong nhà này" />
+                                        <EmptyState
+                                            label="Chưa có công ty nào trong nhà này"
+                                            icon={Building2}
+                                            tone="info"
+                                        />
                                     )}
                                 {!companiesLoading &&
                                     companies.map(c => (

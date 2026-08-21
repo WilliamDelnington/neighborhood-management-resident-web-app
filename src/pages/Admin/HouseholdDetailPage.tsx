@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Users } from "lucide-react";
 import {
     Box,
     Modal,
@@ -335,7 +336,7 @@ const HouseholdDetailContent: React.FC = () => {
 
                 {!loading && !error && household && form && (
                     <>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Box
                                 flex
                                 justifyContent="space-between"
@@ -518,7 +519,7 @@ const HouseholdDetailContent: React.FC = () => {
                         />
 
                         {canViewCitizens && (
-                            <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                            <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                                 <Box
                                     flex
                                     justifyContent="space-between"
@@ -540,7 +541,11 @@ const HouseholdDetailContent: React.FC = () => {
                                 </Box>
                                 {citizensLoading && <LoadingState />}
                                 {!citizensLoading && citizens.length === 0 && (
-                                    <EmptyState label="Chưa có nhân khẩu nào trong hộ" />
+                                    <EmptyState
+                                        label="Chưa có nhân khẩu nào trong hộ"
+                                        icon={Users}
+                                        tone="info"
+                                    />
                                 )}
                                 {!citizensLoading &&
                                     citizens.map(c => (

@@ -245,7 +245,7 @@ const CompanyDetailContent: React.FC = () => {
 
                 {!loading && !error && company && form && (
                     <>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Box
                                 flex
                                 justifyContent="space-between"

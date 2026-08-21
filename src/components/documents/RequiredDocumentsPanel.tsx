@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { FileText } from "lucide-react";
 import {
     Box,
     DatePicker,
@@ -226,7 +227,7 @@ const RequiredDocumentsPanel: React.FC<RequiredDocumentsPanelProps> = ({
     };
 
     return (
-        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
             <Text.Title size="small" className="mb-2">
                 Hồ sơ giấy tờ theo yêu cầu
             </Text.Title>
@@ -234,7 +235,7 @@ const RequiredDocumentsPanel: React.FC<RequiredDocumentsPanelProps> = ({
             {loading && <LoadingState />}
             {!loading && error && <ErrorState label={error} onRetry={load} />}
             {!loading && !error && items.length === 0 && (
-                <EmptyState label={emptyLabel} />
+                <EmptyState label={emptyLabel} icon={FileText} tone="primary" />
             )}
             {!loading && !error && items.length > 0 && (
                 <Box

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { CalendarClock } from "lucide-react";
 import { Box, Icon, Text, useNavigate } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { EmptyState, ErrorState, LoadingState } from "@components/admin";
@@ -58,14 +59,18 @@ const AppointmentServiceListPage: React.FC = () => {
                 {loading && <LoadingState />}
                 {!loading && error && <ErrorState onRetry={load} />}
                 {!loading && !error && items.length === 0 && (
-                    <EmptyState label="Hiện chưa có dịch vụ đặt lịch hẹn nào" />
+                    <EmptyState
+                        label="Hiện chưa có dịch vụ đặt lịch hẹn nào"
+                        icon={CalendarClock}
+                        tone="primary"
+                    />
                 )}
                 {!loading &&
                     !error &&
                     items.map(service => (
                         <Box
                             key={service._id}
-                            className="bg-white rounded-2xl p-4 shadow-sm mt-3"
+                            className="bg-white rounded-2xl p-4 shadow-card mt-3"
                             onClick={() =>
                                 navigate(`/appointments/book/${service._id}`, {
                                     animate: true,

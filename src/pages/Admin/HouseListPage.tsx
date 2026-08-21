@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Home } from "lucide-react";
 import {
     Box,
     Icon,
@@ -134,7 +135,7 @@ const HouseListContent: React.FC = () => {
     return (
         <PageLayout id="house-list-page" title="Danh sách nhà số">
             <Box p={4}>
-                <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                <Box className="bg-white rounded-2xl p-4 shadow-card">
                     <Input
                         placeholder="Tìm theo mã nhà hoặc địa chỉ"
                         value={searchInput}
@@ -147,13 +148,17 @@ const HouseListContent: React.FC = () => {
                     </Box>
                 </Box>
 
-                <Box className="bg-white rounded-2xl mt-3 shadow-sm">
+                <Box className="bg-white rounded-2xl mt-3 shadow-card">
                     {loading && <LoadingState />}
                     {!loading && error && (
                         <ErrorState onRetry={() => load(1, search, false)} />
                     )}
                     {!loading && !error && items.length === 0 && (
-                        <EmptyState label="Không tìm thấy nhà số nào" />
+                        <EmptyState
+                            label="Không tìm thấy nhà số nào"
+                            icon={Home}
+                            tone="primary"
+                        />
                     )}
                     {!loading && !error && items.length > 0 && (
                         <Box px={4}>

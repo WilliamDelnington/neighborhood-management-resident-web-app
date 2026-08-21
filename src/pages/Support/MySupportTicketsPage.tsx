@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { LifeBuoy } from "lucide-react";
 import { Box, Text, useNavigate } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { Button } from "@components/customized";
@@ -75,14 +76,18 @@ const MySupportTicketsContent: React.FC = () => {
                     <ErrorState onRetry={() => load(1, false)} />
                 )}
                 {!loading && !error && items.length === 0 && (
-                    <EmptyState label="Bạn chưa gửi yêu cầu hỗ trợ nào" />
+                    <EmptyState
+                        label="Bạn chưa gửi yêu cầu hỗ trợ nào"
+                        icon={LifeBuoy}
+                        tone="danger"
+                    />
                 )}
                 {!loading &&
                     !error &&
                     items.map(item => (
                         <Box
                             key={item._id}
-                            className="bg-white rounded-2xl p-4 shadow-sm mt-3"
+                            className="bg-white rounded-2xl p-4 shadow-card mt-3"
                             onClick={() =>
                                 navigate(`/support/tickets/${item._id}`, {
                                     animate: true,

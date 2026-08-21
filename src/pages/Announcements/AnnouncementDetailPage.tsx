@@ -35,7 +35,7 @@ const AnnouncementDetailPage: React.FC = () => {
                     <ErrorState label={errorMessage} onRetry={load} />
                 )}
                 {!loading && !errorMessage && announcement && (
-                    <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                    <Box className="bg-white rounded-2xl p-4 shadow-card">
                         <Text size="xxSmall" className="text-main font-medium">
                             {LOAI_THONG_BAO_LABEL[announcement.category]}
                             {" · "}

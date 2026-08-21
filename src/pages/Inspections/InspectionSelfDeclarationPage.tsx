@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { ClipboardList } from "lucide-react";
 import { Box, Text, useNavigate, useParams, useSnackbar } from "@components/ui";
 import {
     EmptyState,
@@ -139,7 +140,11 @@ const InspectionSelfDeclarationContent: React.FC = () => {
     if (!detail)
         return (
             <PageLayout id="self-declaration-empty" title="Biểu mẫu tự khai">
-                <EmptyState label="Không tìm thấy biểu mẫu" />
+                <EmptyState
+                    label="Không tìm thấy biểu mẫu"
+                    icon={ClipboardList}
+                    tone="success"
+                />
             </PageLayout>
         );
 
@@ -149,7 +154,7 @@ const InspectionSelfDeclarationContent: React.FC = () => {
     return (
         <PageLayout id="inspection-self-declaration" title="Biểu mẫu tự khai">
             <Box p={4} className={mutable ? "pb-28" : ""}>
-                <Box className="rounded-2xl bg-white p-4 shadow-sm">
+                <Box className="rounded-2xl bg-white p-4 shadow-card">
                     <Box
                         flex
                         justifyContent="space-between"
@@ -201,7 +206,7 @@ const InspectionSelfDeclarationContent: React.FC = () => {
                     )}
                 </Box>
 
-                <Box className="mt-3 rounded-2xl bg-white p-4 shadow-sm">
+                <Box className="mt-3 rounded-2xl bg-white p-4 shadow-card">
                     <Text.Title size="small">Nội dung tự khai</Text.Title>
                     {campaign.checklistTemplate.map((item, index) => (
                         <Box key={item.itemId} mt={4}>
@@ -343,7 +348,7 @@ const InspectionSelfDeclarationContent: React.FC = () => {
                     ))}
                 </Box>
 
-                <Box className="mt-3 rounded-2xl bg-white p-4 shadow-sm">
+                <Box className="mt-3 rounded-2xl bg-white p-4 shadow-card">
                     <Text.Title size="small">Ghi chú</Text.Title>
                     <Box mt={3}>
                         <TextArea
@@ -355,7 +360,7 @@ const InspectionSelfDeclarationContent: React.FC = () => {
                     </Box>
                 </Box>
 
-                <Box className="mt-3 rounded-2xl bg-white p-4 shadow-sm">
+                <Box className="mt-3 rounded-2xl bg-white p-4 shadow-card">
                     <Text.Title size="small">Ảnh / tệp minh chứng</Text.Title>
                     <Text size="xxSmall" className="mt-1 block text-text_2">
                         JPG, PNG hoặc PDF; tối đa 10MB

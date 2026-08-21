@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Users } from "lucide-react";
 import { Box, Modal, Text, useSnackbar } from "@components/ui";
 import {
     EmptyState,
@@ -98,7 +99,7 @@ const HouseOwnershipSection: React.FC<HouseOwnershipSectionProps> = ({
     };
 
     return (
-        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
             <Box flex justifyContent="space-between" alignItems="center" mb={2}>
                 <Text.Title size="small">
                     Chủ sở hữu &amp; người quản lý
@@ -122,7 +123,11 @@ const HouseOwnershipSection: React.FC<HouseOwnershipSectionProps> = ({
                 />
             )}
             {!loading && !error && ownerships.length === 0 && (
-                <EmptyState label="Chưa có quan hệ sở hữu nào" />
+                <EmptyState
+                    label="Chưa có quan hệ sở hữu nào"
+                    icon={Users}
+                    tone="info"
+                />
             )}
             {!loading &&
                 !error &&

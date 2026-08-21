@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { SearchX } from "lucide-react";
 import { Box, Text, useNavigate, useSnackbar } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button, Checkbox, Input, TextArea } from "@components/customized";
@@ -108,7 +109,7 @@ const CorrespondenceComposeContent: React.FC = () => {
         <PageLayout id="correspondence-compose-page" title="Soạn văn bản">
             <Box p={4}>
                 <Box
-                    className="bg-white rounded-2xl p-4 shadow-sm"
+                    className="bg-white rounded-2xl p-4 shadow-card"
                     onClick={() => setTypePickerVisible(true)}
                 >
                     <Text size="xSmall" className="text-text_2">
@@ -120,7 +121,7 @@ const CorrespondenceComposeContent: React.FC = () => {
                 </Box>
 
                 {selectedType && (
-                    <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                    <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                         {selectedType.requireDocumentNumber && (
                             <Box mb={3}>
                                 <Input
@@ -175,7 +176,11 @@ const CorrespondenceComposeContent: React.FC = () => {
                                 {loadingReceivers && <LoadingState />}
                                 {!loadingReceivers &&
                                     visibleReceivers.length === 0 && (
-                                        <EmptyState label="Không tìm thấy người nhận phù hợp" />
+                                        <EmptyState
+                                            label="Không tìm thấy người nhận phù hợp"
+                                            icon={SearchX}
+                                            tone="info"
+                                        />
                                     )}
                                 {!loadingReceivers &&
                                     visibleReceivers.map(r => (

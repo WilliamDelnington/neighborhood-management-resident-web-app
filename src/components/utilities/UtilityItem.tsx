@@ -33,10 +33,11 @@ export interface UtinityItemProps {
 const Wrapper = styled.div`
     ${tw`flex flex-col items-center justify-center bg-white rounded-2xl`};
     padding: 16px 4px;
-    box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
+    box-shadow: 0 2px 6px rgba(15, 23, 42, 0.1),
+        0 1px 2px rgba(15, 23, 42, 0.08);
 `;
 const IconWrapper = styled.div<{ $bgColor?: string }>`
-    ${tw`rounded-full relative`};
+    ${tw`rounded-2xl relative`};
     background-color: ${({ $bgColor }) => $bgColor || "#F5F9FC"};
     width: 56px;
     height: 56px;
@@ -46,7 +47,11 @@ const IconWrapper = styled.div<{ $bgColor?: string }>`
 `;
 
 const CenterIcon = styled.div`
-    ${tw`inline-block `};
+    ${tw`inline-block`};
+    svg {
+        width: 28px;
+        height: 28px;
+    }
 `;
 
 const Badge = styled.div`

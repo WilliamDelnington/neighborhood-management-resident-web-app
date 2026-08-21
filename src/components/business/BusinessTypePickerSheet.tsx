@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Tags } from "lucide-react";
 import { Box, Sheet, Text } from "@components/ui";
 import { Input } from "@components/customized";
 import { LoadingState, EmptyState, ErrorState } from "@components/admin";
@@ -57,7 +58,11 @@ const BusinessTypePickerSheet: React.FC<BusinessTypePickerSheetProps> = ({
                         <ErrorState label={error} onRetry={load} />
                     )}
                     {!loading && !error && items.length === 0 && (
-                        <EmptyState label="Không tìm thấy loại hình phù hợp" />
+                        <EmptyState
+                            label="Không tìm thấy loại hình phù hợp"
+                            icon={Tags}
+                            tone="warning"
+                        />
                     )}
                     {!loading &&
                         !error &&

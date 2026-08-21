@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { CalendarDays } from "lucide-react";
 import { Box, useNavigate } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import {
@@ -68,11 +69,18 @@ const MeetingListPage: React.FC = () => {
                 ))}
             </Box>
 
-            <Box className="bg-white mt-3">
+            <Box
+                className="bg-white mt-3"
+                style={{ minHeight: "calc(100vh - 112px)" }}
+            >
                 {loading && <LoadingState />}
                 {!loading && error && <ErrorState onRetry={load} />}
                 {!loading && !error && items.length === 0 && (
-                    <EmptyState label="Chưa có cuộc họp nào" />
+                    <EmptyState
+                        label="Chưa có cuộc họp nào"
+                        icon={CalendarDays}
+                        tone="primary"
+                    />
                 )}
                 {!loading && !error && (
                     <Box px={4}>

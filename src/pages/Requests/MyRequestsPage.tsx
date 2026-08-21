@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { ClipboardList } from "lucide-react";
 import { Box, Text, useSnackbar } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { Button, TextArea } from "@components/customized";
@@ -157,7 +158,11 @@ const MyRequestsContent: React.FC = () => {
                     <ErrorState onRetry={() => load(1, false)} />
                 )}
                 {!loading && !error && items.length === 0 && (
-                    <EmptyState label="Bạn chưa có nhiệm vụ nào" />
+                    <EmptyState
+                        label="Bạn chưa có nhiệm vụ nào"
+                        icon={ClipboardList}
+                        tone="warning"
+                    />
                 )}
                 {!loading &&
                     !error &&
@@ -167,7 +172,7 @@ const MyRequestsContent: React.FC = () => {
                         return (
                             <Box
                                 key={item._id}
-                                className="bg-white rounded-2xl p-4 shadow-sm mt-3"
+                                className="bg-white rounded-2xl p-4 shadow-card mt-3"
                             >
                                 <Box
                                     flex

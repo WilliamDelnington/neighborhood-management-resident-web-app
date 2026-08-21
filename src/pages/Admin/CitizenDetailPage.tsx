@@ -146,7 +146,7 @@ const CitizenDetailContent: React.FC = () => {
                 {!loading && error && <ErrorState onRetry={load} />}
 
                 {!loading && !error && citizen && form && (
-                    <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                    <Box className="bg-white rounded-2xl p-4 shadow-card">
                         <Text.Title size="small" className="mb-2">
                             {citizen.fullName}
                         </Text.Title>

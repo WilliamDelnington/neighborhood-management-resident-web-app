@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { MapPin } from "lucide-react";
 import { Box, Text } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { EmptyState, ErrorState, LoadingState } from "@components/admin";
@@ -46,14 +47,18 @@ const NeighborhoodInfoContent: React.FC = () => {
                 {loading && <LoadingState />}
                 {!loading && error && <ErrorState onRetry={load} />}
                 {!loading && !error && items.length === 0 && (
-                    <EmptyState label="Chưa xác định được tổ dân phố cho nhà của bạn." />
+                    <EmptyState
+                        label="Chưa xác định được tổ dân phố cho nhà của bạn."
+                        icon={MapPin}
+                        tone="warning"
+                    />
                 )}
                 {!loading &&
                     !error &&
                     items.map(({ neighborhood, coleaders }) => (
                         <Box
                             key={neighborhood._id}
-                            className="bg-white rounded-2xl p-4 shadow-sm mt-3"
+                            className="bg-white rounded-2xl p-4 shadow-card mt-3"
                         >
                             <Text size="small" className="font-medium">
                                 {neighborhood.name}

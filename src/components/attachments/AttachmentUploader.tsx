@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Paperclip } from "lucide-react";
 import { Box, Icon, Text, useSnackbar } from "@components/ui";
 import { LoadingState, EmptyState } from "@components/admin";
 import { pickAndUploadAttachment } from "@service/uploadApi";
@@ -66,7 +67,7 @@ const AttachmentUploader: React.FC<AttachmentUploaderProps> = ({
     };
 
     return (
-        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
             <Box flex justifyContent="space-between" alignItems="center" mb={2}>
                 <Text.Title size="small">Tài liệu đính kèm</Text.Title>
                 {canUpload && (
@@ -86,7 +87,11 @@ const AttachmentUploader: React.FC<AttachmentUploaderProps> = ({
 
             {loading && <LoadingState />}
             {!loading && items.length === 0 && (
-                <EmptyState label="Chưa có tài liệu đính kèm nào" />
+                <EmptyState
+                    label="Chưa có tài liệu đính kèm nào"
+                    icon={Paperclip}
+                    tone="primary"
+                />
             )}
             {!loading &&
                 items.map(item => (

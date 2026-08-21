@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Users } from "lucide-react";
 import { Box, Sheet, Text } from "@components/ui";
 import { Input } from "@components/customized";
 import { LoadingState, EmptyState } from "@components/admin";
@@ -59,7 +60,11 @@ const HouseholdPickerSheet: React.FC<HouseholdPickerSheetProps> = ({
                 <Box mt={3}>
                     {loading && <LoadingState />}
                     {!loading && items.length === 0 && (
-                        <EmptyState label="Không tìm thấy hộ khẩu phù hợp" />
+                        <EmptyState
+                            label="Không tìm thấy hộ khẩu phù hợp"
+                            icon={Users}
+                            tone="info"
+                        />
                     )}
                     {!loading &&
                         items.map(household => (

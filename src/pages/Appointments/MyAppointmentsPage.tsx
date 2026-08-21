@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { CalendarClock } from "lucide-react";
 import { Box, Text, useNavigate } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { Button } from "@components/customized";
@@ -140,14 +141,18 @@ const MyAppointmentsPageContent: React.FC = () => {
                     <ErrorState onRetry={() => load(1, false)} />
                 )}
                 {!loading && !error && filteredItems.length === 0 && (
-                    <EmptyState label="Không có lịch hẹn nào" />
+                    <EmptyState
+                        label="Không có lịch hẹn nào"
+                        icon={CalendarClock}
+                        tone="primary"
+                    />
                 )}
                 {!loading &&
                     !error &&
                     filteredItems.map(item => (
                         <Box
                             key={item._id}
-                            className="bg-white rounded-2xl p-4 shadow-sm mt-3"
+                            className="bg-white rounded-2xl p-4 shadow-card mt-3"
                             onClick={() =>
                                 navigate(`/appointments/${item._id}`, {
                                     animate: true,

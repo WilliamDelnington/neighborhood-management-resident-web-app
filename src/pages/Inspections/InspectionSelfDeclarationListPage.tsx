@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { ClipboardList } from "lucide-react";
 import { Box, Text, useNavigate } from "@components/ui";
 import {
     EmptyState,
@@ -65,7 +66,11 @@ const InspectionSelfDeclarationListContent: React.FC = () => {
                 {loading && <LoadingState label="Đang tải biểu mẫu..." />}
                 {!loading && error && <ErrorState onRetry={load} />}
                 {!loading && !error && items.length === 0 && (
-                    <EmptyState label="Chưa có biểu mẫu tự khai nào" />
+                    <EmptyState
+                        label="Chưa có biểu mẫu tự khai nào"
+                        icon={ClipboardList}
+                        tone="success"
+                    />
                 )}
                 {!loading &&
                     !error &&
@@ -81,7 +86,7 @@ const InspectionSelfDeclarationListContent: React.FC = () => {
                         return (
                             <Box
                                 key={target._id}
-                                className="mb-3 rounded-2xl bg-white p-4 shadow-sm"
+                                className="mb-3 rounded-2xl bg-white p-4 shadow-card"
                             >
                                 <Box
                                     flex

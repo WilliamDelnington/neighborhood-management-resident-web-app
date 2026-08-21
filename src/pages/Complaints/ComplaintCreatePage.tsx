@@ -285,7 +285,32 @@ const ComplaintCreatePageContent: React.FC = () => {
     }
 
     return (
-        <PageLayout id="complaint-create-page" title="Gửi phản ánh">
+        <PageLayout
+            id="complaint-create-page"
+            title="Gửi phản ánh"
+            bottomNav={
+                <Box
+                    style={{
+                        position: "fixed",
+                        left: 0,
+                        right: 0,
+                        bottom: 0,
+                        background: "#fff",
+                        padding: "14px 16px 20px",
+                        boxShadow: "0 -4px 12px -4px rgba(16,24,40,0.10)",
+                        zIndex: 10,
+                    }}
+                >
+                    <Button
+                        fullWidth
+                        loading={submitting}
+                        onClick={handleSubmit}
+                    >
+                        Gửi phản ánh
+                    </Button>
+                </Box>
+            }
+        >
             <Box p={4}>
                 <Text size="xSmall" className="font-medium text-text_1 mb-2">
                     Nhóm phản ánh
@@ -382,7 +407,7 @@ const ComplaintCreatePageContent: React.FC = () => {
                     onSelect={house => setTargetHouse(house)}
                 />
 
-                <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                     <Box
                         flex
                         justifyContent="space-between"
@@ -437,15 +462,7 @@ const ComplaintCreatePageContent: React.FC = () => {
                     ))}
                 </Box>
 
-                <Box mt={6}>
-                    <Button
-                        fullWidth
-                        loading={submitting}
-                        onClick={handleSubmit}
-                    >
-                        Gửi phản ánh
-                    </Button>
-                </Box>
+                <Box style={{ height: 80 }} />
             </Box>
         </PageLayout>
     );

@@ -48,6 +48,7 @@ const HomePage: React.FunctionComponent = () => {
     const hasUnreadMeetingNotification = useStore(
         state => state.hasUnreadMeetingNotification,
     );
+    const unreadCount = useStore(state => state.unreadCount);
     const [announcements, setAnnouncements] = useState<Announcement[]>([]);
     const [loading, setLoading] = useState(true);
     const [news, setNews] = useState<News[]>([]);
@@ -120,9 +121,10 @@ const HomePage: React.FunctionComponent = () => {
             .catch(() => setFeatureConfig(undefined));
     }, []);
 
-    const primaryOwnership = myHouse?.ownerships.find(
-        o => o.active && o.relationshipType === "primary_owner",
-    ) ?? myHouse?.ownerships.find(o => o.active);
+    const primaryOwnership =
+        myHouse?.ownerships.find(
+            o => o.active && o.relationshipType === "primary_owner",
+        ) ?? myHouse?.ownerships.find(o => o.active);
 
     return (
         <PageLayout
@@ -133,6 +135,7 @@ const HomePage: React.FunctionComponent = () => {
             <HomeInfoBanner
                 title={appName}
                 address="Phường Dương Nội, TP Hà Nội"
+                unreadCount={unreadCount}
                 house={
                     myHouse
                         ? {
@@ -151,7 +154,7 @@ const HomePage: React.FunctionComponent = () => {
             />
 
             {dashboard && (
-                <Box className="bg-white mt-2 p-4">
+                <Box className="bg-white mx-4 mt-3 p-4 rounded-2xl shadow-card">
                     <Text.Title size="small" className="mb-3">
                         Việc cần xử lý
                     </Text.Title>
@@ -163,7 +166,7 @@ const HomePage: React.FunctionComponent = () => {
 
             {user && <MyRequestsPreview />}
 
-            <Box className="bg-white mt-2 p-4">
+            <Box className="bg-white mx-4 mt-3 p-4 rounded-2xl shadow-card">
                 <Box
                     flex
                     justifyContent="space-between"
@@ -226,7 +229,7 @@ const HomePage: React.FunctionComponent = () => {
                 ))}
             </Box>
 
-            <Box className="bg-white mt-2 p-4">
+            <Box className="bg-white mx-4 mt-3 p-4 rounded-2xl shadow-card">
                 <Box
                     flex
                     justifyContent="space-between"
@@ -237,9 +240,7 @@ const HomePage: React.FunctionComponent = () => {
                     <Text
                         size="xSmall"
                         className="text-main"
-                        onClick={() =>
-                            navigate("/news", { animate: true })
-                        }
+                        onClick={() => navigate("/news", { animate: true })}
                     >
                         Xem tất cả
                     </Text>
