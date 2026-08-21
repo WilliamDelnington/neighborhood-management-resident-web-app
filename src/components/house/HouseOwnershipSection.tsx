@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Users } from "lucide-react";
 import { Box, Modal, Text, useSnackbar } from "@components/ui";
 import {
     EmptyState,
@@ -122,7 +123,11 @@ const HouseOwnershipSection: React.FC<HouseOwnershipSectionProps> = ({
                 />
             )}
             {!loading && !error && ownerships.length === 0 && (
-                <EmptyState label="Chưa có quan hệ sở hữu nào" />
+                <EmptyState
+                    label="Chưa có quan hệ sở hữu nào"
+                    icon={Users}
+                    tone="info"
+                />
             )}
             {!loading &&
                 !error &&

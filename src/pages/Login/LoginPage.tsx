@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import {
     Box,
+    Icon,
     Text,
     useLocation,
     useNavigate,
@@ -155,39 +156,52 @@ const LoginPage: React.FC = () => {
                     }
                 />
             }
-            bg="#3B82F6"
         >
             <Box
                 flex
                 flexDirection="column"
                 alignItems="center"
-                justifyContent="center"
-                style={{ minHeight: "80vh" }}
-                p={6}
+                style={{
+                    background:
+                        "linear-gradient(160deg, #3B82F6 0%, #2563EB 65%, #1D4ED8 100%)",
+                    borderRadius: "0 0 32px 32px",
+                    paddingTop: 36,
+                    paddingBottom: 56,
+                }}
             >
-                <img src={Logo} alt="Logo" style={{ width: 72, height: 72 }} />
+                <img
+                    src={Logo}
+                    alt="Logo"
+                    style={{
+                        width: 72,
+                        height: 72,
+                        filter: "drop-shadow(0 8px 16px rgba(15,23,42,0.25))",
+                    }}
+                />
                 <Text.Title
                     size="large"
                     className="text-white mt-4 text-center"
                 >
                     {APP_NAME_DEFAULT}
                 </Text.Title>
-                <Text size="small" className="text-wth_a70 mb-8 text-center">
+                <Text size="small" className="text-wth_a70 text-center">
                     Phường Dương Nội, Hà Nội
                 </Text>
+            </Box>
 
+            <Box p={6} style={{ marginTop: -40 }}>
                 {!token && bootstrapError && (
                     <Text
                         size="xSmall"
-                        className="text-red-100 mt-3 text-center"
+                        className="text-red-500 mb-3 text-center"
                     >
                         {bootstrapError}
                     </Text>
                 )}
 
                 {!token && (
-                    <Box className="bg-white rounded-2xl p-4 w-full mt-6">
-                        <Text.Title size="small">
+                    <Box className="bg-white rounded-3xl shadow-card p-5 w-full">
+                        <Text.Title size="small" className="mb-4">
                             {phoneAuthMode === "register"
                                 ? "Đăng ký tài khoản"
                                 : "Đăng nhập bằng số điện thoại"}
@@ -245,6 +259,25 @@ const LoginPage: React.FC = () => {
                             </Button>
                         </Box>
 
+                        <Box
+                            flex
+                            alignItems="center"
+                            mt={4}
+                            style={{ gap: 10 }}
+                        >
+                            <Box
+                                style={{ flex: 1, height: 1 }}
+                                className="bg-divider_01"
+                            />
+                            <Text size="xxSmall" className="text-text_3">
+                                hoặc
+                            </Text>
+                            <Box
+                                style={{ flex: 1, height: 1 }}
+                                className="bg-divider_01"
+                            />
+                        </Box>
+
                         <Box mt={3}>
                             <Button
                                 fullWidth
@@ -280,14 +313,26 @@ const LoginPage: React.FC = () => {
                 )}
 
                 {import.meta.env.DEV && !token && (
-                    <Box className="bg-white/10 rounded-2xl p-4 w-full mt-6">
-                        <Text
-                            size="xSmall"
-                            className="text-white font-medium mb-2"
-                        >
-                            Tài khoản thử nghiệm (chỉ hiện khi dev)
-                        </Text>
-                        <Text size="xxSmall" className="text-wth_a70 mb-3">
+                    <Box
+                        className="bg-amber-50 rounded-2xl p-4 w-full mt-4"
+                        style={{
+                            border: "1.5px dashed #FBBF24",
+                        }}
+                    >
+                        <Box flex alignItems="center" style={{ gap: 6 }} mb={2}>
+                            <Icon
+                                icon="zi-warning-solid"
+                                size={15}
+                                className="text-amber-600"
+                            />
+                            <Text
+                                size="xSmall"
+                                className="text-amber-800 font-semibold"
+                            >
+                                Tài khoản thử nghiệm (chỉ hiện khi dev)
+                            </Text>
+                        </Box>
+                        <Text size="xxSmall" className="text-amber-700 mb-3">
                             Dùng để kiểm tra giao diện theo từng vai trò mà
                             không cần nhiều tài khoản Zalo thật. Yêu cầu đã chạy
                             `npm run seed` ở backend-app.
@@ -305,7 +350,7 @@ const LoginPage: React.FC = () => {
                                             account.name,
                                         )
                                     }
-                                    className="!bg-white/90 !text-main"
+                                    className="!bg-white !text-text_1 !border !border-amber-200"
                                 >
                                     {ROLE_LABEL[account.role]} — {account.name}
                                 </Button>

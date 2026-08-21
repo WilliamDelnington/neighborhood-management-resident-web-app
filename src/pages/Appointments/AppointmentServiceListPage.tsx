@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { CalendarClock } from "lucide-react";
 import { Box, Icon, Text, useNavigate } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { EmptyState, ErrorState, LoadingState } from "@components/admin";
@@ -58,7 +59,11 @@ const AppointmentServiceListPage: React.FC = () => {
                 {loading && <LoadingState />}
                 {!loading && error && <ErrorState onRetry={load} />}
                 {!loading && !error && items.length === 0 && (
-                    <EmptyState label="Hiện chưa có dịch vụ đặt lịch hẹn nào" />
+                    <EmptyState
+                        label="Hiện chưa có dịch vụ đặt lịch hẹn nào"
+                        icon={CalendarClock}
+                        tone="primary"
+                    />
                 )}
                 {!loading &&
                     !error &&

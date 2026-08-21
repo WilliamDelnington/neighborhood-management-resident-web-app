@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Home } from "lucide-react";
 import { Box, Text, useNavigate, useSnackbar } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { Button, TextArea, Input } from "@components/customized";
@@ -138,7 +139,11 @@ const MyHouseContent: React.FC = () => {
                 {loading && <LoadingState />}
                 {!loading && error && <ErrorState onRetry={load} />}
                 {!loading && !error && items.length === 0 && (
-                    <EmptyState label="Bạn chưa liên kết với nhà số nào. Vui lòng liên hệ Tổ dân phố để được hỗ trợ." />
+                    <EmptyState
+                        label="Bạn chưa liên kết với nhà số nào. Vui lòng liên hệ Tổ dân phố để được hỗ trợ."
+                        icon={Home}
+                        tone="primary"
+                    />
                 )}
                 {!loading &&
                     !error &&

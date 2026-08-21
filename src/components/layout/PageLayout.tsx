@@ -25,7 +25,7 @@ const StyledPage = styled(Page)`
             return "";
         }
         return {
-            backgroundColor: $bg,
+            background: $bg,
         };
     }}
 `;

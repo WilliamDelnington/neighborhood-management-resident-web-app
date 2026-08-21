@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { ClipboardCheck } from "lucide-react";
 import { Box, Text, useNavigate } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { RequireAuth, hasPermission } from "@components/role";
@@ -60,7 +61,11 @@ const InspectionCampaignListContent: React.FC = () => {
                 {loading && <LoadingState label="Đang tải chiến dịch..." />}
                 {!loading && error && <ErrorState onRetry={load} />}
                 {!loading && !error && items.length === 0 && (
-                    <EmptyState label="Chưa có chiến dịch được giao" />
+                    <EmptyState
+                        label="Chưa có chiến dịch được giao"
+                        icon={ClipboardCheck}
+                        tone="success"
+                    />
                 )}
                 {!loading &&
                     !error &&

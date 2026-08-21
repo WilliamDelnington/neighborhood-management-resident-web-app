@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Tags } from "lucide-react";
 import { Box, Icon, Sheet, Text, useSnackbar } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { Button, Input } from "@components/customized";
@@ -204,7 +205,11 @@ const BusinessTypeListContent: React.FC = () => {
                         <ErrorState onRetry={() => load(1, search, false)} />
                     )}
                     {!loading && !error && items.length === 0 && (
-                        <EmptyState label="Chưa có loại hình kinh doanh nào" />
+                        <EmptyState
+                            label="Chưa có loại hình kinh doanh nào"
+                            icon={Tags}
+                            tone="warning"
+                        />
                     )}
                     {!loading && !error && items.length > 0 && (
                         <Box px={4}>

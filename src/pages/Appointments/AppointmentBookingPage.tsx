@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { CalendarX, Home } from "lucide-react";
 import {
     Box,
     DatePicker,
@@ -514,7 +515,11 @@ const AppointmentBookingPageContent: React.FC = () => {
                                     {ownHousesLoading && <LoadingState />}
                                     {!ownHousesLoading &&
                                         verifiedOwnHouses.length === 0 && (
-                                            <EmptyState label="Bạn chưa có nhà số nào đã xác thực để đặt lịch hẹn. Vui lòng liên hệ Tổ dân phố để được hỗ trợ." />
+                                            <EmptyState
+                                                label="Bạn chưa có nhà số nào đã xác thực để đặt lịch hẹn. Vui lòng liên hệ Tổ dân phố để được hỗ trợ."
+                                                icon={Home}
+                                                tone="primary"
+                                            />
                                         )}
                                     {!ownHousesLoading &&
                                         verifiedOwnHouses.length > 0 &&
@@ -583,7 +588,11 @@ const AppointmentBookingPageContent: React.FC = () => {
                                 !slotsLoading &&
                                 !slotsError &&
                                 slots.length === 0 && (
-                                    <EmptyState label="Không có khung giờ nào cho ngày này" />
+                                    <EmptyState
+                                        label="Không có khung giờ nào cho ngày này"
+                                        icon={CalendarX}
+                                        tone="primary"
+                                    />
                                 )}
                             {date &&
                                 !slotsLoading &&

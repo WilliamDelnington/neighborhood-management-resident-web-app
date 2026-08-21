@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { BellOff } from "lucide-react";
 import { Box, Tabs, Text, useLocation, useNavigate } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button } from "@components/customized";
@@ -202,7 +203,19 @@ const PersonalNotificationsTab: React.FC = () => {
             {loading && <LoadingState />}
             {!loading && error && <ErrorState onRetry={load} />}
             {!loading && !error && items.length === 0 && (
-                <EmptyState label="Bạn chưa có thông báo nào" />
+                <Box
+                    flex
+                    flexDirection="column"
+                    alignItems="center"
+                    justifyContent="center"
+                    style={{ minHeight: "60vh" }}
+                >
+                    <EmptyState
+                        label="Bạn chưa có thông báo nào"
+                        icon={BellOff}
+                        tone="primary"
+                    />
+                </Box>
             )}
             {!loading && !error && (
                 <Box px={4}>

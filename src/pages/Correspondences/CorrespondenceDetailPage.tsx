@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { MessageSquare, Paperclip } from "lucide-react";
 import { Box, Text, useParams, useSnackbar } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button, TextArea } from "@components/customized";
@@ -143,7 +144,11 @@ const CorrespondenceDetailContent: React.FC = () => {
                                 Tệp đính kèm
                             </Text.Title>
                             {attachments.length === 0 && (
-                                <EmptyState label="Không có file đính kèm" />
+                                <EmptyState
+                                    label="Không có file đính kèm"
+                                    icon={Paperclip}
+                                    tone="primary"
+                                />
                             )}
                             {attachments.map(a => (
                                 <Box
@@ -164,7 +169,11 @@ const CorrespondenceDetailContent: React.FC = () => {
                                 Phản hồi
                             </Text.Title>
                             {replies.length === 0 && (
-                                <EmptyState label="Chưa có phản hồi nào" />
+                                <EmptyState
+                                    label="Chưa có phản hồi nào"
+                                    icon={MessageSquare}
+                                    tone="info"
+                                />
                             )}
                             {replies.map(r => {
                                 const actor =

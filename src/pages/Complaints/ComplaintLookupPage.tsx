@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { MessageSquareWarning } from "lucide-react";
 import { Box, Icon, Text, useNavigate } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { Button, Input } from "@components/customized";
@@ -129,7 +130,11 @@ const ComplaintLookupPage: React.FC = () => {
                         {!myLoading &&
                             !myError &&
                             myComplaints.length === 0 && (
-                                <EmptyState label="Bạn chưa gửi phản ánh nào" />
+                                <EmptyState
+                                    label="Bạn chưa gửi phản ánh nào"
+                                    icon={MessageSquareWarning}
+                                    tone="danger"
+                                />
                             )}
                         {!myLoading &&
                             !myError &&

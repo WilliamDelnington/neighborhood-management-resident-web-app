@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { FileEdit } from "lucide-react";
 import { Box, Text, useSnackbar } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { Button } from "@components/customized";
@@ -125,7 +126,11 @@ const MyChangeRequestsContent: React.FC = () => {
                     <ErrorState onRetry={() => load(1, false)} />
                 )}
                 {!loading && !error && items.length === 0 && (
-                    <EmptyState label="Bạn chưa gửi yêu cầu thay đổi thông tin nào" />
+                    <EmptyState
+                        label="Bạn chưa gửi yêu cầu thay đổi thông tin nào"
+                        icon={FileEdit}
+                        tone="warning"
+                    />
                 )}
                 {!loading &&
                     !error &&

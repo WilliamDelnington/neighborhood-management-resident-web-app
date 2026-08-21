@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { SearchX } from "lucide-react";
 import { Box, Text, useNavigate, useParams } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { RequireAuth, hasPermission } from "@components/role";
@@ -153,7 +154,11 @@ const InspectionCampaignDetailContent: React.FC = () => {
                         </Box>
                         <Box mt={3}>
                             {targets.length === 0 && (
-                                <EmptyState label="Không có Nhà số phù hợp" />
+                                <EmptyState
+                                    label="Không có Nhà số phù hợp"
+                                    icon={SearchX}
+                                    tone="success"
+                                />
                             )}
                             {targets.map(target => {
                                 const house =

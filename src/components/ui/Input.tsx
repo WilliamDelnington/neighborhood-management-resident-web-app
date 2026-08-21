@@ -13,7 +13,7 @@ export interface InputProps extends InputHTMLAttributes<HTMLInputElement> {
 }
 
 const inputClass =
-    "w-full rounded-xl border border-transparent bg-ng_10 px-3 py-3 text-[15px] text-text_1 placeholder:text-text_3 transition-colors focus:outline-none focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100";
+    "w-full rounded-xl border border-ng_20 bg-ng_10 px-3 py-3 text-[15px] text-text_1 placeholder:text-text_3 transition-colors focus:outline-none focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100";
 
 const errorInputClass =
     "border-red-400 bg-red-50 focus:border-red-500 focus:ring-red-100";

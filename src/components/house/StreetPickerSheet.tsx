@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { MapPin } from "lucide-react";
 import { Box, Sheet, Text } from "@components/ui";
 import { Input } from "@components/customized";
 import { LoadingState, EmptyState } from "@components/admin";
@@ -56,7 +57,11 @@ const StreetPickerSheet: React.FC<StreetPickerSheetProps> = ({
                 <Box mt={3}>
                     {loading && <LoadingState />}
                     {!loading && items.length === 0 && (
-                        <EmptyState label="Chưa có đường/phố nào" />
+                        <EmptyState
+                            label="Chưa có đường/phố nào"
+                            icon={MapPin}
+                            tone="primary"
+                        />
                     )}
                     {!loading &&
                         items.map(street => (

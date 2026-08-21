@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { SearchX } from "lucide-react";
 import { Box, Text, useNavigate, useSnackbar } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button, Checkbox, Input, TextArea } from "@components/customized";
@@ -175,7 +176,11 @@ const CorrespondenceComposeContent: React.FC = () => {
                                 {loadingReceivers && <LoadingState />}
                                 {!loadingReceivers &&
                                     visibleReceivers.length === 0 && (
-                                        <EmptyState label="Không tìm thấy người nhận phù hợp" />
+                                        <EmptyState
+                                            label="Không tìm thấy người nhận phù hợp"
+                                            icon={SearchX}
+                                            tone="info"
+                                        />
                                     )}
                                 {!loadingReceivers &&
                                     visibleReceivers.map(r => (

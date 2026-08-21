@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Newspaper } from "lucide-react";
 import { Box, useNavigate } from "@components/ui";
 import {
     EmptyState,
@@ -29,11 +30,15 @@ const NewsListView: React.FC = () => {
     useEffect(load, []);
 
     return (
-        <Box className="bg-white mt-2">
+        <Box className="bg-white mt-2" style={{ minHeight: "60vh" }}>
             {loading && <LoadingState />}
             {!loading && error && <ErrorState onRetry={load} />}
             {!loading && !error && items.length === 0 && (
-                <EmptyState label="Chưa có tin tức nào" />
+                <EmptyState
+                    label="Chưa có tin tức nào"
+                    icon={Newspaper}
+                    tone="primary"
+                />
             )}
             {!loading && !error && (
                 <Box px={4}>

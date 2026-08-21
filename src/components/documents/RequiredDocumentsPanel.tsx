@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { FileText } from "lucide-react";
 import {
     Box,
     DatePicker,
@@ -234,7 +235,7 @@ const RequiredDocumentsPanel: React.FC<RequiredDocumentsPanelProps> = ({
             {loading && <LoadingState />}
             {!loading && error && <ErrorState label={error} onRetry={load} />}
             {!loading && !error && items.length === 0 && (
-                <EmptyState label={emptyLabel} />
+                <EmptyState label={emptyLabel} icon={FileText} tone="primary" />
             )}
             {!loading && !error && items.length > 0 && (
                 <Box

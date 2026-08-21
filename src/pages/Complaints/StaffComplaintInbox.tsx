@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { MessageSquareWarning } from "lucide-react";
 import { Box, Text, useNavigate } from "@components/ui";
 import { Button } from "@components/customized";
 import {
@@ -68,7 +69,11 @@ const StaffComplaintInbox: React.FC = () => {
             {loading && <LoadingState />}
             {!loading && error && <ErrorState onRetry={() => load(1, false)} />}
             {!loading && !error && items.length === 0 && (
-                <EmptyState label="Chưa có phản ánh nào trong phạm vi của bạn" />
+                <EmptyState
+                    label="Chưa có phản ánh nào trong phạm vi của bạn"
+                    icon={MessageSquareWarning}
+                    tone="danger"
+                />
             )}
             {!loading && !error && items.length > 0 && (
                 <>

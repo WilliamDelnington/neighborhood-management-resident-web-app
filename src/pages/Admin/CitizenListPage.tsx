@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Users } from "lucide-react";
 import {
     Box,
     Icon,
@@ -173,7 +174,11 @@ const CitizenListContent: React.FC = () => {
                         <ErrorState onRetry={() => load(1, search, false)} />
                     )}
                     {!loading && !error && items.length === 0 && (
-                        <EmptyState label="Không tìm thấy nhân khẩu nào" />
+                        <EmptyState
+                            label="Không tìm thấy nhân khẩu nào"
+                            icon={Users}
+                            tone="info"
+                        />
                     )}
                     {!loading && !error && items.length > 0 && (
                         <Box px={4}>

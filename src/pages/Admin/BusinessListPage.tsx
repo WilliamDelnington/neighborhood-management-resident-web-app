@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Store } from "lucide-react";
 import {
     Box,
     Icon,
@@ -178,7 +179,11 @@ const BusinessListContent: React.FC = () => {
                         <ErrorState onRetry={() => load(1, search, false)} />
                     )}
                     {!loading && !error && items.length === 0 && (
-                        <EmptyState label="Không tìm thấy hộ kinh doanh nào" />
+                        <EmptyState
+                            label="Không tìm thấy hộ kinh doanh nào"
+                            icon={Store}
+                            tone="warning"
+                        />
                     )}
                     {!loading && !error && items.length > 0 && (
                         <Box px={4}>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Home } from "lucide-react";
 import {
     Box,
     Icon,
@@ -153,7 +154,11 @@ const HouseListContent: React.FC = () => {
                         <ErrorState onRetry={() => load(1, search, false)} />
                     )}
                     {!loading && !error && items.length === 0 && (
-                        <EmptyState label="Không tìm thấy nhà số nào" />
+                        <EmptyState
+                            label="Không tìm thấy nhà số nào"
+                            icon={Home}
+                            tone="primary"
+                        />
                     )}
                     {!loading && !error && items.length > 0 && (
                         <Box px={4}>

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Users } from "lucide-react";
 import {
     Box,
     Modal,
@@ -540,7 +541,11 @@ const HouseholdDetailContent: React.FC = () => {
                                 </Box>
                                 {citizensLoading && <LoadingState />}
                                 {!citizensLoading && citizens.length === 0 && (
-                                    <EmptyState label="Chưa có nhân khẩu nào trong hộ" />
+                                    <EmptyState
+                                        label="Chưa có nhân khẩu nào trong hộ"
+                                        icon={Users}
+                                        tone="info"
+                                    />
                                 )}
                                 {!citizensLoading &&
                                     citizens.map(c => (

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Home } from "lucide-react";
 import { Box, Sheet, Text } from "@components/ui";
 import { Input } from "@components/customized";
 import { LoadingState, EmptyState } from "@components/admin";
@@ -56,7 +57,11 @@ const HouseTargetPickerSheet: React.FC<HouseTargetPickerSheetProps> = ({
                 <Box mt={3}>
                     {loading && <LoadingState />}
                     {!loading && items.length === 0 && (
-                        <EmptyState label="Không tìm thấy nhà số phù hợp" />
+                        <EmptyState
+                            label="Không tìm thấy nhà số phù hợp"
+                            icon={Home}
+                            tone="primary"
+                        />
                     )}
                     {!loading &&
                         items.map(house => (

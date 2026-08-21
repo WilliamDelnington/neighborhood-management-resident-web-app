@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useRef, useState } from "react";
+import { ClipboardList } from "lucide-react";
 import { Box, Text, useNavigate, useParams, useSnackbar } from "@components/ui";
 import {
     EmptyState,
@@ -139,7 +140,11 @@ const InspectionSelfDeclarationContent: React.FC = () => {
     if (!detail)
         return (
             <PageLayout id="self-declaration-empty" title="Biểu mẫu tự khai">
-                <EmptyState label="Không tìm thấy biểu mẫu" />
+                <EmptyState
+                    label="Không tìm thấy biểu mẫu"
+                    icon={ClipboardList}
+                    tone="success"
+                />
             </PageLayout>
         );
 

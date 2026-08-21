@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Mail } from "lucide-react";
 import { Box, Sheet, Text } from "@components/ui";
 import { LoadingState, EmptyState } from "@components/admin";
 import { fetchEligibleSenderCorrespondenceTypes } from "@service/correspondenceTypeApi";
@@ -36,7 +37,11 @@ const CorrespondenceTypePickerSheet: React.FC<
             <Box p={4} style={{ maxHeight: "70vh", overflowY: "auto" }}>
                 {loading && <LoadingState />}
                 {!loading && items.length === 0 && (
-                    <EmptyState label="Bạn chưa được phép gửi loại văn bản nào" />
+                    <EmptyState
+                        label="Bạn chưa được phép gửi loại văn bản nào"
+                        icon={Mail}
+                        tone="warning"
+                    />
                 )}
                 {!loading &&
                     items.map(type => (

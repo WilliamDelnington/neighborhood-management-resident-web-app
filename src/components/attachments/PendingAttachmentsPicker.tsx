@@ -1,4 +1,5 @@
 import React from "react";
+import { Paperclip } from "lucide-react";
 import { Box, Icon, Text } from "@components/ui";
 import { EmptyState } from "@components/admin";
 import { pickLocalFile } from "@service/uploadApi";
@@ -47,7 +48,11 @@ const PendingAttachmentsPicker: React.FC<PendingAttachmentsPickerProps> = ({
             </Box>
 
             {files.length === 0 && (
-                <EmptyState label="Chưa chọn tài liệu nào" />
+                <EmptyState
+                    label="Chưa chọn tài liệu nào"
+                    icon={Paperclip}
+                    tone="primary"
+                />
             )}
             {files.map((file, index) => (
                 <Box

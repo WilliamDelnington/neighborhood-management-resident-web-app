@@ -1,4 +1,5 @@
 import React, { useEffect, useMemo, useState } from "react";
+import { CalendarX } from "lucide-react";
 import {
     Box,
     DatePicker,
@@ -556,7 +557,11 @@ const AppointmentDetailPageContent: React.FC = () => {
                                                 !rescheduleSlotsError &&
                                                 rescheduleSlots.length ===
                                                     0 && (
-                                                    <EmptyState label="Không có khung giờ nào cho ngày này" />
+                                                    <EmptyState
+                                                        label="Không có khung giờ nào cho ngày này"
+                                                        icon={CalendarX}
+                                                        tone="primary"
+                                                    />
                                                 )}
                                             {rescheduleDate &&
                                                 !rescheduleSlotsLoading &&

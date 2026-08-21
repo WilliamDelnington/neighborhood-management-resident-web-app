@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import { Home } from "lucide-react";
 import { Box, Sheet, Text } from "@components/ui";
 import { Input } from "@components/customized";
 import { LoadingState, EmptyState } from "@components/admin";
@@ -66,6 +67,8 @@ const HousePickerSheet: React.FC<HousePickerSheetProps> = ({
                                     ? "Bạn chưa có nhà số nào ở trạng thái phù hợp (chưa bị từ chối hoặc bị khóa)"
                                     : "Không tìm thấy nhà số phù hợp"
                             }
+                            icon={Home}
+                            tone="primary"
                         />
                     )}
                     {!loading &&
