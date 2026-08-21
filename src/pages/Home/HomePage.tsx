@@ -153,6 +153,8 @@ const HomePage: React.FunctionComponent = () => {
                 }
             />
 
+            <FeaturesCard features={features} />
+
             {dashboard && (
                 <Box className="bg-white mx-4 mt-3 p-4 rounded-2xl shadow-card">
                     <Text.Title size="small" className="mb-3">
@@ -161,8 +163,6 @@ const HomePage: React.FunctionComponent = () => {
                     <TaskSummaryGrid dashboard={dashboard} />
                 </Box>
             )}
-
-            <FeaturesCard features={features} />
 
             {user && <MyRequestsPreview />}
 

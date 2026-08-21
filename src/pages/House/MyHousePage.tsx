@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Home } from "lucide-react";
-import { Box, Text, useNavigate, useSnackbar } from "@components/ui";
+import { Box, Icon, Text, useNavigate, useSnackbar } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { Button, TextArea, Input } from "@components/customized";
 import {
@@ -163,11 +163,12 @@ const MyHouseContent: React.FC = () => {
                                     flex
                                     justifyContent="space-between"
                                     alignItems="flex-start"
+                                    style={{ gap: 12 }}
                                 >
-                                    <Box>
+                                    <Box style={{ flex: 1, minWidth: 0 }}>
                                         <Text
                                             size="small"
-                                            className="font-medium"
+                                            className="font-semibold"
                                         >
                                             {house.code} — {house.address}
                                         </Text>
@@ -178,10 +179,16 @@ const MyHouseContent: React.FC = () => {
                                             Cụm/khu: {house.cluster}
                                         </Text>
                                     </Box>
-                                    <StatusBadge
-                                        label={HOUSE_STATUS_LABEL[house.status]}
-                                        tone={HOUSE_STATUS_TONE[house.status]}
-                                    />
+                                    <Box style={{ flexShrink: 0 }}>
+                                        <StatusBadge
+                                            label={
+                                                HOUSE_STATUS_LABEL[house.status]
+                                            }
+                                            tone={
+                                                HOUSE_STATUS_TONE[house.status]
+                                            }
+                                        />
+                                    </Box>
                                 </Box>
 
                                 {house.status === "needs_update" &&
@@ -203,37 +210,98 @@ const MyHouseContent: React.FC = () => {
                                         </Text>
                                     )}
 
-                                {neighborhood && (
-                                    <Text
-                                        size="xSmall"
-                                        className="text-main mt-2"
-                                        onClick={() =>
-                                            navigate("/neighborhood/mine")
-                                        }
+                                {(neighborhood ||
+                                    house.usageTypes?.length > 0) && (
+                                    <Box
+                                        mt={3}
+                                        className="border-t border-divider_01"
                                     >
-                                        Tổ dân phố: {neighborhood.name}
-                                        {neighborhood.contactPhone
-                                            ? ` · ĐT: ${neighborhood.contactPhone}`
-                                            : ""}
-                                    </Text>
-                                )}
+                                        {neighborhood && (
+                                            <Box
+                                                flex
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                                py={2}
+                                                style={{ gap: 12 }}
+                                                className="border-b border-divider_01 last:border-0"
+                                                onClick={() =>
+                                                    navigate(
+                                                        "/neighborhood/mine",
+                                                    )
+                                                }
+                                            >
+                                                <Text
+                                                    size="xxSmall"
+                                                    className="text-text_2"
+                                                >
+                                                    Tổ dân phố
+                                                </Text>
+                                                <Box
+                                                    flex
+                                                    alignItems="center"
+                                                    style={{
+                                                        gap: 4,
+                                                        minWidth: 0,
+                                                    }}
+                                                >
+                                                    <Text
+                                                        size="xxSmall"
+                                                        className="font-medium text-right truncate"
+                                                    >
+                                                        {neighborhood.name}
+                                                        {neighborhood.contactPhone
+                                                            ? ` · ĐT: ${neighborhood.contactPhone}`
+                                                            : ""}
+                                                    </Text>
+                                                    <Icon
+                                                        icon="zi-chevron-right"
+                                                        size={14}
+                                                        className="text-text_3"
+                                                        style={{
+                                                            flexShrink: 0,
+                                                        }}
+                                                    />
+                                                </Box>
+                                            </Box>
+                                        )}
 
-                                {house.usageTypes?.length > 0 && (
-                                    <Text
-                                        size="xxSmall"
-                                        className="text-text_2 mt-1"
-                                    >
-                                        Mục đích sử dụng:{" "}
-                                        {house.usageTypes
-                                            .map(t => HOUSE_USAGE_TYPE_LABEL[t])
-                                            .join(", ")}
-                                    </Text>
+                                        {house.usageTypes?.length > 0 && (
+                                            <Box
+                                                flex
+                                                justifyContent="space-between"
+                                                alignItems="center"
+                                                py={2}
+                                                style={{ gap: 12 }}
+                                                className="border-b border-divider_01 last:border-0"
+                                            >
+                                                <Text
+                                                    size="xxSmall"
+                                                    className="text-text_2"
+                                                >
+                                                    Mục đích sử dụng
+                                                </Text>
+                                                <Text
+                                                    size="xxSmall"
+                                                    className="font-medium text-right"
+                                                >
+                                                    {house.usageTypes
+                                                        .map(
+                                                            t =>
+                                                                HOUSE_USAGE_TYPE_LABEL[
+                                                                    t
+                                                                ],
+                                                        )
+                                                        .join(", ")}
+                                                </Text>
+                                            </Box>
+                                        )}
+                                    </Box>
                                 )}
 
                                 {/* Nguoi lien ket */}
                                 <Text
                                     size="xSmall"
-                                    className="font-medium mt-3"
+                                    className="font-semibold mt-4"
                                 >
                                     Người liên kết với nhà này
                                 </Text>
@@ -247,19 +315,21 @@ const MyHouseContent: React.FC = () => {
                                         return (
                                             <Box
                                                 key={o._id}
-                                                flex
-                                                justifyContent="space-between"
-                                                alignItems="center"
-                                                className="mt-2"
+                                                className="mt-2.5 border-b border-divider_01 pb-2.5 last:border-0 last:pb-0"
                                             >
-                                                <Box>
-                                                    <Text size="xSmall">
-                                                        {o.ownerDisplayName ||
-                                                            "—"}
-                                                        {o.ownerPhone
-                                                            ? ` (${o.ownerPhone})`
-                                                            : ""}
-                                                    </Text>
+                                                <Text size="xSmall">
+                                                    {o.ownerDisplayName || "—"}
+                                                    {o.ownerPhone
+                                                        ? ` (${o.ownerPhone})`
+                                                        : ""}
+                                                </Text>
+                                                <Box
+                                                    flex
+                                                    justifyContent="space-between"
+                                                    alignItems="center"
+                                                    style={{ gap: 12 }}
+                                                    className="mt-1"
+                                                >
                                                     <Text
                                                         size="xxSmall"
                                                         className="text-text_2"
@@ -278,22 +348,26 @@ const MyHouseContent: React.FC = () => {
                                                             ]
                                                         }
                                                     </Text>
+                                                    {isSelf && (
+                                                        <Button
+                                                            size="small"
+                                                            variant="secondary"
+                                                            className="whitespace-nowrap"
+                                                            style={{
+                                                                flexShrink: 0,
+                                                            }}
+                                                            loading={
+                                                                unlinkingId ===
+                                                                o._id
+                                                            }
+                                                            onClick={() =>
+                                                                handleUnlink(o)
+                                                            }
+                                                        >
+                                                            Hủy liên kết
+                                                        </Button>
+                                                    )}
                                                 </Box>
-                                                {isSelf && (
-                                                    <Button
-                                                        size="small"
-                                                        variant="secondary"
-                                                        loading={
-                                                            unlinkingId ===
-                                                            o._id
-                                                        }
-                                                        onClick={() =>
-                                                            handleUnlink(o)
-                                                        }
-                                                    >
-                                                        Hủy liên kết
-                                                    </Button>
-                                                )}
                                             </Box>
                                         );
                                     })}
@@ -303,7 +377,7 @@ const MyHouseContent: React.FC = () => {
                                     <>
                                         <Text
                                             size="xSmall"
-                                            className="font-medium mt-3"
+                                            className="font-semibold mt-4"
                                         >
                                             Đơn vị đang sử dụng nhà
                                         </Text>
