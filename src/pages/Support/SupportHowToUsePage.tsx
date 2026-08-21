@@ -67,7 +67,7 @@ const SupportHowToUsePageContent: React.FC = () => {
                     return (
                         <Box
                             key={guide.key}
-                            className="bg-white rounded-2xl p-4 shadow-sm mt-3 first:mt-0"
+                            className="bg-white rounded-2xl p-4 shadow-card mt-3 first:mt-0"
                         >
                             <Box
                                 flex

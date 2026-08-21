@@ -623,7 +623,7 @@ const HouseDetailContent: React.FC = () => {
 
                 {!loading && !error && house && form && (
                     <>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Box
                                 flex
                                 justifyContent="space-between"
@@ -813,7 +813,7 @@ const HouseDetailContent: React.FC = () => {
                         />
 
                         {canViewHouseholds && (
-                            <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                            <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                                 <Box
                                     flex
                                     justifyContent="space-between"
@@ -876,7 +876,7 @@ const HouseDetailContent: React.FC = () => {
                         )}
 
                         {canViewBusinesses && (
-                            <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                            <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                                 <Box
                                     flex
                                     justifyContent="space-between"
@@ -938,7 +938,7 @@ const HouseDetailContent: React.FC = () => {
                         )}
 
                         {canViewCompanies && (
-                            <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                            <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                                 <Box
                                     flex
                                     justifyContent="space-between"

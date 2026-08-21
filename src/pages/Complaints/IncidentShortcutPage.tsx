@@ -93,7 +93,7 @@ const IncidentShortcutPage: React.FC = () => {
                             alignItems="center"
                             justifyContent="center"
                             p={4}
-                            className="bg-white rounded-2xl shadow-sm"
+                            className="bg-white rounded-2xl shadow-card"
                             onClick={() =>
                                 navigate("/complaints/create", {
                                     animate: true,

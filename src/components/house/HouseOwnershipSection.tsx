@@ -98,7 +98,7 @@ const HouseOwnershipSection: React.FC<HouseOwnershipSectionProps> = ({
     };
 
     return (
-        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
             <Box flex justifyContent="space-between" alignItems="center" mb={2}>
                 <Text.Title size="small">
                     Chủ sở hữu &amp; người quản lý

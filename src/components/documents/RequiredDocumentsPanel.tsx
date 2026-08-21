@@ -226,7 +226,7 @@ const RequiredDocumentsPanel: React.FC<RequiredDocumentsPanelProps> = ({
     };
 
     return (
-        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
             <Text.Title size="small" className="mb-2">
                 Hồ sơ giấy tờ theo yêu cầu
             </Text.Title>

@@ -33,7 +33,7 @@ const BottomNavigation: FC<BottomNavigationProps> & {
         <div
             id={id}
             className={clsx(
-                "flex flex-row border-t border-divider_01 bg-white",
+                "flex flex-row border-t border-divider_01 bg-white shadow-[0_-1px_4px_rgba(16,24,40,0.04)]",
                 fixed && "fixed bottom-0 left-0 w-full",
                 className,
             )}
@@ -50,8 +50,10 @@ const BottomNavigation: FC<BottomNavigationProps> & {
                             else if (linkTo) navigate(linkTo);
                         }}
                         className={clsx(
-                            "flex flex-1 flex-col items-center gap-0.5 py-2 text-[12px]",
-                            isActive ? "text-main" : "text-text_2",
+                            "flex flex-1 flex-col items-center gap-0.5 py-2 text-[12px] transition-colors",
+                            isActive
+                                ? "text-primary-600 font-medium"
+                                : "text-text_2",
                         )}
                     >
                         {icon}

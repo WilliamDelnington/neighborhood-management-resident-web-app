@@ -104,7 +104,7 @@ const CorrespondenceListContent: React.FC = () => {
                     <EmptyState label="Chưa có văn bản nào" />
                 )}
                 {!loading && !error && items.length > 0 && (
-                    <Box className="bg-white rounded-2xl p-2 shadow-sm">
+                    <Box className="bg-white rounded-2xl p-2 shadow-card">
                         {items.map(item => (
                             <ListRow
                                 key={item._id}

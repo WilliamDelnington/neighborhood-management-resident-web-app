@@ -108,7 +108,7 @@ const CorrespondenceComposeContent: React.FC = () => {
         <PageLayout id="correspondence-compose-page" title="Soạn văn bản">
             <Box p={4}>
                 <Box
-                    className="bg-white rounded-2xl p-4 shadow-sm"
+                    className="bg-white rounded-2xl p-4 shadow-card"
                     onClick={() => setTypePickerVisible(true)}
                 >
                     <Text size="xSmall" className="text-text_2">
@@ -120,7 +120,7 @@ const CorrespondenceComposeContent: React.FC = () => {
                 </Box>
 
                 {selectedType && (
-                    <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                    <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                         {selectedType.requireDocumentNumber && (
                             <Box mb={3}>
                                 <Input

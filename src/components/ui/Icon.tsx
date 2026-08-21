@@ -16,6 +16,9 @@ import {
     Home,
     Settings,
     User,
+    HelpCircle,
+    ClipboardList,
+    Pencil,
     LucideProps,
 } from "lucide-react";
 
@@ -38,6 +41,9 @@ const ICON_MAP: Record<string, FC<LucideProps>> = {
     "zi-home": Home,
     "zi-setting": Settings,
     "zi-user": User,
+    "zi-help": HelpCircle,
+    "zi-task": ClipboardList,
+    "zi-edit": Pencil,
 };
 
 export interface IconProps {

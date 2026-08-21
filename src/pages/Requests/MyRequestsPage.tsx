@@ -167,7 +167,7 @@ const MyRequestsContent: React.FC = () => {
                         return (
                             <Box
                                 key={item._id}
-                                className="bg-white rounded-2xl p-4 shadow-sm mt-3"
+                                className="bg-white rounded-2xl p-4 shadow-card mt-3"
                             >
                                 <Box
                                     flex

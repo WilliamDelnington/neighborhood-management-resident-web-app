@@ -105,7 +105,7 @@ const SupportTicketDetailPageContent: React.FC = () => {
                 )}
                 {!loading && !errorMessage && ticket && (
                     <Box>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Box
                                 flex
                                 justifyContent="space-between"
@@ -147,7 +147,7 @@ const SupportTicketDetailPageContent: React.FC = () => {
                             </Text>
                         </Box>
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Text.Title size="small" className="mb-2">
                                 Phản hồi từ quản trị viên
                             </Text.Title>
@@ -166,7 +166,7 @@ const SupportTicketDetailPageContent: React.FC = () => {
                         </Box>
 
                         {ticket.status === "can_bo_sung" && (
-                            <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                            <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                                 <Text.Title size="small" className="mb-2">
                                     Cần bổ sung thông tin
                                 </Text.Title>
@@ -197,7 +197,7 @@ const SupportTicketDetailPageContent: React.FC = () => {
                             </Box>
                         )}
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Text.Title size="small" className="mb-2">
                                 Trao đổi
                             </Text.Title>

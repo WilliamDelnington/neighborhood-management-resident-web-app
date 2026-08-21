@@ -82,7 +82,7 @@ const ComplaintLookupPage: React.FC = () => {
             bottomNav={<AppBottomNav />}
         >
             <Box p={4}>
-                <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                <Box className="bg-white rounded-2xl p-4 shadow-card">
                     <Text.Title size="small" className="mb-2">
                         Tra cứu theo mã phản ánh
                     </Text.Title>
@@ -117,7 +117,7 @@ const ComplaintLookupPage: React.FC = () => {
                 )}
 
                 {token && (
-                    <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                    <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                         <Text.Title size="small" className="mb-2">
                             Phản ánh của tôi
                         </Text.Title>

@@ -137,7 +137,7 @@ const HouseholdListContent: React.FC = () => {
     return (
         <PageLayout id="household-list-page" title="Danh sách hộ dân">
             <Box p={4}>
-                <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                <Box className="bg-white rounded-2xl p-4 shadow-card">
                     <Input
                         placeholder="Tìm theo mã hộ, địa chỉ hoặc chủ hộ"
                         value={searchInput}
@@ -150,7 +150,7 @@ const HouseholdListContent: React.FC = () => {
                     </Box>
                 </Box>
 
-                <Box className="bg-white rounded-2xl mt-3 shadow-sm">
+                <Box className="bg-white rounded-2xl mt-3 shadow-card">
                     {loading && <LoadingState />}
                     {!loading && error && (
                         <ErrorState onRetry={() => load(1, search, false)} />

@@ -159,7 +159,7 @@ const BusinessListContent: React.FC = () => {
     return (
         <PageLayout id="business-list-page" title="Danh sách hộ kinh doanh">
             <Box p={4}>
-                <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                <Box className="bg-white rounded-2xl p-4 shadow-card">
                     <Input
                         placeholder="Tìm theo tên hộ kinh doanh"
                         value={searchInput}
@@ -172,7 +172,7 @@ const BusinessListContent: React.FC = () => {
                     </Box>
                 </Box>
 
-                <Box className="bg-white rounded-2xl mt-3 shadow-sm">
+                <Box className="bg-white rounded-2xl mt-3 shadow-card">
                     {loading && <LoadingState />}
                     {!loading && error && (
                         <ErrorState onRetry={() => load(1, search, false)} />

@@ -183,7 +183,7 @@ const ComplaintDetailPageContent: React.FC = () => {
                         )}
 
                         {editing ? (
-                            <Box className="bg-white rounded-2xl p-4 shadow-sm mb-3">
+                            <Box className="bg-white rounded-2xl p-4 shadow-card mb-3">
                                 <Text
                                     size="xSmall"
                                     className="font-medium text-text_1 mb-2"
@@ -259,7 +259,7 @@ const ComplaintDetailPageContent: React.FC = () => {
                         )}
 
                         {canRespondToResolution && (
-                            <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                            <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                                 <Text.Title size="small" className="mb-2">
                                     Phản ánh đã được xử lý
                                 </Text.Title>

@@ -60,7 +60,7 @@ const StaffComplaintInbox: React.FC = () => {
     }, []);
 
     return (
-        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
             <Text.Title size="small" className="mb-2">
                 Phản ánh trong phạm vi phụ trách
             </Text.Title>

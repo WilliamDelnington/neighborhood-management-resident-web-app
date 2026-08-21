@@ -36,7 +36,7 @@ const Wrapper = styled.div`
     box-shadow: 0 1px 2px rgba(0, 0, 0, 0.04), 0 1px 3px rgba(0, 0, 0, 0.06);
 `;
 const IconWrapper = styled.div<{ $bgColor?: string }>`
-    ${tw`rounded-full relative`};
+    ${tw`rounded-2xl relative`};
     background-color: ${({ $bgColor }) => $bgColor || "#F5F9FC"};
     width: 56px;
     height: 56px;

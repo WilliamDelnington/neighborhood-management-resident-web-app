@@ -28,7 +28,7 @@ const FeaturesCard: React.FC<FeaturesCardProps> = ({
     const hasMore = features.length > initialCount;
 
     return (
-        <Box className="bg-white mt-2 p-4">
+        <Box className="bg-white mx-4 mt-3 p-4 rounded-2xl shadow-card">
             <Text.Title size="small" className="mb-3">
                 Nhóm dịch vụ
             </Text.Title>

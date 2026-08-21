@@ -81,7 +81,7 @@ const InspectionSelfDeclarationListContent: React.FC = () => {
                         return (
                             <Box
                                 key={target._id}
-                                className="mb-3 rounded-2xl bg-white p-4 shadow-sm"
+                                className="mb-3 rounded-2xl bg-white p-4 shadow-card"
                             >
                                 <Box
                                     flex

@@ -53,7 +53,7 @@ const NeighborhoodInfoContent: React.FC = () => {
                     items.map(({ neighborhood, coleaders }) => (
                         <Box
                             key={neighborhood._id}
-                            className="bg-white rounded-2xl p-4 shadow-sm mt-3"
+                            className="bg-white rounded-2xl p-4 shadow-card mt-3"
                         >
                             <Text size="small" className="font-medium">
                                 {neighborhood.name}

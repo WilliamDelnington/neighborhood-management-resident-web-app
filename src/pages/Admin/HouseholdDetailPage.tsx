@@ -335,7 +335,7 @@ const HouseholdDetailContent: React.FC = () => {
 
                 {!loading && !error && household && form && (
                     <>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Box
                                 flex
                                 justifyContent="space-between"
@@ -518,7 +518,7 @@ const HouseholdDetailContent: React.FC = () => {
                         />
 
                         {canViewCitizens && (
-                            <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                            <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                                 <Box
                                     flex
                                     justifyContent="space-between"

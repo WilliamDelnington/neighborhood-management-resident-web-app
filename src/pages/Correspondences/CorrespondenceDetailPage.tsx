@@ -102,7 +102,7 @@ const CorrespondenceDetailContent: React.FC = () => {
                 )}
                 {!loading && !errorMessage && doc && (
                     <>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Box flex alignItems="center" style={{ gap: 8 }}>
                                 {typeName && (
                                     <StatusBadge label={typeName} tone="blue" />
@@ -138,7 +138,7 @@ const CorrespondenceDetailContent: React.FC = () => {
                             </Text>
                         </Box>
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Text.Title size="small" className="mb-2">
                                 Tệp đính kèm
                             </Text.Title>
@@ -159,7 +159,7 @@ const CorrespondenceDetailContent: React.FC = () => {
                             ))}
                         </Box>
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Text.Title size="small" className="mb-2">
                                 Phản hồi
                             </Text.Title>

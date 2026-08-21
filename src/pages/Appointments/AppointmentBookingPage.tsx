@@ -379,7 +379,7 @@ const AppointmentBookingPageContent: React.FC = () => {
 
                 {!serviceLoading && !serviceError && service && (
                     <>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Text.Title size="small">{service.name}</Text.Title>
                             {service.description && (
                                 <Text
@@ -407,7 +407,7 @@ const AppointmentBookingPageContent: React.FC = () => {
                                 flex
                                 justifyContent="space-between"
                                 alignItems="center"
-                                className="bg-white rounded-2xl p-4 shadow-sm mt-3"
+                                className="bg-white rounded-2xl p-4 shadow-card mt-3"
                             >
                                 <Box style={{ flex: 1, minWidth: 0 }} pr={3}>
                                     <Text.Title size="small">
@@ -431,7 +431,7 @@ const AppointmentBookingPageContent: React.FC = () => {
                             </Box>
                         )}
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Text.Title size="small" className="mb-2">
                                 Nhà số
                             </Text.Title>
@@ -545,7 +545,7 @@ const AppointmentBookingPageContent: React.FC = () => {
                             )}
                         </Box>
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Text.Title size="small" className="mb-2">
                                 Ngày hẹn
                             </Text.Title>
@@ -563,7 +563,7 @@ const AppointmentBookingPageContent: React.FC = () => {
                             </Text>
                         </Box>
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Text.Title size="small" className="mb-2">
                                 Khung giờ
                             </Text.Title>
@@ -639,7 +639,7 @@ const AppointmentBookingPageContent: React.FC = () => {
                             />
                         </Box>
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Box
                                 flex
                                 justifyContent="space-between"

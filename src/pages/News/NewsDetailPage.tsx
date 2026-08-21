@@ -36,7 +36,7 @@ const NewsDetailPage: React.FC = () => {
                     <ErrorState label={errorMessage} onRetry={load} />
                 )}
                 {!loading && !errorMessage && news && (
-                    <Box className="bg-white rounded-2xl overflow-hidden shadow-sm">
+                    <Box className="bg-white rounded-2xl overflow-hidden shadow-card">
                         {news.coverImageUrl && (
                             <img
                                 src={resolveAssetUrl(news.coverImageUrl)}
@@ -80,8 +80,7 @@ const NewsDetailPage: React.FC = () => {
                                     className="mt-4"
                                     style={{
                                         display: "grid",
-                                        gridTemplateColumns:
-                                            "repeat(3, 1fr)",
+                                        gridTemplateColumns: "repeat(3, 1fr)",
                                         gap: 8,
                                     }}
                                 >

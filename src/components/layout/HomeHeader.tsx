@@ -14,7 +14,7 @@ const HeaderContainer = styled.div`
     height: calc(48px + var(--zaui-safe-area-inset-top, 0px));
     padding-top: var(--zaui-safe-area-inset-top, 0px);
     z-index: 1;
-    box-shadow: inset 0 -1px 0 0 #e9ebed;
+    box-shadow: inset 0 -1px 0 0 #e5e7eb;
 `;
 
 const LogoWrapper = styled.div`

@@ -35,7 +35,7 @@ const ComplaintTimelineView: React.FC<ComplaintTimelineViewProps> = ({
     timeline,
 }) => (
     <Box>
-        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+        <Box className="bg-white rounded-2xl p-4 shadow-card">
             <Box
                 flex
                 justifyContent="space-between"
@@ -63,7 +63,7 @@ const ComplaintTimelineView: React.FC<ComplaintTimelineViewProps> = ({
             </Text>
         </Box>
 
-        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
             <Text.Title size="small" className="mb-3">
                 Lịch sử xử lý
             </Text.Title>

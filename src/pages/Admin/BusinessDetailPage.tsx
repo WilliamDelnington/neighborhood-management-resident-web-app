@@ -264,7 +264,7 @@ const BusinessDetailContent: React.FC = () => {
                 {!loading && error && <ErrorState onRetry={load} />}
 
                 {!loading && !error && business && form && (
-                    <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                    <Box className="bg-white rounded-2xl p-4 shadow-card">
                         <Box
                             flex
                             justifyContent="space-between"

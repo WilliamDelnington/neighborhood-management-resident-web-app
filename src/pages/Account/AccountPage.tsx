@@ -210,7 +210,7 @@ const AccountPageContent: React.FC = () => {
         >
             <Box p={4}>
                 <Box
-                    className="bg-white rounded-2xl p-4 shadow-sm"
+                    className="bg-white rounded-2xl p-4 shadow-card"
                     flex
                     flexDirection="column"
                     alignItems="center"
@@ -245,12 +245,20 @@ const AccountPageContent: React.FC = () => {
                     <Text.Title size="small" className="mt-2">
                         {user.displayName}
                     </Text.Title>
-                    <Text size="xSmall" className="text-main">
+                    <Text
+                        size="xxSmall"
+                        className="text-primary-700 bg-primary-50 font-semibold mt-1"
+                        style={{
+                            padding: "3px 10px",
+                            borderRadius: 99,
+                            display: "inline-block",
+                        }}
+                    >
                         {ROLE_LABEL[user.primaryRole]}
                     </Text>
                 </Box>
 
-                <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                     <Box
                         flex
                         justifyContent="space-between"
@@ -328,7 +336,7 @@ const AccountPageContent: React.FC = () => {
                     )}
                 </Box>
 
-                <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                     <Box
                         flex
                         justifyContent="space-between"
@@ -407,7 +415,7 @@ const AccountPageContent: React.FC = () => {
                     )}
                 </Box>
 
-                <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                     <Box
                         flex
                         justifyContent="space-between"
@@ -490,107 +498,88 @@ const AccountPageContent: React.FC = () => {
                     )}
                 </Box>
 
-                <Box
-                    className="bg-white rounded-2xl p-4 shadow-sm mt-3"
-                    flex
-                    justifyContent="space-between"
-                    alignItems="center"
-                    onClick={() =>
-                        navigate("/notifications", { animate: true })
-                    }
+                <Text
+                    size="xxSmall"
+                    className="text-text_2 font-bold mt-4 mb-2 ml-1"
+                    style={{ letterSpacing: 0.4 }}
                 >
-                    <Text.Title size="small">Thông báo của tôi</Text.Title>
-                    <Box flex alignItems="center" style={{ gap: 8 }}>
-                        {unreadCount > 0 && (
-                            <Box
-                                className="bg-red-500 text-white"
-                                style={{
-                                    minWidth: 20,
-                                    height: 20,
-                                    borderRadius: 10,
-                                    fontSize: 11,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    padding: "0 6px",
-                                }}
-                            >
-                                {unreadCount > 99 ? "99+" : unreadCount}
-                            </Box>
-                        )}
-                        <Icon icon="zi-chevron-right" className="text-text_3" />
-                    </Box>
-                </Box>
-
-                <Box
-                    className="bg-white rounded-2xl p-4 shadow-sm mt-3"
-                    flex
-                    justifyContent="space-between"
-                    alignItems="center"
-                    onClick={() =>
-                        navigate("/requests/mine", { animate: true })
-                    }
-                >
-                    <Text.Title size="small">Nhiệm vụ của tôi</Text.Title>
-                    <Icon icon="zi-chevron-right" className="text-text_3" />
-                </Box>
-
-                <Box
-                    className="bg-white rounded-2xl p-4 shadow-sm mt-3"
-                    flex
-                    justifyContent="space-between"
-                    alignItems="center"
-                    onClick={() =>
-                        navigate("/change-requests/mine", { animate: true })
-                    }
-                >
-                    <Text.Title size="small">
-                        Yêu cầu thay đổi thông tin của tôi
-                    </Text.Title>
-                    <Icon icon="zi-chevron-right" className="text-text_3" />
-                </Box>
-
-                <Box
-                    className="bg-white rounded-2xl p-4 shadow-sm mt-3"
-                    flex
-                    justifyContent="space-between"
-                    alignItems="center"
-                    onClick={() => navigate("/support", { animate: true })}
-                >
-                    <Text.Title size="small">Hỗ trợ</Text.Title>
-                    <Icon icon="zi-chevron-right" className="text-text_3" />
-                </Box>
-
-                <Box
-                    className="bg-white rounded-2xl p-4 shadow-sm mt-3"
-                    flex
-                    justifyContent="space-between"
-                    alignItems="center"
-                    onClick={() =>
-                        navigate("/account/history", { animate: true })
-                    }
-                >
-                    <Text.Title size="small">Lịch sử tương tác</Text.Title>
-                    <Icon icon="zi-chevron-right" className="text-text_3" />
-                </Box>
-
-                <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
-                    <Box
-                        flex
-                        justifyContent="space-between"
-                        alignItems="center"
-                    >
-                        <Box>
-                            <Text.Title size="small">Nhận thông báo</Text.Title>
-                            <Text size="xxSmall" className="text-text_2">
-                                Thông báo họp dân, phản ánh, khảo sát mới
-                            </Text>
-                        </Box>
-                        <Switch
-                            checked={user.notificationPermission}
-                            onChange={handleToggleNotification}
-                        />
-                    </Box>
+                    HOẠT ĐỘNG &amp; HỖ TRỢ
+                </Text>
+                <Box className="bg-white rounded-2xl px-4 shadow-card">
+                    <MenuRow
+                        icon="zi-notif"
+                        label="Thông báo của tôi"
+                        onClick={() =>
+                            navigate("/notifications", { animate: true })
+                        }
+                        right={
+                            unreadCount > 0 ? (
+                                <Box
+                                    flex
+                                    alignItems="center"
+                                    style={{ gap: 8 }}
+                                >
+                                    <Box
+                                        className="bg-red-500 text-white"
+                                        style={{
+                                            minWidth: 20,
+                                            height: 20,
+                                            borderRadius: 10,
+                                            fontSize: 11,
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            padding: "0 6px",
+                                        }}
+                                    >
+                                        {unreadCount > 99 ? "99+" : unreadCount}
+                                    </Box>
+                                    <Icon
+                                        icon="zi-chevron-right"
+                                        className="text-text_3"
+                                    />
+                                </Box>
+                            ) : undefined
+                        }
+                    />
+                    <MenuRow
+                        icon="zi-task"
+                        label="Nhiệm vụ của tôi"
+                        onClick={() =>
+                            navigate("/requests/mine", { animate: true })
+                        }
+                    />
+                    <MenuRow
+                        icon="zi-edit"
+                        label="Yêu cầu thay đổi thông tin của tôi"
+                        onClick={() =>
+                            navigate("/change-requests/mine", {
+                                animate: true,
+                            })
+                        }
+                    />
+                    <MenuRow
+                        icon="zi-help"
+                        label="Hỗ trợ"
+                        onClick={() => navigate("/support", { animate: true })}
+                    />
+                    <MenuRow
+                        icon="zi-clock-1"
+                        label="Lịch sử tương tác"
+                        onClick={() =>
+                            navigate("/account/history", { animate: true })
+                        }
+                    />
+                    <MenuRow
+                        icon="zi-notif"
+                        label="Nhận thông báo"
+                        right={
+                            <Switch
+                                checked={user.notificationPermission}
+                                onChange={handleToggleNotification}
+                            />
+                        }
+                    />
                 </Box>
 
                 <Box mt={4}>
@@ -621,6 +610,40 @@ const InfoRow: React.FC<{ label: string; value: string }> = ({
             {label}
         </Text>
         <Text size="xSmall">{value}</Text>
+    </Box>
+);
+
+const MenuRow: React.FC<{
+    icon: string;
+    label: string;
+    onClick?: () => void;
+    right?: React.ReactNode;
+}> = ({ icon, label, onClick, right }) => (
+    <Box
+        flex
+        alignItems="center"
+        py={3}
+        className="border-b border-divider_01 last:border-0"
+        style={{ gap: 12 }}
+        onClick={onClick}
+    >
+        <Box
+            flex
+            alignItems="center"
+            justifyContent="center"
+            className="bg-primary-50 text-primary-600"
+            style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}
+        >
+            <Icon icon={icon} size={17} />
+        </Box>
+        <Text size="small" className="font-medium" style={{ flex: 1 }}>
+            {label}
+        </Text>
+        {right !== undefined
+            ? right
+            : onClick && (
+                  <Icon icon="zi-chevron-right" className="text-text_3" />
+              )}
     </Box>
 );
 

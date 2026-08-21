@@ -149,7 +149,7 @@ const InspectionSelfDeclarationContent: React.FC = () => {
     return (
         <PageLayout id="inspection-self-declaration" title="Biểu mẫu tự khai">
             <Box p={4} className={mutable ? "pb-28" : ""}>
-                <Box className="rounded-2xl bg-white p-4 shadow-sm">
+                <Box className="rounded-2xl bg-white p-4 shadow-card">
                     <Box
                         flex
                         justifyContent="space-between"
@@ -201,7 +201,7 @@ const InspectionSelfDeclarationContent: React.FC = () => {
                     )}
                 </Box>
 
-                <Box className="mt-3 rounded-2xl bg-white p-4 shadow-sm">
+                <Box className="mt-3 rounded-2xl bg-white p-4 shadow-card">
                     <Text.Title size="small">Nội dung tự khai</Text.Title>
                     {campaign.checklistTemplate.map((item, index) => (
                         <Box key={item.itemId} mt={4}>
@@ -343,7 +343,7 @@ const InspectionSelfDeclarationContent: React.FC = () => {
                     ))}
                 </Box>
 
-                <Box className="mt-3 rounded-2xl bg-white p-4 shadow-sm">
+                <Box className="mt-3 rounded-2xl bg-white p-4 shadow-card">
                     <Text.Title size="small">Ghi chú</Text.Title>
                     <Box mt={3}>
                         <TextArea
@@ -355,7 +355,7 @@ const InspectionSelfDeclarationContent: React.FC = () => {
                     </Box>
                 </Box>
 
-                <Box className="mt-3 rounded-2xl bg-white p-4 shadow-sm">
+                <Box className="mt-3 rounded-2xl bg-white p-4 shadow-card">
                     <Text.Title size="small">Ảnh / tệp minh chứng</Text.Title>
                     <Text size="xxSmall" className="mt-1 block text-text_2">
                         JPG, PNG hoặc PDF; tối đa 10MB

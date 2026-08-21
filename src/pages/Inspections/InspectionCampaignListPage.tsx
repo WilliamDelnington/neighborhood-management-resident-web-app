@@ -67,7 +67,7 @@ const InspectionCampaignListContent: React.FC = () => {
                     items.map(item => (
                         <Box
                             key={item._id}
-                            className="bg-white rounded-2xl p-4 mb-3 shadow-sm"
+                            className="bg-white rounded-2xl p-4 mb-3 shadow-card"
                         >
                             <Box
                                 flex

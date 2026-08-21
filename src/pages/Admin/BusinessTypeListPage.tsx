@@ -185,7 +185,7 @@ const BusinessTypeListContent: React.FC = () => {
             bottomNav={<AppBottomNav />}
         >
             <Box p={4}>
-                <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                <Box className="bg-white rounded-2xl p-4 shadow-card">
                     <Input
                         placeholder="Tìm theo tên loại hình"
                         value={searchInput}
@@ -198,7 +198,7 @@ const BusinessTypeListContent: React.FC = () => {
                     </Box>
                 </Box>
 
-                <Box className="bg-white rounded-2xl mt-3 shadow-sm">
+                <Box className="bg-white rounded-2xl mt-3 shadow-card">
                     {loading && <LoadingState />}
                     {!loading && error && (
                         <ErrorState onRetry={() => load(1, search, false)} />
