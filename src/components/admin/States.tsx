@@ -30,7 +30,7 @@ export type EmptyStateTone =
 // tailwind.config.js (success/warning/danger/info) de cac trang trong
 // (danh sach chua co du lieu) khong bi lap lai cung mot mau/icon nhu nhau.
 const TONE_STYLES: Record<EmptyStateTone, { bg: string; color: string }> = {
-    primary: { bg: "#EBF4FF", color: "#3B82F6" },
+    primary: { bg: "#ECFEFF", color: "#0891B2" },
     success: { bg: "#DCFCE7", color: "#16A34A" },
     warning: { bg: "#FEF3C7", color: "#D97706" },
     danger: { bg: "#FEE2E2", color: "#DC2626" },

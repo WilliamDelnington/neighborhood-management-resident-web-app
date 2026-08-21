@@ -7,7 +7,7 @@ export type ListRowTone = "primary" | "success" | "warning" | "danger" | "info";
 // Cung bang mau voi EmptyState (components/admin/States.tsx) de icon dau
 // dong danh sach va icon trang trong dong bo mot bang mau xuyen suot app.
 const TONE_STYLES: Record<ListRowTone, { bg: string; color: string }> = {
-    primary: { bg: "#EBF4FF", color: "#3B82F6" },
+    primary: { bg: "#ECFEFF", color: "#0891B2" },
     success: { bg: "#DCFCE7", color: "#16A34A" },
     warning: { bg: "#FEF3C7", color: "#D97706" },
     danger: { bg: "#FEE2E2", color: "#DC2626" },

@@ -163,7 +163,7 @@ const LoginPage: React.FC = () => {
                 alignItems="center"
                 style={{
                     background:
-                        "linear-gradient(160deg, #3B82F6 0%, #2563EB 65%, #1D4ED8 100%)",
+                        "linear-gradient(160deg, #05AAC0 0%, #0891B2 65%, #0E7490 100%)",
                     borderRadius: "0 0 32px 32px",
                     paddingTop: 36,
                     paddingBottom: 56,
