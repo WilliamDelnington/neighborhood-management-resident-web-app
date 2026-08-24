@@ -6,7 +6,7 @@ import {
     autocompleteAddress,
     fetchPlaceDetails,
     GeoAutocompletePrediction,
-} from "@service/googleMapsGeoApi";
+} from "@service/geoApi";
 import type { HouseGisSource } from "@dts";
 
 export type GeoMode = "address" | "gps" | "manual" | "skip";
@@ -63,6 +63,11 @@ interface PendingPin {
 interface HouseLocationPickerProps {
     values: HouseGeoValues;
     onChange: (values: HouseGeoValues) => void;
+    // Dia chi da nhap o buoc truoc (truong "Dia chi" +/- ten duong/pho da
+    // chon) - dung de nap san o tim kiem khi chuyen sang che do "Tra cuu dia
+    // chi", tranh bat nguoi dung phai go lai tu dau (xem HouseForm.tsx).
+    // Nguoi dung van co the sua/xoa truoc khi tim.
+    initialAddress?: string;
 }
 
 /**
@@ -75,12 +80,13 @@ interface HouseLocationPickerProps {
 const HouseLocationPicker: React.FC<HouseLocationPickerProps> = ({
     values,
     onChange,
+    initialAddress,
 }) => {
     const { openSnackbar } = useSnackbar();
     const [searchText, setSearchText] = useState("");
-    const [suggestions, setSuggestions] = useState<
-        GeoAutocompletePrediction[]
-    >([]);
+    const [suggestions, setSuggestions] = useState<GeoAutocompletePrediction[]>(
+        [],
+    );
     const [searching, setSearching] = useState(false);
     const [pendingPin, setPendingPin] = useState<PendingPin | null>(null);
     const [locating, setLocating] = useState(false);
@@ -104,6 +110,9 @@ const HouseLocationPicker: React.FC<HouseLocationPickerProps> = ({
     const selectMode = (mode: GeoMode) => {
         if (mode === values.geoMode) return;
         resetFlow();
+        if (mode === "address" && initialAddress) {
+            setSearchText(initialAddress);
+        }
         onChange({
             geoMode: mode,
             gisLatitude: null,
@@ -205,11 +214,16 @@ const HouseLocationPicker: React.FC<HouseLocationPickerProps> = ({
         gisLongitude: 180,
     };
 
-    const setManualValue = (key: "gisLatitude" | "gisLongitude", raw: string) => {
+    const setManualValue = (
+        key: "gisLatitude" | "gisLongitude",
+        raw: string,
+    ) => {
         const parsed = raw.trim() === "" ? null : Number(raw);
         const bound = MANUAL_BOUNDS[key];
         const valid =
-            parsed !== null && Number.isFinite(parsed) && Math.abs(parsed) <= bound;
+            parsed !== null &&
+            Number.isFinite(parsed) &&
+            Math.abs(parsed) <= bound;
         onChange({
             ...values,
             [key]: valid ? parsed : null,

@@ -1,28 +1,12 @@
 import React, { useEffect, useRef, useState } from "react";
+import { Map as MaplibreMap } from "maplibre-gl";
+import "maplibre-gl/dist/maplibre-gl.css";
 import { Box, Text } from "@components/ui";
 import Button from "@components/customized/Button";
-import { fetchStaticMap, GeoStaticMap } from "@service/googleMapsGeoApi";
 
-const TILE_SIZE = 256;
-const clamp = (value: number, min: number, max: number) =>
-    Math.min(max, Math.max(min, value));
-
-/** Web Mercator - phai khop chinh xac voi kieu chieu Google dung cho Static Maps. */
-function project(lat: number, lng: number, zoom: number) {
-    const worldSize = TILE_SIZE * 2 ** zoom;
-    const x = ((lng + 180) / 360) * worldSize;
-    const siny = clamp(Math.sin((lat * Math.PI) / 180), -0.9999, 0.9999);
-    const y =
-        (0.5 - Math.log((1 + siny) / (1 - siny)) / (4 * Math.PI)) * worldSize;
-    return { x, y, worldSize };
-}
-
-function unproject(x: number, y: number, worldSize: number) {
-    const lng = (x / worldSize) * 360 - 180;
-    const n = Math.PI - (2 * Math.PI * y) / worldSize;
-    const lat = (180 / Math.PI) * Math.atan(Math.sinh(n));
-    return { lat, lng };
-}
+const GOONG_MAP_KEY = import.meta.env.VITE_GOONG_MAP_KEY as string;
+const GOONG_MAP_STYLE_URL = `https://tiles.goong.io/assets/goong_map_web.json?api_key=${GOONG_MAP_KEY}`;
+const INITIAL_ZOOM = 18;
 
 interface StaticMapPinConfirmProps {
     initialLat: number;
@@ -32,11 +16,16 @@ interface StaticMapPinConfirmProps {
 }
 
 /**
- * Xac nhan/dieu chinh chinh xac vi tri nha bang cach keo mot pin tren MOT anh
- * Static Maps duy nhat (khong ve/goi lai anh khi keo) - toa do moi duoc tinh
- * hoan toan o client qua phep chieu Web Mercator, giup chi ton 1 request
- * Google cho ca phien xac nhan bat ke keo bao nhieu lan (xem plan: uu tien
- * giam so luong request Google Maps).
+ * Xac nhan/dieu chinh chinh xac vi tri nha bang mot ban do Goong (MapLibre)
+ * tuong tac that - pin ("📍") luon co dinh giua man hinh, nguoi dung keo BAN
+ * DO ben duoi de dua diem can chon vao duoi pin. Luc "Xac nhan vi tri", toa
+ * do lay truc tiep tu map.getCenter() - khong can tu tinh phep chieu Web
+ * Mercator nhu ban Static Maps (Google) truoc day, vi MapLibre da lo lieu do.
+ *
+ * Goong REST API (goong.ts o backend) khong co endpoint anh tinh theo
+ * center+zoom nhu Google Static Maps, nen buoc xac nhan pin chuyen sang goi
+ * thang Goong Map Tiles tu client (can VITE_GOONG_MAP_KEY - khac voi
+ * GOONG_API_KEY o server, xem .env.development).
  */
 const StaticMapPinConfirm: React.FC<StaticMapPinConfirmProps> = ({
     initialLat,
@@ -44,103 +33,52 @@ const StaticMapPinConfirm: React.FC<StaticMapPinConfirmProps> = ({
     onConfirm,
     onCancel,
 }) => {
-    const [map, setMap] = useState<GeoStaticMap | null>(null);
+    const containerRef = useRef<HTMLDivElement | null>(null);
+    const mapRef = useRef<MaplibreMap | null>(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(false);
-    // offset tinh bang pixel HIEN THI (CSS, sau khi anh co the bi thu nho theo
-    // chieu rong man hinh) - dung truc tiep de dat vi tri pin tren man hinh.
-    // Chi quy doi sang pixel GOC cua anh (map.width/height) luc bam Xac nhan.
-    const [offset, setOffset] = useState({ dx: 0, dy: 0 });
-    const containerRef = useRef<HTMLDivElement | null>(null);
-    const dragStateRef = useRef<{
-        startX: number;
-        startY: number;
-        startOffset: { dx: number; dy: number };
-    } | null>(null);
 
     useEffect(() => {
-        let cancelled = false;
+        if (!containerRef.current) return undefined;
+        if (!GOONG_MAP_KEY) {
+            setLoading(false);
+            setError(true);
+            return undefined;
+        }
         setLoading(true);
         setError(false);
-        fetchStaticMap(initialLat, initialLng)
-            .then(result => {
-                if (!cancelled) setMap(result);
-            })
-            .catch(() => {
-                if (!cancelled) setError(true);
-            })
-            .finally(() => {
-                if (!cancelled) setLoading(false);
-            });
+        const map = new MaplibreMap({
+            container: containerRef.current,
+            style: GOONG_MAP_STYLE_URL,
+            center: [initialLng, initialLat],
+            zoom: INITIAL_ZOOM,
+            attributionControl: false,
+            dragRotate: false,
+            touchPitch: false,
+        });
+        mapRef.current = map;
+        map.touchZoomRotate.disableRotation();
+        map.on("load", () => setLoading(false));
+        map.on("error", () => {
+            setLoading(false);
+            setError(true);
+        });
         return () => {
-            cancelled = true;
+            map.remove();
+            mapRef.current = null;
         };
-        // Chi goi 1 lan luc mount cho ca phien xac nhan pin - khong phu thuoc
-        // lai vao initialLat/Lng (component duoc mount lai moi khi bat dau
-        // mot phien xac nhan moi tu HouseLocationPicker).
+        // Chi khoi tao 1 lan luc mount cho ca phien xac nhan pin (giong quy uoc
+        // cu voi Static Maps) - khong phu thuoc lai initialLat/Lng.
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
-    const handlePointerDown = (e: React.PointerEvent<HTMLDivElement>) => {
-        (e.currentTarget as HTMLElement).setPointerCapture(e.pointerId);
-        dragStateRef.current = {
-            startX: e.clientX,
-            startY: e.clientY,
-            startOffset: offset,
-        };
-    };
-
-    const handlePointerMove = (e: React.PointerEvent<HTMLDivElement>) => {
-        if (!dragStateRef.current || !containerRef.current) return;
-        const rect = containerRef.current.getBoundingClientRect();
-        const dragDx = e.clientX - dragStateRef.current.startX;
-        const dragDy = e.clientY - dragStateRef.current.startY;
-        setOffset({
-            dx: clamp(
-                dragStateRef.current.startOffset.dx + dragDx,
-                -rect.width / 2,
-                rect.width / 2,
-            ),
-            dy: clamp(
-                dragStateRef.current.startOffset.dy + dragDy,
-                -rect.height / 2,
-                rect.height / 2,
-            ),
-        });
-    };
-
-    const handlePointerUp = () => {
-        dragStateRef.current = null;
-    };
-
     const confirm = () => {
-        if (!map || !containerRef.current) return;
-        const rect = containerRef.current.getBoundingClientRect();
-        // Quy doi offset hien thi (CSS pixel) ve pixel goc cua anh Static Maps
-        // (map.width/height) - can thiet vi anh thuong duoc CSS thu nho theo
-        // be rong man hinh (vd anh goc 640px nhung hien thi 360px).
-        const nativeDx = offset.dx * (map.width / rect.width);
-        const nativeDy = offset.dy * (map.height / rect.height);
-        const center = project(map.centerLat, map.centerLng, map.zoom);
-        const { lat, lng } = unproject(
-            center.x + nativeDx,
-            center.y + nativeDy,
-            center.worldSize,
-        );
+        if (!mapRef.current) return;
+        const { lat, lng } = mapRef.current.getCenter();
         onConfirm(lat, lng);
     };
 
-    if (loading) {
-        return (
-            <Box className="py-4">
-                <Text size="small" className="text-text_3">
-                    Đang tải bản đồ...
-                </Text>
-            </Box>
-        );
-    }
-
-    if (error || !map) {
+    if (error) {
         return (
             <Box style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <Text size="small" className="text-red-500">
@@ -156,40 +94,43 @@ const StaticMapPinConfirm: React.FC<StaticMapPinConfirmProps> = ({
     return (
         <Box style={{ display: "flex", flexDirection: "column", gap: 10 }}>
             <Text size="xSmall" className="text-text_2">
-                Kéo ghim để chỉnh đúng vị trí nhà (đặc biệt với nhà trong
+                Kéo bản đồ để chỉnh đúng vị trí nhà (đặc biệt với nhà trong
                 ngõ/hẻm mà bản đồ chưa định vị chính xác)
             </Text>
             <div
-                ref={containerRef}
                 style={{
                     position: "relative",
                     width: "100%",
-                    aspectRatio: `${map.width} / ${map.height}`,
-                    touchAction: "none",
+                    height: 320,
                     borderRadius: 12,
                     overflow: "hidden",
                 }}
-                onPointerDown={handlePointerDown}
-                onPointerMove={handlePointerMove}
-                onPointerUp={handlePointerUp}
-                onPointerCancel={handlePointerUp}
             >
-                <img
-                    src={`data:${map.mimeType};base64,${map.base64}`}
-                    alt="Bản đồ xác nhận vị trí"
-                    style={{
-                        width: "100%",
-                        height: "100%",
-                        display: "block",
-                        userSelect: "none",
-                    }}
-                    draggable={false}
+                <div
+                    ref={containerRef}
+                    style={{ width: "100%", height: "100%" }}
                 />
+                {loading && (
+                    <Box
+                        style={{
+                            position: "absolute",
+                            inset: 0,
+                            display: "flex",
+                            alignItems: "center",
+                            justifyContent: "center",
+                        }}
+                        className="bg-ng_10"
+                    >
+                        <Text size="small" className="text-text_3">
+                            Đang tải bản đồ...
+                        </Text>
+                    </Box>
+                )}
                 <div
                     style={{
                         position: "absolute",
-                        left: `calc(50% + ${offset.dx}px)`,
-                        top: `calc(50% + ${offset.dy}px)`,
+                        left: "50%",
+                        top: "50%",
                         transform: "translate(-50%, -90%)",
                         fontSize: 32,
                         lineHeight: 1,
@@ -207,7 +148,11 @@ const StaticMapPinConfirm: React.FC<StaticMapPinConfirmProps> = ({
                 >
                     Hủy
                 </Button>
-                <Button onClick={confirm} style={{ flex: 1 }}>
+                <Button
+                    onClick={confirm}
+                    style={{ flex: 1 }}
+                    disabled={loading}
+                >
                     Xác nhận vị trí
                 </Button>
             </Box>
