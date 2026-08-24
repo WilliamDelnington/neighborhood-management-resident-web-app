@@ -85,7 +85,9 @@ export function toHouseInput(values: HouseFormValues): HouseInput {
         note: values.note.trim() || undefined,
         organizationId: values.organizationId || undefined,
         gisLatitude:
-            values.geoMode === "skip" ? undefined : values.gisLatitude ?? undefined,
+            values.geoMode === "skip"
+                ? undefined
+                : values.gisLatitude ?? undefined,
         gisLongitude:
             values.geoMode === "skip"
                 ? undefined
@@ -94,7 +96,10 @@ export function toHouseInput(values: HouseFormValues): HouseInput {
             values.geoMode === "skip"
                 ? undefined
                 : values.gisAccuracyMeters ?? undefined,
-        gisSource: values.geoMode === "skip" ? undefined : values.gisSource || undefined,
+        gisSource:
+            values.geoMode === "skip"
+                ? undefined
+                : values.gisSource || undefined,
         geoConsentAccepted:
             values.geoMode === "skip" ? undefined : values.geoConsentAccepted,
     };
@@ -224,6 +229,11 @@ const HouseForm: React.FC<HouseFormProps> = ({
             />
             <HouseLocationPicker
                 values={values}
+                initialAddress={
+                    [values.address.trim(), values.streetLabel]
+                        .filter(Boolean)
+                        .join(", ") || undefined
+                }
                 onChange={geo => onChange({ ...values, ...geo })}
             />
             <Box>
