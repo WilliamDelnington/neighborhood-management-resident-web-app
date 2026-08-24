@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Icon, Text, useNavigate, useSnackbar } from "zmp-ui";
+import { Box, Icon, Text, useNavigate, useSnackbar } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button, Input, TextArea } from "@components/customized";
 import { RequireAuth, hasPermission } from "@components/role";
@@ -41,6 +41,16 @@ const PAGE_COPY: Record<
         contentPlaceholder: "Chia sẻ góp ý của bạn để giúp ứng dụng tốt hơn...",
         submitLabel: "Gửi góp ý",
         successTitle: "Gửi góp ý thành công",
+    },
+    ho_tro_ho_dan: {
+        pageTitle: "Hỗ trợ hộ dân",
+        titleLabel: "Tiêu đề yêu cầu",
+        titlePlaceholder: "VD: Cần hỗ trợ làm hồ sơ tạm trú",
+        contentLabel: "Nội dung cần hỗ trợ",
+        contentPlaceholder:
+            "Mô tả vấn đề cần Tổ dân phố/Phường hỗ trợ giúp gia đình bạn...",
+        submitLabel: "Gửi yêu cầu hỗ trợ",
+        successTitle: "Gửi yêu cầu hỗ trợ thành công",
     },
 };
 

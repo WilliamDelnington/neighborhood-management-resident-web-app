@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Box, Icon, Text } from "zmp-ui";
+import { Box, Icon, Text } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { RequireAuth } from "@components/role";
 
@@ -14,13 +14,13 @@ const GUIDES: Guide[] = [
         key: "complaints",
         title: "Gửi và tra cứu phản ánh",
         content:
-            'Vào mục "Gửi phản ánh" ở trang chủ để phản ánh các vấn đề an ninh trật tự, vệ sinh môi trường, hạ tầng điện nước... Sau khi gửi, bạn sẽ nhận được một mã phản ánh - dùng mã này ở mục "Tra cứu phản ánh" để theo dõi tiến độ xử lý.',
+            'Vào mục "Phản ánh của tôi" ở trang chủ để xem danh sách phản ánh bạn đã gửi và bấm nút "+" để gửi phản ánh mới về các vấn đề an ninh trật tự, vệ sinh môi trường, hạ tầng điện nước... Bạn cũng có thể tra cứu tiến độ xử lý bằng mã phản ánh ngay trên mục này.',
     },
     {
         key: "announcements",
         title: "Xem thông báo",
         content:
-            'Mục "Xem thông báo" ở trang chủ hiển thị các thông báo từ tổ dân phố như lịch họp, thông báo phòng chống dịch bệnh, an ninh trật tự... Bạn cũng có thể bật nhận thông báo đẩy trong mục Tài khoản để không bỏ lỡ thông báo mới.',
+            'Bấm vào biểu tượng chuông ở đầu trang chủ để xem thông báo, gồm hai tab: "Thông báo chung" (thông báo từ tổ dân phố như lịch họp, phòng chống dịch bệnh, an ninh trật tự...) và "Của tôi" (thông báo riêng cho tài khoản của bạn). Bạn cũng có thể bật nhận thông báo đẩy trong mục Tài khoản để không bỏ lỡ thông báo mới.',
     },
     {
         key: "meetings",
@@ -67,7 +67,7 @@ const SupportHowToUsePageContent: React.FC = () => {
                     return (
                         <Box
                             key={guide.key}
-                            className="bg-white rounded-2xl p-4 shadow-sm mt-3 first:mt-0"
+                            className="bg-white rounded-2xl p-4 shadow-card mt-3 first:mt-0"
                         >
                             <Box
                                 flex

@@ -3,29 +3,12 @@ import { Utinity } from "@dts";
 
 export const APP_UTINITIES: Array<Utinity> = [
     {
-        key: "create-complaint",
-        label: "Gửi phản ánh",
+        key: "complaints",
+        label: "Phản ánh của tôi",
         icon: Icon.PenIcon,
-        color: "#2563EB",
-        bgColor: "#EBF4FF",
-        path: "/complaints/create",
-        requiredPermission: "complaints.create",
-    },
-    {
-        key: "lookup-complaint",
-        label: "Tra cứu phản ánh",
-        icon: Icon.SearchIcon,
-        color: "#7C3AED",
-        bgColor: "#F3E8FF",
+        color: "#0891B2",
+        bgColor: "#ECFEFF",
         path: "/complaints/lookup",
-    },
-    {
-        key: "announcements",
-        label: "Xem thông báo",
-        icon: Icon.NotificationIcon,
-        color: "#D97706",
-        bgColor: "#FEF3C7",
-        path: "/announcements",
     },
     {
         key: "meetings",
@@ -62,13 +45,29 @@ export const APP_UTINITIES: Array<Utinity> = [
  */
 export const MORE_FEATURES: Array<Utinity> = [
     {
-        key: "admin-houses",
-        label: "Nhà số của tôi",
+        key: "my-house",
+        label: "Nhà của tôi",
         icon: Icon.HouseIcon,
-        color: "#0891B2",
-        bgColor: "#CFFAFE",
-        path: "/admin/houses",
-        requiredPermission: "houses.read",
+        color: "#06B6D4",
+        bgColor: "#ECFEFF",
+        path: "/house/mine",
+    },
+    {
+        key: "appointments",
+        label: "Đặt lịch hẹn",
+        icon: Icon.ClockIcon,
+        color: "#0EA5E9",
+        bgColor: "#E0F2FE",
+        path: "/appointments/services",
+        requiredPermission: "appointments.create",
+    },
+    {
+        key: "inspection-self-declarations",
+        label: "Biểu mẫu tự khai",
+        icon: Icon.ClipboardCheckIcon,
+        color: "#0F766E",
+        bgColor: "#CCFBF1",
+        path: "/inspections/self-declarations",
     },
     {
         key: "admin-households",
@@ -89,6 +88,15 @@ export const MORE_FEATURES: Array<Utinity> = [
         requiredPermission: "citizens.read",
     },
     {
+        key: "inspections",
+        label: "Rà soát chiến dịch",
+        icon: Icon.SearchReviewIcon,
+        color: "#0891B2",
+        bgColor: "#CFFAFE",
+        path: "/inspections",
+        requiredPermission: "inspections.read",
+    },
+    {
         key: "support",
         label: "Hỗ trợ",
         icon: Icon.HeadsetIcon,
@@ -97,12 +105,12 @@ export const MORE_FEATURES: Array<Utinity> = [
         path: "/support",
     },
     {
-        key: "notifications",
-        label: "Thông báo của tôi",
-        icon: Icon.NotificationIcon,
-        color: "#CA8A04",
-        bgColor: "#FEF9C3",
-        path: "/notifications",
+        key: "incident-shortcut",
+        label: "Báo sự cố hạ tầng",
+        icon: Icon.PenIcon,
+        color: "#EA580C",
+        bgColor: "#FFEDD5",
+        path: "/complaints/incident-shortcut",
     },
     {
         key: "admin-business-types",
@@ -113,7 +121,47 @@ export const MORE_FEATURES: Array<Utinity> = [
         path: "/admin/business-types",
         requiredPermission: "business_types.read",
     },
+    {
+        key: "election",
+        label: "Bầu cử",
+        icon: Icon.VoteIcon,
+        color: "#B91C1C",
+        bgColor: "#FEE2E2",
+        inDevelopment: true,
+    },
 ];
+
+export type MiniAppFeatureConfigEntry = {
+    key: string;
+    order: number;
+    visible: boolean;
+};
+
+/**
+ * Ap dung cau hinh thu tu/hien thi tinh nang do admin luu (Setting key
+ * "mini_app_features", xem settingsApi.ts) len tren catalog tinh nang tinh
+ * (APP_UTINITIES + MORE_FEATURES). Khong co cau hinh (chua duoc admin luu lan
+ * nao) -> giu nguyen thu tu catalog nhu truoc gio (hanh vi mac dinh). Tinh
+ * nang co trong catalog nhung chua co trong config (vd vua them vao code) van
+ * duoc hien, xep sau cac tinh nang da duoc cau hinh, theo dung thu tu catalog.
+ */
+export function resolveFeatureOrder(
+    catalog: Utinity[],
+    config?: MiniAppFeatureConfigEntry[] | null,
+): Utinity[] {
+    if (!config || config.length === 0) return catalog;
+
+    const configByKey = new Map(config.map(c => [c.key, c]));
+    return catalog
+        .filter(item => configByKey.get(item.key)?.visible !== false)
+        .map((item, index) => ({
+            item,
+            order: configByKey.get(item.key)?.order ?? Infinity,
+            index,
+        }))
+        .sort((a, b) => a.order - b.order || a.index - b.index)
+        .map(({ item }) => item);
+}
 
 export const EMERGENCY_HOTLINES: Array<{
     key: string;
@@ -129,31 +177,41 @@ export const CONTACTS: Array<Utinity> = [
     {
         key: "police-113",
         label: "Công an (113)",
-        icon: Icon.HeadphoneIcon,
+        icon: Icon.PhoneIcon,
+        color: "#0891B2",
+        bgColor: "#ECFEFF",
         phoneNumber: "113",
     },
     {
         key: "fire-114",
         label: "Phòng cháy chữa cháy (114)",
-        icon: Icon.HeadphoneIcon,
+        icon: Icon.PhoneIcon,
+        color: "#DC2626",
+        bgColor: "#FEE2E2",
         phoneNumber: "114",
     },
     {
         key: "ambulance-115",
         label: "Cấp cứu y tế (115)",
-        icon: Icon.HeadphoneIcon,
+        icon: Icon.PhoneIcon,
+        color: "#16A34A",
+        bgColor: "#DCFCE7",
         phoneNumber: "115",
     },
     {
         key: "regional-police",
         label: "Công an khu vực phường Dương Nội",
         icon: Icon.PersonalIcon,
+        color: "#0891B2",
+        bgColor: "#ECFEFF",
         phoneNumber: "",
     },
     {
         key: "neighborhood-leader",
-        label: "Tổ trưởng Tổ dân phố Hòa Bình",
+        label: "Tổ trưởng tổ dân phố",
         icon: Icon.EnterpriseIcon,
+        color: "#D97706",
+        bgColor: "#FEF3C7",
         phoneNumber: "",
     },
 ];

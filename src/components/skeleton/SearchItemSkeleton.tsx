@@ -1,6 +1,6 @@
 import React from "react";
 import styled from "styled-components";
-import { Box } from "zmp-ui";
+import { Box } from "@components/ui";
 import TextItemSkeleton from "./TextSketeton";
 
 const Wrapper = styled.div`

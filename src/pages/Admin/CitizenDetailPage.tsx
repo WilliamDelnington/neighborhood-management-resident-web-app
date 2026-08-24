@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Box, Modal, Text, useNavigate, useParams, useSnackbar } from "zmp-ui";
+import {
+    Box,
+    Modal,
+    Text,
+    useNavigate,
+    useParams,
+    useSnackbar,
+} from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { ErrorState, LoadingState } from "@components/admin";
 import { Button } from "@components/customized";
@@ -39,11 +46,15 @@ const toFormValues = (c: Citizen): CitizenFormValues => {
             ? `${household.code} — ${household.address}`
             : "",
         residenceType: c.residenceType,
+        temporaryResidenceExpiresAt: c.temporaryResidenceExpiresAt
+            ? new Date(c.temporaryResidenceExpiresAt)
+            : null,
         isElderly: c.isElderly,
         isChild: c.isChild,
         isDisabledOrSupportNeeded: c.isDisabledOrSupportNeeded,
         isPartyMember: c.isPartyMember,
         isUnionMember: c.isUnionMember,
+        attachments: [],
     };
 };
 
@@ -135,14 +146,18 @@ const CitizenDetailContent: React.FC = () => {
                 {!loading && error && <ErrorState onRetry={load} />}
 
                 {!loading && !error && citizen && form && (
-                    <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                    <Box className="bg-white rounded-2xl p-4 shadow-card">
                         <Text.Title size="small" className="mb-2">
                             {citizen.fullName}
                         </Text.Title>
 
                         {editing ? (
                             <>
-                                <CitizenForm values={form} onChange={setForm} />
+                                <CitizenForm
+                                    values={form}
+                                    onChange={setForm}
+                                    showAttachments={false}
+                                />
                                 <Box mt={4} flex style={{ gap: 8 }}>
                                     <Button
                                         variant="secondary"

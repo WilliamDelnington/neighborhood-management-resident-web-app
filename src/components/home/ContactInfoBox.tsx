@@ -1,5 +1,5 @@
 import React, { FC } from "react";
-import { useNavigate } from "zmp-ui";
+import { Icon, useNavigate } from "@components/ui";
 import styled from "styled-components";
 import tw from "twin.macro";
 
@@ -9,9 +9,17 @@ export interface ContactInfoBoxProps {
 }
 
 const Wrapper = styled.div`
-    ${tw`bg-white rounded-2xl`};
-    margin: 8px 16px 16px;
-    padding: 16px;
+    ${tw`flex flex-row items-center bg-white border border-devider_1 rounded-2xl shadow-card`};
+    margin: 12px 16px 16px;
+    padding: 14px 16px;
+`;
+
+const IconCircle = styled.div`
+    ${tw`flex items-center justify-center rounded-full bg-primary-50 text-primary-600`};
+    width: 40px;
+    height: 40px;
+    margin-right: 12px;
+    flex-shrink: 0;
 `;
 
 const Title = styled.div`
@@ -29,8 +37,14 @@ const ContactInfoBox: FC<ContactInfoBoxProps> = props => {
 
     return (
         <Wrapper onClick={() => navigate("/emergency", { animate: true })}>
-            <Title>{title}</Title>
-            <Description>{description}</Description>
+            <IconCircle>
+                <Icon icon="zi-user" size={18} />
+            </IconCircle>
+            <div style={{ flex: 1, minWidth: 0 }}>
+                <Title>{title}</Title>
+                <Description>{description}</Description>
+            </div>
+            <Icon icon="zi-chevron-right" size={16} className="text-text_3" />
         </Wrapper>
     );
 };

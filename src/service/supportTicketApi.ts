@@ -1,5 +1,10 @@
 import { API, DEFAULT_PAGE_SIZE } from "@constants/common";
-import { LoaiYeuCauHoTro, PaginatedData, SupportTicket } from "@dts";
+import {
+    LoaiYeuCauHoTro,
+    PaginatedData,
+    RequestComment,
+    SupportTicket,
+} from "@dts";
 import { request } from "./request";
 
 export interface CreateSupportTicketParams {
@@ -26,3 +31,28 @@ export const fetchMySupportTickets = (
 
 export const fetchSupportTicketDetail = (id: string): Promise<SupportTicket> =>
     request<SupportTicket>("GET", `${API.SUPPORT_TICKETS}/${id}`);
+
+/**
+ * Nguoi gui bo sung noi dung cho yeu cau cua chinh minh - tu dong quay ve
+ * "dang_xu_ly" neu dang "can_bo_sung" (xem updateSupportTicket o backend).
+ */
+export const updateSupportTicket = (
+    id: string,
+    content: string,
+): Promise<SupportTicket> =>
+    request<SupportTicket>("PATCH", `${API.SUPPORT_TICKETS}/${id}`, {
+        content,
+    });
+
+export const fetchSupportTicketComments = (
+    id: string,
+): Promise<RequestComment[]> =>
+    request<RequestComment[]>("GET", `${API.SUPPORT_TICKETS}/${id}/comments`);
+
+export const createSupportTicketComment = (
+    id: string,
+    content: string,
+): Promise<RequestComment> =>
+    request<RequestComment>("POST", `${API.SUPPORT_TICKETS}/${id}/comments`, {
+        content,
+    });

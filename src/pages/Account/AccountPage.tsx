@@ -1,5 +1,12 @@
 import React, { useEffect, useState } from "react";
-import { Box, Icon, Text, useNavigate, useSnackbar, Switch } from "zmp-ui";
+import {
+    Box,
+    Icon,
+    Text,
+    useNavigate,
+    useSnackbar,
+    Switch,
+} from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { Button, Input } from "@components/customized";
 import { RequireAuth } from "@components/role";
@@ -12,6 +19,11 @@ import {
 import { fetchUnreadNotificationCount } from "@service/notificationApi";
 import { requestNotificationPermission } from "@service/zalo";
 import { ROLE_LABEL } from "@constants/domain";
+import {
+    createChangeRequest,
+    fetchMyChangeRequests,
+} from "@service/changeRequestApi";
+import { ChangeRequest } from "@dts";
 
 const AccountPage: React.FC = () => (
     <RequireAuth>
@@ -29,21 +41,38 @@ const AccountPageContent: React.FC = () => {
     ]);
 
     const [editing, setEditing] = useState(false);
-    const [displayName, setDisplayName] = useState(user?.displayName || "");
-    const [phone, setPhone] = useState(user?.phone || "");
+    const [email, setEmail] = useState(user?.email || "");
     const [address, setAddress] = useState(user?.address || "");
     const [saving, setSaving] = useState(false);
     const [unreadCount, setUnreadCount] = useState(0);
 
     const [changingPassword, setChangingPassword] = useState(false);
+    const [currentPassword, setCurrentPassword] = useState("");
     const [newPassword, setNewPassword] = useState("");
     const [confirmNewPassword, setConfirmNewPassword] = useState("");
     const [settingPassword, setSettingPassword] = useState(false);
+
+    const [requestingNameChange, setRequestingNameChange] = useState(false);
+    const [nameRequest, setNameRequest] = useState("");
+    const [nameRequestReason, setNameRequestReason] = useState("");
+    const [sendingNameRequest, setSendingNameRequest] = useState(false);
+    const [pendingNameRequest, setPendingNameRequest] =
+        useState<ChangeRequest | null>(null);
 
     useEffect(() => {
         fetchUnreadNotificationCount()
             .then(res => setUnreadCount(res.count))
             .catch(() => setUnreadCount(0));
+    }, []);
+
+    useEffect(() => {
+        fetchMyChangeRequests(1, 20, "pending")
+            .then(res =>
+                setPendingNameRequest(
+                    res.items.find(r => r.targetModel === "User") || null,
+                ),
+            )
+            .catch(() => setPendingNameRequest(null));
     }, []);
 
     if (!user) return null;
@@ -52,8 +81,7 @@ const AccountPageContent: React.FC = () => {
         try {
             setSaving(true);
             const updated = await updateMyProfile({
-                displayName,
-                phone,
+                email,
                 address,
             });
             setUser(updated);
@@ -66,6 +94,38 @@ const AccountPageContent: React.FC = () => {
             });
         } finally {
             setSaving(false);
+        }
+    };
+
+    const handleRequestNameChange = async () => {
+        if (!nameRequest.trim()) {
+            openSnackbar({ type: "error", text: "Vui lòng nhập họ tên mới" });
+            return;
+        }
+        try {
+            setSendingNameRequest(true);
+            const created = await createChangeRequest({
+                targetModel: "User",
+                targetId: user.id,
+                changeType: "update",
+                patch: { displayName: nameRequest.trim() },
+                reason: nameRequestReason.trim() || undefined,
+            });
+            setPendingNameRequest(created);
+            setRequestingNameChange(false);
+            setNameRequest("");
+            setNameRequestReason("");
+            openSnackbar({
+                type: "success",
+                text: "Đã gửi yêu cầu đổi tên, chờ duyệt",
+            });
+        } catch (err: any) {
+            openSnackbar({
+                type: "error",
+                text: err?.message || "Có lỗi xảy ra",
+            });
+        } finally {
+            setSendingNameRequest(false);
         }
     };
 
@@ -113,7 +173,8 @@ const AccountPageContent: React.FC = () => {
         }
         try {
             setSettingPassword(true);
-            await setPasswordApi(newPassword);
+            await setPasswordApi(newPassword, currentPassword || undefined);
+            setCurrentPassword("");
             setNewPassword("");
             setConfirmNewPassword("");
             setChangingPassword(false);
@@ -149,7 +210,7 @@ const AccountPageContent: React.FC = () => {
         >
             <Box p={4}>
                 <Box
-                    className="bg-white rounded-2xl p-4 shadow-sm"
+                    className="bg-white rounded-2xl p-4 shadow-card"
                     flex
                     flexDirection="column"
                     alignItems="center"
@@ -184,12 +245,20 @@ const AccountPageContent: React.FC = () => {
                     <Text.Title size="small" className="mt-2">
                         {user.displayName}
                     </Text.Title>
-                    <Text size="xSmall" className="text-main">
+                    <Text
+                        size="xxSmall"
+                        className="text-primary-700 bg-primary-50 font-semibold mt-1"
+                        style={{
+                            padding: "3px 10px",
+                            borderRadius: 99,
+                            display: "inline-block",
+                        }}
+                    >
                         {ROLE_LABEL[user.primaryRole]}
                     </Text>
                 </Box>
 
-                <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                     <Box
                         flex
                         justifyContent="space-between"
@@ -210,16 +279,11 @@ const AccountPageContent: React.FC = () => {
 
                     {editing ? (
                         <>
-                            <Input
-                                label="Họ tên"
-                                value={displayName}
-                                onChange={e => setDisplayName(e.target.value)}
-                            />
                             <Box mt={3}>
                                 <Input
-                                    label="Số điện thoại"
-                                    value={phone}
-                                    onChange={e => setPhone(e.target.value)}
+                                    label="Email"
+                                    value={email}
+                                    onChange={e => setEmail(e.target.value)}
                                 />
                             </Box>
                             <Box mt={3}>
@@ -253,6 +317,10 @@ const AccountPageContent: React.FC = () => {
                                 value={user.phone || "Chưa cập nhật"}
                             />
                             <InfoRow
+                                label="Email"
+                                value={user.email || "Chưa cập nhật"}
+                            />
+                            <InfoRow
                                 label="Địa chỉ"
                                 value={user.address || "Chưa cập nhật"}
                             />
@@ -268,142 +336,250 @@ const AccountPageContent: React.FC = () => {
                     )}
                 </Box>
 
-                {import.meta.env.DEV && (
-                    <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
-                        <Box
-                            flex
-                            justifyContent="space-between"
-                            alignItems="center"
-                            mb={changingPassword ? 2 : 0}
-                        >
-                            <Box>
-                                <Text.Title size="small">Bảo mật</Text.Title>
-                                <Text size="xxSmall" className="text-text_2">
-                                    {user.phone
-                                        ? "Đăng nhập bằng số điện thoại + mật khẩu"
-                                        : "Đặt mật khẩu để có thể đăng nhập bằng số điện thoại"}
-                                </Text>
-                            </Box>
-                            {!changingPassword && (
-                                <Text
-                                    size="xSmall"
-                                    className="text-main"
-                                    onClick={() => setChangingPassword(true)}
-                                >
-                                    Đặt mật khẩu
-                                </Text>
-                            )}
-                        </Box>
-
-                        {changingPassword && (
-                            <>
-                                <Box mt={3}>
-                                    <Input
-                                        type="password"
-                                        label="Mật khẩu mới"
-                                        value={newPassword}
-                                        onChange={e =>
-                                            setNewPassword(e.target.value)
-                                        }
-                                    />
-                                </Box>
-                                <Box mt={3}>
-                                    <Input
-                                        type="password"
-                                        label="Nhập lại mật khẩu mới"
-                                        value={confirmNewPassword}
-                                        onChange={e =>
-                                            setConfirmNewPassword(
-                                                e.target.value,
-                                            )
-                                        }
-                                    />
-                                </Box>
-                                <Box mt={4} flex style={{ gap: 8 }}>
-                                    <Button
-                                        variant="secondary"
-                                        fullWidth
-                                        onClick={() => {
-                                            setChangingPassword(false);
-                                            setNewPassword("");
-                                            setConfirmNewPassword("");
-                                        }}
-                                    >
-                                        Hủy
-                                    </Button>
-                                    <Button
-                                        fullWidth
-                                        loading={settingPassword}
-                                        onClick={handleSetPassword}
-                                    >
-                                        Lưu
-                                    </Button>
-                                </Box>
-                            </>
-                        )}
-                    </Box>
-                )}
-
-                <Box
-                    className="bg-white rounded-2xl p-4 shadow-sm mt-3"
-                    flex
-                    justifyContent="space-between"
-                    alignItems="center"
-                    onClick={() =>
-                        navigate("/notifications", { animate: true })
-                    }
-                >
-                    <Text.Title size="small">Thông báo của tôi</Text.Title>
-                    <Box flex alignItems="center" style={{ gap: 8 }}>
-                        {unreadCount > 0 && (
-                            <Box
-                                className="bg-red-500 text-white"
-                                style={{
-                                    minWidth: 20,
-                                    height: 20,
-                                    borderRadius: 10,
-                                    fontSize: 11,
-                                    display: "flex",
-                                    alignItems: "center",
-                                    justifyContent: "center",
-                                    padding: "0 6px",
-                                }}
-                            >
-                                {unreadCount > 99 ? "99+" : unreadCount}
-                            </Box>
-                        )}
-                        <Icon icon="zi-chevron-right" className="text-text_3" />
-                    </Box>
-                </Box>
-
-                <Box
-                    className="bg-white rounded-2xl p-4 shadow-sm mt-3"
-                    flex
-                    justifyContent="space-between"
-                    alignItems="center"
-                    onClick={() => navigate("/support", { animate: true })}
-                >
-                    <Text.Title size="small">Hỗ trợ</Text.Title>
-                    <Icon icon="zi-chevron-right" className="text-text_3" />
-                </Box>
-
-                <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                     <Box
                         flex
                         justifyContent="space-between"
                         alignItems="center"
+                        mb={pendingNameRequest || requestingNameChange ? 2 : 0}
                     >
                         <Box>
-                            <Text.Title size="small">Nhận thông báo</Text.Title>
+                            <Text.Title size="small">Họ tên</Text.Title>
                             <Text size="xxSmall" className="text-text_2">
-                                Thông báo họp dân, phản ánh, khảo sát mới
+                                {user.displayName}
                             </Text>
                         </Box>
-                        <Switch
-                            checked={user.notificationPermission}
-                            onChange={handleToggleNotification}
-                        />
+                        {!requestingNameChange && !pendingNameRequest && (
+                            <Text
+                                size="xSmall"
+                                className="text-main"
+                                onClick={() => {
+                                    setNameRequest(user.displayName);
+                                    setRequestingNameChange(true);
+                                }}
+                            >
+                                Yêu cầu đổi tên
+                            </Text>
+                        )}
                     </Box>
+
+                    {pendingNameRequest && !requestingNameChange && (
+                        <Text size="xxSmall" className="text-text_2">
+                            Yêu cầu đổi tên thành &quot;
+                            {String(
+                                pendingNameRequest.patch?.displayName || "",
+                            )}
+                            &quot; đang chờ duyệt.
+                        </Text>
+                    )}
+
+                    {requestingNameChange && (
+                        <>
+                            <Box mt={3}>
+                                <Input
+                                    label="Họ tên mới"
+                                    value={nameRequest}
+                                    onChange={e =>
+                                        setNameRequest(e.target.value)
+                                    }
+                                />
+                            </Box>
+                            <Box mt={3}>
+                                <Input
+                                    label="Lý do (không bắt buộc)"
+                                    value={nameRequestReason}
+                                    onChange={e =>
+                                        setNameRequestReason(e.target.value)
+                                    }
+                                />
+                            </Box>
+                            <Box mt={4} flex style={{ gap: 8 }}>
+                                <Button
+                                    variant="secondary"
+                                    fullWidth
+                                    onClick={() =>
+                                        setRequestingNameChange(false)
+                                    }
+                                >
+                                    Hủy
+                                </Button>
+                                <Button
+                                    fullWidth
+                                    loading={sendingNameRequest}
+                                    onClick={handleRequestNameChange}
+                                >
+                                    Gửi yêu cầu
+                                </Button>
+                            </Box>
+                        </>
+                    )}
+                </Box>
+
+                <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
+                    <Box
+                        flex
+                        justifyContent="space-between"
+                        alignItems="center"
+                        mb={changingPassword ? 2 : 0}
+                    >
+                        <Box>
+                            <Text.Title size="small">Bảo mật</Text.Title>
+                            <Text size="xxSmall" className="text-text_2">
+                                {user.phone
+                                    ? "Đăng nhập bằng số điện thoại + mật khẩu"
+                                    : "Đặt mật khẩu để có thể đăng nhập bằng số điện thoại"}
+                            </Text>
+                        </Box>
+                        {!changingPassword && (
+                            <Text
+                                size="xSmall"
+                                className="text-main"
+                                onClick={() => setChangingPassword(true)}
+                            >
+                                Đặt mật khẩu
+                            </Text>
+                        )}
+                    </Box>
+
+                    {changingPassword && (
+                        <>
+                            <Box mt={3}>
+                                <Input
+                                    type="password"
+                                    label="Mật khẩu hiện tại"
+                                    value={currentPassword}
+                                    onChange={e =>
+                                        setCurrentPassword(e.target.value)
+                                    }
+                                />
+                            </Box>
+                            <Box mt={3}>
+                                <Input
+                                    type="password"
+                                    label="Mật khẩu mới"
+                                    value={newPassword}
+                                    onChange={e =>
+                                        setNewPassword(e.target.value)
+                                    }
+                                />
+                            </Box>
+                            <Box mt={3}>
+                                <Input
+                                    type="password"
+                                    label="Nhập lại mật khẩu mới"
+                                    value={confirmNewPassword}
+                                    onChange={e =>
+                                        setConfirmNewPassword(e.target.value)
+                                    }
+                                />
+                            </Box>
+                            <Box mt={4} flex style={{ gap: 8 }}>
+                                <Button
+                                    variant="secondary"
+                                    fullWidth
+                                    onClick={() => {
+                                        setChangingPassword(false);
+                                        setCurrentPassword("");
+                                        setNewPassword("");
+                                        setConfirmNewPassword("");
+                                    }}
+                                >
+                                    Hủy
+                                </Button>
+                                <Button
+                                    fullWidth
+                                    loading={settingPassword}
+                                    onClick={handleSetPassword}
+                                >
+                                    Lưu
+                                </Button>
+                            </Box>
+                        </>
+                    )}
+                </Box>
+
+                <Text
+                    size="xxSmall"
+                    className="text-text_2 font-bold mt-4 mb-2 ml-1"
+                    style={{ letterSpacing: 0.4 }}
+                >
+                    HOẠT ĐỘNG &amp; HỖ TRỢ
+                </Text>
+                <Box className="bg-white rounded-2xl px-4 shadow-card">
+                    <MenuRow
+                        icon="zi-notif"
+                        label="Thông báo của tôi"
+                        onClick={() =>
+                            navigate("/notifications", { animate: true })
+                        }
+                        right={
+                            unreadCount > 0 ? (
+                                <Box
+                                    flex
+                                    alignItems="center"
+                                    style={{ gap: 8 }}
+                                >
+                                    <Box
+                                        className="bg-red-500 text-white"
+                                        style={{
+                                            minWidth: 20,
+                                            height: 20,
+                                            borderRadius: 10,
+                                            fontSize: 11,
+                                            display: "flex",
+                                            alignItems: "center",
+                                            justifyContent: "center",
+                                            padding: "0 6px",
+                                        }}
+                                    >
+                                        {unreadCount > 99 ? "99+" : unreadCount}
+                                    </Box>
+                                    <Icon
+                                        icon="zi-chevron-right"
+                                        className="text-text_3"
+                                    />
+                                </Box>
+                            ) : undefined
+                        }
+                    />
+                    <MenuRow
+                        icon="zi-task"
+                        label="Nhiệm vụ của tôi"
+                        onClick={() =>
+                            navigate("/requests/mine", { animate: true })
+                        }
+                    />
+                    <MenuRow
+                        icon="zi-edit"
+                        label="Yêu cầu thay đổi thông tin của tôi"
+                        onClick={() =>
+                            navigate("/change-requests/mine", {
+                                animate: true,
+                            })
+                        }
+                    />
+                    <MenuRow
+                        icon="zi-help"
+                        label="Hỗ trợ"
+                        onClick={() => navigate("/support", { animate: true })}
+                    />
+                    <MenuRow
+                        icon="zi-clock-1"
+                        label="Lịch sử tương tác"
+                        onClick={() =>
+                            navigate("/account/history", { animate: true })
+                        }
+                    />
+                    <MenuRow
+                        icon="zi-notif"
+                        label="Nhận thông báo"
+                        right={
+                            <Switch
+                                checked={user.notificationPermission}
+                                onChange={handleToggleNotification}
+                            />
+                        }
+                    />
                 </Box>
 
                 <Box mt={4}>
@@ -434,6 +610,40 @@ const InfoRow: React.FC<{ label: string; value: string }> = ({
             {label}
         </Text>
         <Text size="xSmall">{value}</Text>
+    </Box>
+);
+
+const MenuRow: React.FC<{
+    icon: string;
+    label: string;
+    onClick?: () => void;
+    right?: React.ReactNode;
+}> = ({ icon, label, onClick, right }) => (
+    <Box
+        flex
+        alignItems="center"
+        py={3}
+        className="border-b border-divider_01 last:border-0"
+        style={{ gap: 12 }}
+        onClick={onClick}
+    >
+        <Box
+            flex
+            alignItems="center"
+            justifyContent="center"
+            className="bg-primary-50 text-primary-600"
+            style={{ width: 34, height: 34, borderRadius: 10, flexShrink: 0 }}
+        >
+            <Icon icon={icon} size={17} />
+        </Box>
+        <Text size="small" className="font-medium" style={{ flex: 1 }}>
+            {label}
+        </Text>
+        {right !== undefined
+            ? right
+            : onClick && (
+                  <Icon icon="zi-chevron-right" className="text-text_3" />
+              )}
     </Box>
 );
 

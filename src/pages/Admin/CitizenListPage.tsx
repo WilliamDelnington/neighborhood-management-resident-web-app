@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Box, Icon, Sheet, Text, useNavigate, useSnackbar } from "zmp-ui";
+import { Users } from "lucide-react";
+import {
+    Box,
+    Icon,
+    Sheet,
+    Text,
+    useNavigate,
+    useSnackbar,
+} from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button, Input } from "@components/customized";
 import {
@@ -18,6 +26,7 @@ import {
 } from "@components/citizen";
 import { useStore } from "@store";
 import { createCitizen, fetchCitizens } from "@service/citizenApi";
+import { uploadPendingAttachments } from "@service/uploadApi";
 import { GIOI_TINH_LABEL } from "@constants/domain";
 import { AppError, Citizen } from "@dts";
 
@@ -121,8 +130,19 @@ const CitizenListContent: React.FC = () => {
         }
         try {
             setSubmitting(true);
-            await createCitizen(toCitizenInput(form));
-            openSnackbar({ type: "success", text: "Đã thêm nhân khẩu mới" });
+            const citizen = await createCitizen(toCitizenInput(form));
+            let text = "Đã thêm nhân khẩu mới";
+            if (form.attachments.length > 0) {
+                const { failed } = await uploadPendingAttachments(
+                    "Citizen",
+                    citizen._id,
+                    form.attachments,
+                );
+                if (failed.length > 0) {
+                    text = `${text}, nhưng ${failed.length} tài liệu tải lên thất bại`;
+                }
+            }
+            openSnackbar({ type: "success", text });
             setCreateVisible(false);
             load(1, search, false);
         } catch (err) {
@@ -135,7 +155,7 @@ const CitizenListContent: React.FC = () => {
     return (
         <PageLayout id="citizen-list-page" title="Danh sách nhân khẩu">
             <Box p={4}>
-                <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                <Box className="bg-white rounded-2xl p-4 shadow-card">
                     <Input
                         placeholder="Tìm theo họ tên, CCCD hoặc SĐT"
                         value={searchInput}
@@ -148,13 +168,17 @@ const CitizenListContent: React.FC = () => {
                     </Box>
                 </Box>
 
-                <Box className="bg-white rounded-2xl mt-3 shadow-sm">
+                <Box className="bg-white rounded-2xl mt-3 shadow-card">
                     {loading && <LoadingState />}
                     {!loading && error && (
                         <ErrorState onRetry={() => load(1, search, false)} />
                     )}
                     {!loading && !error && items.length === 0 && (
-                        <EmptyState label="Không tìm thấy nhân khẩu nào" />
+                        <EmptyState
+                            label="Không tìm thấy nhân khẩu nào"
+                            icon={Users}
+                            tone="info"
+                        />
                     )}
                     {!loading && !error && items.length > 0 && (
                         <Box px={4}>
@@ -212,7 +236,7 @@ const CitizenListContent: React.FC = () => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        boxShadow: "0 4px 12px rgba(37,99,235,0.4)",
+                        boxShadow: "0 4px 12px rgba(5,170,192,0.4)",
                         zIndex: 20,
                     }}
                     onClick={openCreate}

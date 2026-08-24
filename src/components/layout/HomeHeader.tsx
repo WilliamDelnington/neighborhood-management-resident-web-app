@@ -1,5 +1,5 @@
 import React, { FC, useEffect } from "react";
-import { Box, Icon, useNavigate } from "zmp-ui";
+import { Box, Icon, useNavigate } from "@components/ui";
 import styled from "styled-components";
 import tw from "twin.macro";
 import Logo from "@assets/logo.png";
@@ -12,9 +12,9 @@ export interface HomeHeaderProps {
 const HeaderContainer = styled.div`
     ${tw`flex flex-row bg-white text-text_1 items-center justify-between fixed top-0 left-0 w-full px-4`};
     height: calc(48px + var(--zaui-safe-area-inset-top, 0px));
-    padding-top: var(--zaui-safe-area-inset-top);
+    padding-top: var(--zaui-safe-area-inset-top, 0px);
     z-index: 1;
-    box-shadow: inset 0 -1px 0 0 #e9ebed;
+    box-shadow: inset 0 -1px 0 0 #e5e7eb;
 `;
 
 const LogoWrapper = styled.div`

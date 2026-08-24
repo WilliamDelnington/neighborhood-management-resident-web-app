@@ -1,14 +1,21 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, useLocation, useNavigate, useSnackbar } from "zmp-ui";
-import { PageLayout } from "@components/layout";
+import {
+    Box,
+    Icon,
+    Text,
+    useLocation,
+    useNavigate,
+    useSnackbar,
+} from "@components/ui";
+import { PageLayout, DefaultHeader } from "@components/layout";
 import { Button, Input } from "@components/customized";
 import { useStore } from "@store";
-import { ROLE_LABEL } from "@constants/domain";
+import { ROLE_LABEL, APP_NAME_DEFAULT } from "@constants/domain";
 import { Role } from "@dts";
 import { isValidVietnamesePhone } from "@utils/string";
 import Logo from "@assets/logo.png";
 
-type PhoneAuthMode = "hidden" | "login" | "register";
+type PhoneAuthMode = "login" | "register";
 
 /**
  * Danh sach tai khoan mau tao boi backend-app/scripts/seed.ts - dung de test nhanh tung vai tro
@@ -45,18 +52,26 @@ const DEV_TEST_ACCOUNTS: { zaloUserId: string; name: string; role: Role }[] = [
 ];
 
 /**
- * Man hinh dang nhap: san pham chinh thuc chi dang nhap bang Zalo. Kenh dang nhap
- * bang so dien thoai + mat khau chi hien khi import.meta.env.DEV (build dev), dung
- * de test khi chua co tai khoan Zalo sandbox phu hop - khong duoc bat trong production.
- * Tai khoan moi da la house_owner day du quyen ngay tu dau (khong con buoc
- * onboarding bat buoc) - dang ky nha so la viec lam sau, tu trang quan tri.
+ * Man hinh dang nhap: kenh dang nhap/dang ky duy nhat la so dien thoai + mat
+ * khau (loginWithPhone/registerWithPhone).
+ *
+ * OTP (eSMS/Zalo ZNS) da duoc XAY XONG o backend (otpService.ts, lib/esms.ts,
+ * lib/esmsZns.ts) nhung TAM HOAN dung o man hinh nay - eSMS/Zalo ZNS deu can
+ * mau tin duoc duyet truoc (2-3 ngay), khong kip cho demo. Code OTP van con,
+ * chi khong duoc goi tu day nua; bat lai bang cach doi UI ve dung
+ * requestOtp/verifyOtp trong @store/authSlice.ts khi cac mau tin da duoc
+ * duyet.
+ *
+ * Ngoai tu dang ky, tai khoan con co the duoc to truong/nguoi co quyen tao
+ * san (kem mat khau) tu form tao ho/nha trong khu Admin - xem
+ * components/house/AddHouseOwnershipSheet.tsx.
  */
 const LoginPage: React.FC = () => {
     const navigate = useNavigate();
     const location = useLocation();
     const { openSnackbar } = useSnackbar();
 
-    const [phoneAuthMode, setPhoneAuthMode] = useState<PhoneAuthMode>("hidden");
+    const [phoneAuthMode] = useState<PhoneAuthMode>("login");
     const [phone, setPhone] = useState("");
     const [password, setPassword] = useState("");
     const [confirmPassword, setConfirmPassword] = useState("");
@@ -66,7 +81,6 @@ const LoginPage: React.FC = () => {
         token,
         bootstrapping,
         bootstrapError,
-        bootstrapSession,
         loginAsTestUser,
         loginWithPhone,
         registerWithPhone,
@@ -74,7 +88,6 @@ const LoginPage: React.FC = () => {
         state.token,
         state.bootstrapping,
         state.bootstrapError,
-        state.bootstrapSession,
         state.loginAsTestUser,
         state.loginWithPhone,
         state.registerWithPhone,
@@ -91,10 +104,6 @@ const LoginPage: React.FC = () => {
             navigate(from, { animate: true, replace: true });
         }
     }, [token]);
-
-    const handleLogin = () => {
-        bootstrapSession();
-    };
 
     const handleLoginAsTestUser = (zaloUserId: string, name: string) => {
         loginAsTestUser(zaloUserId, name);
@@ -136,61 +145,63 @@ const LoginPage: React.FC = () => {
     return (
         <PageLayout
             id="login-page"
-            customHeader={<Box className="h-[env(safe-area-inset-top)]" />}
-            bg="#2563EB"
+            customHeader={
+                <DefaultHeader
+                    title={
+                        phoneAuthMode === "register" ? "Đăng ký" : "Đăng nhập"
+                    }
+                    back
+                    onBackClick={() =>
+                        navigate("/", { animate: true, replace: true })
+                    }
+                />
+            }
         >
             <Box
                 flex
                 flexDirection="column"
                 alignItems="center"
-                justifyContent="center"
-                style={{ minHeight: "80vh" }}
-                p={6}
+                style={{
+                    background:
+                        "linear-gradient(160deg, #05AAC0 0%, #0891B2 65%, #0E7490 100%)",
+                    borderRadius: "0 0 32px 32px",
+                    paddingTop: 36,
+                    paddingBottom: 56,
+                }}
             >
-                <img src={Logo} alt="Logo" style={{ width: 72, height: 72 }} />
+                <img
+                    src={Logo}
+                    alt="Logo"
+                    style={{
+                        width: 72,
+                        height: 72,
+                        filter: "drop-shadow(0 8px 16px rgba(15,23,42,0.25))",
+                    }}
+                />
                 <Text.Title
                     size="large"
                     className="text-white mt-4 text-center"
                 >
-                    Tổ dân phố Hòa Bình
+                    {APP_NAME_DEFAULT}
                 </Text.Title>
-                <Text size="small" className="text-wth_a70 mb-8 text-center">
+                <Text size="small" className="text-wth_a70 text-center">
                     Phường Dương Nội, Hà Nội
                 </Text>
+            </Box>
 
-                {!token && (
-                    <Button
-                        fullWidth
-                        loading={bootstrapping}
-                        onClick={handleLogin}
-                        className="!bg-white !text-main"
-                    >
-                        Đăng nhập bằng Zalo
-                    </Button>
-                )}
-
+            <Box p={6} style={{ marginTop: -40 }}>
                 {!token && bootstrapError && (
                     <Text
                         size="xSmall"
-                        className="text-red-100 mt-3 text-center"
+                        className="text-red-500 mb-3 text-center"
                     >
                         {bootstrapError}
                     </Text>
                 )}
 
-                {import.meta.env.DEV && !token && phoneAuthMode === "hidden" && (
-                    <Text
-                        size="xSmall"
-                        className="text-white mt-4 text-center"
-                        onClick={() => setPhoneAuthMode("login")}
-                    >
-                        Đăng nhập bằng số điện thoại
-                    </Text>
-                )}
-
-                {import.meta.env.DEV && !token && phoneAuthMode !== "hidden" && (
-                    <Box className="bg-white rounded-2xl p-4 w-full mt-6">
-                        <Text.Title size="small">
+                {!token && (
+                    <Box className="bg-white rounded-3xl shadow-card p-5 w-full">
+                        <Text.Title size="small" className="mb-4">
                             {phoneAuthMode === "register"
                                 ? "Đăng ký tài khoản"
                                 : "Đăng nhập bằng số điện thoại"}
@@ -248,33 +259,80 @@ const LoginPage: React.FC = () => {
                             </Button>
                         </Box>
 
+                        <Box
+                            flex
+                            alignItems="center"
+                            mt={4}
+                            style={{ gap: 10 }}
+                        >
+                            <Box
+                                style={{ flex: 1, height: 1 }}
+                                className="bg-divider_01"
+                            />
+                            <Text size="xxSmall" className="text-text_3">
+                                hoặc
+                            </Text>
+                            <Box
+                                style={{ flex: 1, height: 1 }}
+                                className="bg-divider_01"
+                            />
+                        </Box>
+
+                        <Box mt={3}>
+                            <Button
+                                fullWidth
+                                variant="secondary"
+                                onClick={() =>
+                                    openSnackbar({
+                                        text: "Tính năng đang được phát triển",
+                                        type: "info",
+                                        duration: 3000,
+                                        verticalAction: true,
+                                        action: { text: "Đóng", close: true },
+                                    })
+                                }
+                            >
+                                Đăng nhập bằng VNeID
+                            </Button>
+                        </Box>
+
                         <Text
                             size="xSmall"
                             className="text-main text-center mt-3"
                             onClick={() =>
-                                setPhoneAuthMode(
-                                    phoneAuthMode === "register"
-                                        ? "login"
-                                        : "register",
-                                )
+                                openSnackbar({
+                                    type: "info",
+                                    text: "Vui lòng liên hệ Tổ trưởng tổ dân phố hoặc UBND phường Dương Nội để được hỗ trợ đặt lại mật khẩu.",
+                                    duration: 6000,
+                                })
                             }
                         >
-                            {phoneAuthMode === "register"
-                                ? "Đã có tài khoản? Đăng nhập"
-                                : "Chưa có tài khoản? Đăng ký"}
+                            Quên mật khẩu? Gửi hỗ trợ
                         </Text>
                     </Box>
                 )}
 
                 {import.meta.env.DEV && !token && (
-                    <Box className="bg-white/10 rounded-2xl p-4 w-full mt-6">
-                        <Text
-                            size="xSmall"
-                            className="text-white font-medium mb-2"
-                        >
-                            Tài khoản thử nghiệm (chỉ hiện khi dev)
-                        </Text>
-                        <Text size="xxSmall" className="text-wth_a70 mb-3">
+                    <Box
+                        className="bg-amber-50 rounded-2xl p-4 w-full mt-4"
+                        style={{
+                            border: "1.5px dashed #FBBF24",
+                        }}
+                    >
+                        <Box flex alignItems="center" style={{ gap: 6 }} mb={2}>
+                            <Icon
+                                icon="zi-warning-solid"
+                                size={15}
+                                className="text-amber-600"
+                            />
+                            <Text
+                                size="xSmall"
+                                className="text-amber-800 font-semibold"
+                            >
+                                Tài khoản thử nghiệm (chỉ hiện khi dev)
+                            </Text>
+                        </Box>
+                        <Text size="xxSmall" className="text-amber-700 mb-3">
                             Dùng để kiểm tra giao diện theo từng vai trò mà
                             không cần nhiều tài khoản Zalo thật. Yêu cầu đã chạy
                             `npm run seed` ở backend-app.
@@ -292,7 +350,7 @@ const LoginPage: React.FC = () => {
                                             account.name,
                                         )
                                     }
-                                    className="!bg-white/90 !text-main"
+                                    className="!bg-white !text-text_1 !border !border-amber-200"
                                 >
                                     {ROLE_LABEL[account.role]} — {account.name}
                                 </Button>

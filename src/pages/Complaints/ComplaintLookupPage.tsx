@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, useNavigate } from "zmp-ui";
+import { MessageSquareWarning } from "lucide-react";
+import { Box, Icon, Text, useNavigate } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { Button, Input } from "@components/customized";
 import {
@@ -28,6 +29,7 @@ const ComplaintLookupPage: React.FC = () => {
     const token = useStore(state => state.token);
     const user = useStore(state => state.user);
     const canViewInbox = hasPermission(user, "complaints.read");
+    const canCreate = hasPermission(user, "complaints.create");
 
     const [code, setCode] = useState("");
     const [searching, setSearching] = useState(false);
@@ -77,11 +79,11 @@ const ComplaintLookupPage: React.FC = () => {
     return (
         <PageLayout
             id="complaint-lookup-page"
-            title={canViewInbox ? "Phản ánh" : "Tra cứu phản ánh"}
+            title="Phản ánh"
             bottomNav={<AppBottomNav />}
         >
             <Box p={4}>
-                <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                <Box className="bg-white rounded-2xl p-4 shadow-card">
                     <Text.Title size="small" className="mb-2">
                         Tra cứu theo mã phản ánh
                     </Text.Title>
@@ -116,7 +118,7 @@ const ComplaintLookupPage: React.FC = () => {
                 )}
 
                 {token && (
-                    <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+                    <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                         <Text.Title size="small" className="mb-2">
                             Phản ánh của tôi
                         </Text.Title>
@@ -128,7 +130,11 @@ const ComplaintLookupPage: React.FC = () => {
                         {!myLoading &&
                             !myError &&
                             myComplaints.length === 0 && (
-                                <EmptyState label="Bạn chưa gửi phản ánh nào" />
+                                <EmptyState
+                                    label="Bạn chưa gửi phản ánh nào"
+                                    icon={MessageSquareWarning}
+                                    tone="danger"
+                                />
                             )}
                         {!myLoading &&
                             !myError &&
@@ -163,6 +169,30 @@ const ComplaintLookupPage: React.FC = () => {
 
                 {canViewInbox && <StaffComplaintInbox />}
             </Box>
+
+            {canCreate && (
+                <Box
+                    className="bg-main"
+                    style={{
+                        position: "fixed",
+                        right: 16,
+                        bottom: 76,
+                        width: 52,
+                        height: 52,
+                        borderRadius: 26,
+                        display: "flex",
+                        alignItems: "center",
+                        justifyContent: "center",
+                        boxShadow: "0 4px 12px rgba(5,170,192,0.4)",
+                        zIndex: 20,
+                    }}
+                    onClick={() =>
+                        navigate("/complaints/create", { animate: true })
+                    }
+                >
+                    <Icon icon="zi-plus" className="text-white" />
+                </Box>
+            )}
         </PageLayout>
     );
 };

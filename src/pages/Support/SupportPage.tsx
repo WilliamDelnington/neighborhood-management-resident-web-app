@@ -1,5 +1,5 @@
 import React from "react";
-import { Box, Icon, Text, useNavigate } from "zmp-ui";
+import { Box, Icon, Text, useNavigate } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { RequireAuth } from "@components/role";
 
@@ -21,7 +21,7 @@ const SupportRow: React.FC<SupportRowProps> = ({
     onClick,
 }) => (
     <Box
-        className="bg-white rounded-2xl p-4 shadow-sm mt-3"
+        className="bg-white rounded-2xl p-4 shadow-card mt-3"
         flex
         justifyContent="space-between"
         alignItems="center"
@@ -48,6 +48,22 @@ const SupportPageContent: React.FC = () => {
                     description="Xem hướng dẫn sử dụng các tính năng của ứng dụng"
                     onClick={() =>
                         navigate("/support/how-to-use", { animate: true })
+                    }
+                />
+                <SupportRow
+                    title="Yêu cầu hỗ trợ của tôi"
+                    description="Xem lại các yêu cầu hỗ trợ bạn đã gửi và trạng thái xử lý"
+                    onClick={() =>
+                        navigate("/support/tickets/mine", { animate: true })
+                    }
+                />
+                <SupportRow
+                    title="Hỗ trợ hộ dân"
+                    description="Đề nghị Tổ dân phố/Phường hỗ trợ một vấn đề của gia đình bạn"
+                    onClick={() =>
+                        navigate("/support/household-assistance", {
+                            animate: true,
+                        })
                     }
                 />
                 <SupportRow

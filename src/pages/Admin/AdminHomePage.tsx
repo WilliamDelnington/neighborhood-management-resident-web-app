@@ -1,5 +1,6 @@
 import React from "react";
-import { Box, Text, useNavigate } from "zmp-ui";
+import { Home, Mail, Store, Tags, IdCard, Users } from "lucide-react";
+import { Box, Text, useNavigate } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { ListRow } from "@components/admin";
 import { RequireAuth, hasPermission, hasAdminAccess } from "@components/role";
@@ -22,6 +23,8 @@ const AdminHomeContent: React.FC = () => {
     const canViewCitizens = hasPermission(user, "citizens.read");
     const canViewHouses = hasPermission(user, "houses.read");
     const canViewBusinessTypes = hasPermission(user, "business_types.read");
+    const canViewBusinesses = hasPermission(user, "businesses.read");
+    const canViewCorrespondences = hasPermission(user, "correspondences.read");
 
     return (
         <PageLayout
@@ -29,11 +32,16 @@ const AdminHomeContent: React.FC = () => {
             title="Quản trị"
             bottomNav={<AppBottomNav />}
         >
-            <Box className="bg-white mt-2">
+            <Box
+                className="bg-white mt-2"
+                style={{ minHeight: "calc(100vh - 112px)" }}
+            >
                 {(canViewHouseholds ||
                     canViewCitizens ||
                     canViewHouses ||
-                    canViewBusinessTypes) && (
+                    canViewBusinessTypes ||
+                    canViewBusinesses ||
+                    canViewCorrespondences) && (
                     <Box px={4}>
                         {canViewHouses && (
                             <ListRow
@@ -43,6 +51,8 @@ const AdminHomeContent: React.FC = () => {
                                         ? "Nhà số của bạn"
                                         : "Nhà số trong cụm dân cư bạn phụ trách"
                                 }
+                                icon={Home}
+                                tone="primary"
                                 onClick={() =>
                                     navigate("/admin/houses", {
                                         animate: true,
@@ -58,6 +68,8 @@ const AdminHomeContent: React.FC = () => {
                                         ? "Hộ dân trong nhà của bạn"
                                         : "Thông tin các hộ dân trong tổ dân phố"
                                 }
+                                icon={Users}
+                                tone="info"
                                 onClick={() =>
                                     navigate("/admin/households", {
                                         animate: true,
@@ -73,8 +85,27 @@ const AdminHomeContent: React.FC = () => {
                                         ? "Nhân khẩu trong hộ của bạn"
                                         : "Thông tin nhân khẩu của từng hộ"
                                 }
+                                icon={IdCard}
+                                tone="success"
                                 onClick={() =>
                                     navigate("/admin/citizens", {
+                                        animate: true,
+                                    })
+                                }
+                            />
+                        )}
+                        {canViewBusinesses && (
+                            <ListRow
+                                title="Danh sách hộ kinh doanh"
+                                subtitle={
+                                    isHouseOwner
+                                        ? "Hộ kinh doanh trong nhà của bạn"
+                                        : "Hộ kinh doanh trong tổ dân phố"
+                                }
+                                icon={Store}
+                                tone="warning"
+                                onClick={() =>
+                                    navigate("/admin/businesses", {
                                         animate: true,
                                     })
                                 }
@@ -84,8 +115,23 @@ const AdminHomeContent: React.FC = () => {
                             <ListRow
                                 title="Danh sách loại hình kinh doanh"
                                 subtitle="Danh mục loại hình hộ kinh doanh"
+                                icon={Tags}
+                                tone="warning"
                                 onClick={() =>
                                     navigate("/admin/business-types", {
+                                        animate: true,
+                                    })
+                                }
+                            />
+                        )}
+                        {canViewCorrespondences && (
+                            <ListRow
+                                title="Văn bản"
+                                subtitle="Công văn, báo cáo, đề xuất giữa phường/xã và tổ dân phố"
+                                icon={Mail}
+                                tone="info"
+                                onClick={() =>
+                                    navigate("/correspondences", {
                                         animate: true,
                                     })
                                 }
@@ -96,7 +142,9 @@ const AdminHomeContent: React.FC = () => {
                 {!canViewHouseholds &&
                     !canViewCitizens &&
                     !canViewHouses &&
-                    !canViewBusinessTypes && (
+                    !canViewBusinessTypes &&
+                    !canViewBusinesses &&
+                    !canViewCorrespondences && (
                         <Box p={6}>
                             <Text
                                 size="small"

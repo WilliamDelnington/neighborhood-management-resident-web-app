@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, useNavigate, useParams, useSnackbar } from "zmp-ui";
+import { Box, Text, useNavigate, useParams, useSnackbar } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button, Checkbox, Radio, TextArea } from "@components/customized";
 import { ErrorState, LoadingState } from "@components/admin";
@@ -58,7 +58,7 @@ const SurveyDetailPage: React.FC = () => {
 
                 {!loading && !errorMessage && survey && (
                     <>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Text.Title size="small">{survey.title}</Text.Title>
                             {survey.description && (
                                 <Text
@@ -84,7 +84,7 @@ const SurveyDetailPage: React.FC = () => {
                                     />
                                 ))}
                                 <Box
-                                    className="bg-white rounded-2xl p-4 shadow-sm mt-3"
+                                    className="bg-white rounded-2xl p-4 shadow-card mt-3"
                                     flex
                                     flexDirection="column"
                                     alignItems="center"
@@ -119,7 +119,7 @@ const ReadOnlyQuestion: React.FC<{
     index: number;
     question: SurveyQuestion;
 }> = ({ index, question }) => (
-    <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+    <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
         <Text size="small" className="font-medium">
             {index + 1}. {question.question}
             {question.required && <Text className="text-red-500">{" *"}</Text>}
@@ -248,7 +248,7 @@ const SurveyAnswerForm: React.FC<{ survey: Survey }> = ({ survey }) => {
             {survey.questions.map((question, index) => (
                 <Box
                     key={question._id}
-                    className="bg-white rounded-2xl p-4 shadow-sm mt-3"
+                    className="bg-white rounded-2xl p-4 shadow-card mt-3"
                 >
                     <Text size="small" className="font-medium">
                         {index + 1}. {question.question}
@@ -336,7 +336,7 @@ const SurveyAnswerForm: React.FC<{ survey: Survey }> = ({ survey }) => {
             <Box mt={4}>
                 {disabled ? (
                     <Box
-                        className="bg-white rounded-2xl p-4 shadow-sm"
+                        className="bg-white rounded-2xl p-4 shadow-card"
                         style={{ textAlign: "center" }}
                     >
                         <Text size="small" className="text-main font-medium">

@@ -1,7 +1,8 @@
 import React, { useState } from "react";
-import { Box, DatePicker, Text } from "zmp-ui";
+import { Box, DatePicker, Text } from "@components/ui";
 import { Input, Radio, Checkbox } from "@components/customized";
 import { HouseholdPickerSheet } from "@components/household";
+import { PendingAttachmentsPicker } from "@components/attachments";
 import { GIOI_TINH_LABEL, LOAI_CU_TRU_LABEL } from "@constants/domain";
 import { GioiTinh, Household, LoaiCuTru } from "@dts";
 import { CitizenInput } from "@service/citizenApi";
@@ -16,11 +17,13 @@ export interface CitizenFormValues {
     householdId: string;
     householdLabel: string;
     residenceType: LoaiCuTru;
+    temporaryResidenceExpiresAt: Date | null;
     isElderly: boolean;
     isChild: boolean;
     isDisabledOrSupportNeeded: boolean;
     isPartyMember: boolean;
     isUnionMember: boolean;
+    attachments: File[];
 }
 
 export const EMPTY_CITIZEN_FORM: CitizenFormValues = {
@@ -33,11 +36,13 @@ export const EMPTY_CITIZEN_FORM: CitizenFormValues = {
     householdId: "",
     householdLabel: "",
     residenceType: "thuong_tru",
+    temporaryResidenceExpiresAt: null,
     isElderly: false,
     isChild: false,
     isDisabledOrSupportNeeded: false,
     isPartyMember: false,
     isUnionMember: false,
+    attachments: [],
 };
 
 export function toCitizenInput(values: CitizenFormValues): CitizenInput {
@@ -52,6 +57,9 @@ export function toCitizenInput(values: CitizenFormValues): CitizenInput {
         gender: values.gender,
         relationToHead: values.relationToHead.trim() || undefined,
         residenceType: values.residenceType,
+        temporaryResidenceExpiresAt: values.temporaryResidenceExpiresAt
+            ? values.temporaryResidenceExpiresAt.toISOString()
+            : undefined,
         isElderly: values.isElderly,
         isChild: values.isChild,
         isDisabledOrSupportNeeded: values.isDisabledOrSupportNeeded,
@@ -61,7 +69,12 @@ export function toCitizenInput(values: CitizenFormValues): CitizenInput {
 }
 
 export function isCitizenFormValid(values: CitizenFormValues): boolean {
-    return !!(values.fullName.trim() && values.householdId);
+    return !!(
+        values.fullName.trim() &&
+        values.householdId &&
+        (values.residenceType !== "tam_tru" ||
+            !!values.temporaryResidenceExpiresAt)
+    );
 }
 
 interface CitizenFormProps {
@@ -69,6 +82,12 @@ interface CitizenFormProps {
     onChange: (values: CitizenFormValues) => void;
     /** An khi tao nhan khau tu man chi tiet ho dan (da co household co dinh). */
     lockHousehold?: boolean;
+    /**
+     * An khi chinh sua nhan khau da co tu man chi tiet - man do da co
+     * AttachmentUploader rieng de quan ly tai lieu (xem CitizenDetailPage),
+     * nen khong can chon lai file trong Form (chi dung khi tao moi).
+     */
+    showAttachments?: boolean;
 }
 
 /**
@@ -78,6 +97,7 @@ const CitizenForm: React.FC<CitizenFormProps> = ({
     values,
     onChange,
     lockHousehold,
+    showAttachments = true,
 }) => {
     const [pickerVisible, setPickerVisible] = useState(false);
     const set = <K extends keyof CitizenFormValues>(
@@ -172,6 +192,15 @@ const CitizenForm: React.FC<CitizenFormProps> = ({
                     ))}
                 </Box>
             </Box>
+            {values.residenceType === "tam_tru" && (
+                <DatePicker
+                    label="Thời hạn tạm trú"
+                    title="Chọn ngày hết hạn tạm trú"
+                    value={values.temporaryResidenceExpiresAt || undefined}
+                    onChange={date => set("temporaryResidenceExpiresAt", date)}
+                    placeholder="Chọn ngày hết hạn"
+                />
+            )}
             <Box style={{ display: "flex", flexDirection: "column", gap: 8 }}>
                 <Checkbox
                     label="Người cao tuổi"
@@ -209,6 +238,12 @@ const CitizenForm: React.FC<CitizenFormProps> = ({
                     onChange={() => set("isUnionMember", !values.isUnionMember)}
                 />
             </Box>
+            {showAttachments && (
+                <PendingAttachmentsPicker
+                    files={values.attachments}
+                    onChange={files => set("attachments", files)}
+                />
+            )}
             {!lockHousehold && (
                 <HouseholdPickerSheet
                     visible={pickerVisible}

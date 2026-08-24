@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Box, Icon, Sheet, Text, useNavigate, useSnackbar } from "zmp-ui";
+import { Users } from "lucide-react";
+import {
+    Box,
+    Icon,
+    Sheet,
+    Text,
+    useNavigate,
+    useSnackbar,
+} from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button, Input } from "@components/customized";
 import {
@@ -18,6 +26,10 @@ import {
     toHouseholdInput,
 } from "@components/household";
 import { useStore } from "@store";
+import {
+    VERIFICATION_STATUS_LABEL,
+    VERIFICATION_STATUS_TONE,
+} from "@constants/domain";
 import { createHousehold, fetchHouseholds } from "@service/householdApi";
 import { AppError, Household } from "@dts";
 
@@ -103,16 +115,16 @@ const HouseholdListContent: React.FC = () => {
     };
 
     const handleCreate = async () => {
-        if (!isHouseholdFormValid(form)) {
+        if (!isHouseholdFormValid(form, "create")) {
             openSnackbar({
                 type: "error",
-                text: "Vui lòng chọn nhà số và nhập đầy đủ địa chỉ, chủ hộ",
+                text: "Vui lòng chọn nhà số, nhập đầy đủ địa chỉ, chủ hộ, số điện thoại liên hệ (và tên người liên hệ nếu khác chủ hộ)",
             });
             return;
         }
         try {
             setSubmitting(true);
-            await createHousehold(toHouseholdInput(form));
+            await createHousehold(toHouseholdInput(form, "create"));
             openSnackbar({ type: "success", text: "Đã thêm hộ dân mới" });
             setCreateVisible(false);
             load(1, search, false);
@@ -126,7 +138,7 @@ const HouseholdListContent: React.FC = () => {
     return (
         <PageLayout id="household-list-page" title="Danh sách hộ dân">
             <Box p={4}>
-                <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                <Box className="bg-white rounded-2xl p-4 shadow-card">
                     <Input
                         placeholder="Tìm theo mã hộ, địa chỉ hoặc chủ hộ"
                         value={searchInput}
@@ -139,13 +151,17 @@ const HouseholdListContent: React.FC = () => {
                     </Box>
                 </Box>
 
-                <Box className="bg-white rounded-2xl mt-3 shadow-sm">
+                <Box className="bg-white rounded-2xl mt-3 shadow-card">
                     {loading && <LoadingState />}
                     {!loading && error && (
                         <ErrorState onRetry={() => load(1, search, false)} />
                     )}
                     {!loading && !error && items.length === 0 && (
-                        <EmptyState label="Không tìm thấy hộ dân nào" />
+                        <EmptyState
+                            label="Không tìm thấy hộ dân nào"
+                            icon={Users}
+                            tone="info"
+                        />
                     )}
                     {!loading && !error && items.length > 0 && (
                         <Box px={4}>
@@ -158,12 +174,26 @@ const HouseholdListContent: React.FC = () => {
                                     title={`${item.code} · ${item.headOfHousehold}`}
                                     subtitle={`${item.address} · ${item.memberCount} nhân khẩu`}
                                     right={
-                                        item.needsSupport ? (
+                                        <>
                                             <StatusBadge
-                                                label="Cần hỗ trợ"
-                                                tone="yellow"
+                                                label={
+                                                    VERIFICATION_STATUS_LABEL[
+                                                        item.status
+                                                    ]
+                                                }
+                                                tone={
+                                                    VERIFICATION_STATUS_TONE[
+                                                        item.status
+                                                    ]
+                                                }
                                             />
-                                        ) : undefined
+                                            {item.needsSupport && (
+                                                <StatusBadge
+                                                    label="Cần hỗ trợ"
+                                                    tone="yellow"
+                                                />
+                                            )}
+                                        </>
                                     }
                                     onClick={() =>
                                         navigate(
@@ -204,7 +234,7 @@ const HouseholdListContent: React.FC = () => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        boxShadow: "0 4px 12px rgba(37,99,235,0.4)",
+                        boxShadow: "0 4px 12px rgba(5,170,192,0.4)",
                         zIndex: 20,
                     }}
                     onClick={openCreate}
@@ -229,7 +259,11 @@ const HouseholdListContent: React.FC = () => {
                     }}
                 >
                     <Box style={{ flex: 1, overflowY: "auto" }}>
-                        <HouseholdForm values={form} onChange={setForm} />
+                        <HouseholdForm
+                            values={form}
+                            onChange={setForm}
+                            mode="create"
+                        />
                     </Box>
                     <Box mt={3}>
                         <Button

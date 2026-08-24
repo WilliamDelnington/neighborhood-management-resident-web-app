@@ -1,5 +1,5 @@
 import { API } from "@constants/common";
-import { Citizen, GioiTinh, LoaiCuTru, PaginatedData } from "@dts";
+import { Citizen, FileAsset, GioiTinh, LoaiCuTru, PaginatedData } from "@dts";
 import { request } from "./request";
 
 /**
@@ -31,6 +31,7 @@ export interface CitizenInput {
     relationToHead?: string;
     householdId: string;
     residenceType?: LoaiCuTru;
+    temporaryResidenceExpiresAt?: string;
     isElderly?: boolean;
     isChild?: boolean;
     isDisabledOrSupportNeeded?: boolean;
@@ -49,3 +50,12 @@ export const updateCitizen = (
 
 export const deleteCitizen = (id: string): Promise<null> =>
     request<null>("DELETE", `${API.CITIZENS}/${id}`);
+
+export const fetchCitizenAttachments = (id: string): Promise<FileAsset[]> =>
+    request<FileAsset[]>("GET", `${API.CITIZENS}/${id}/attachments`);
+
+export const deleteCitizenAttachment = (
+    id: string,
+    fileId: string,
+): Promise<null> =>
+    request<null>("DELETE", `${API.CITIZENS}/${id}/attachments/${fileId}`);

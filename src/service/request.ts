@@ -52,6 +52,9 @@ export async function request<T>(
                 },
             );
         }
+    } else if (data instanceof FormData) {
+        // Trình duyệt tự đặt multipart boundary; không gắn Content-Type thủ công.
+        requestOptions.body = data;
     } else {
         headers.append("Content-Type", "application/json");
         requestOptions.body = JSON.stringify(data ?? {});
@@ -64,15 +67,39 @@ export async function request<T>(
         throw new RequestError("Không kết nối được tới máy chủ");
     }
 
-    const resData = (await response.json()) as ApiResponse<T>;
+    let resData: ApiResponse<T>;
+    try {
+        resData = (await response.json()) as ApiResponse<T>;
+    } catch (err) {
+        // Phan hoi khong phai JSON hop le (vd rong hoac HTML) - thuong do goi
+        // sai duong dan, hoac backend chua trien khai route nay (chua deploy
+        // ban moi nhat) nen tra ve 404/502 khong co body JSON. Nem loi ro
+        // rang thay vi de nguyen SyntaxError kho hieu ("Unexpected end of
+        // JSON input") lam nguoi dung tuong nham la loi khac.
+        throw new RequestError(
+            `Phan hoi khong hop le tu may chu (status ${response.status}) - co the API chua duoc trien khai hoac duong dan sai: ${method} ${url}`,
+            response.status,
+        );
+    }
 
     if (!resData.success) {
         if (response.status === 401) {
+            const hadToken = Boolean(store.getState().token);
             store.setState(state => ({
                 ...state,
                 token: undefined,
                 user: undefined,
             }));
+            // Chi bao "phien het han" khi truoc do dang co token (mot phien
+            // dang dang nhap vua bi tu choi) - tranh hien toast nay cho cac
+            // request 401 khac (vd sai OTP luc chua dang nhap).
+            if (hadToken) {
+                store.getState().setError({
+                    message:
+                        "Phiên đăng nhập đã hết hạn, vui lòng đăng nhập lại.",
+                    status: 401,
+                });
+            }
         }
         throw new RequestError(
             resData.error || resData.message || "Đã xảy ra lỗi",

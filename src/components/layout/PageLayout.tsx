@@ -1,7 +1,6 @@
 import React, { ReactNode, useImperativeHandle, useRef } from "react";
 import styled from "styled-components";
-import { Page } from "zmp-ui";
-import { PageProps } from "zmp-ui/page";
+import { Page, PageProps } from "@components/ui";
 import tw from "twin.macro";
 import DefaultHeader from "./DefaultHeader";
 
@@ -17,14 +16,16 @@ interface PropsType extends PageProps {
 }
 
 const StyledPage = styled(Page)`
-    ${tw`bg-[#EAEBED]`}
-    padding: calc(var(--zaui-safe-area-inset-top, 0px) + 48px) 0 var(--zaui-safe-area-inset-bottom) 0;
+    ${tw`bg-app-bg`}
+    min-height: 100vh;
+    padding: calc(var(--zaui-safe-area-inset-top, 0px) + 48px) 0
+        var(--zaui-safe-area-inset-bottom, 0px) 0;
     ${({ $bg }: { $bg?: string }) => {
         if (!$bg) {
             return "";
         }
         return {
-            backgroundColor: $bg,
+            background: $bg,
         };
     }}
 `;

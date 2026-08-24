@@ -1,6 +1,21 @@
 import { API } from "@constants/common";
-import { Citizen, Household, LoaiSoHuu, PaginatedData } from "@dts";
+import {
+    Citizen,
+    EntityRequiredDocumentsResult,
+    FileAsset,
+    Household,
+    LoaiSoHuu,
+    PaginatedData,
+    RequiredDocumentRecord,
+    VerificationStatus,
+} from "@dts";
 import { request } from "./request";
+import {
+    fetchEntityRequiredDocuments,
+    reviewEntityDocument,
+    submitEntityDocument,
+    SubmitEntityDocumentInput,
+} from "./requiredDocumentApi";
 
 export const searchHouseholds = (params: {
     search?: string;
@@ -50,7 +65,12 @@ export interface HouseholdInput {
     address: string;
     headOfHousehold: string;
     phone?: string;
-    memberCount?: number;
+    // Chi dung khi tao moi ho dan (xem HouseholdForm mode="create") - danh dau
+    // nguoi lien he (phone o tren) co phai chinh chu ho khong. true = chi tao
+    // Citizen "Chủ hộ" mang phone nay; false = tao them mot Citizen
+    // "Người liên hệ" rieng mang ten contactName va phone nay.
+    contactIsHead?: boolean;
+    contactName?: string;
     ownershipType?: LoaiSoHuu;
     needsSupport?: boolean;
     houseId?: string | null;
@@ -68,3 +88,49 @@ export const updateHousehold = (
 
 export const deleteHousehold = (id: string): Promise<null> =>
     request<null>("DELETE", `${API.HOUSEHOLDS}/${id}`);
+
+export const fetchHouseholdAttachments = (id: string): Promise<FileAsset[]> =>
+    request<FileAsset[]>("GET", `${API.HOUSEHOLDS}/${id}/attachments`);
+
+export const deleteHouseholdAttachment = (
+    id: string,
+    fileId: string,
+): Promise<null> =>
+    request<null>("DELETE", `${API.HOUSEHOLDS}/${id}/attachments/${fileId}`);
+
+export const updateHouseholdStatus = (
+    id: string,
+    status: VerificationStatus,
+    note?: string,
+): Promise<Household> =>
+    request<Household>("PATCH", `${API.HOUSEHOLDS}/${id}/status`, {
+        status,
+        note,
+    });
+
+export const fetchHouseholdRequiredDocuments = (
+    id: string,
+): Promise<EntityRequiredDocumentsResult> =>
+    fetchEntityRequiredDocuments(API.HOUSEHOLDS, id);
+
+export const submitHouseholdDocument = (
+    id: string,
+    input: SubmitEntityDocumentInput,
+): Promise<RequiredDocumentRecord> =>
+    submitEntityDocument(API.HOUSEHOLDS, id, input);
+
+export const reviewHouseholdDocument = (
+    id: string,
+    documentId: string,
+    decision: "approved" | "rejected",
+    rejectionReason?: string,
+    approvalNote?: string,
+): Promise<RequiredDocumentRecord> =>
+    reviewEntityDocument(
+        API.HOUSEHOLDS,
+        id,
+        documentId,
+        decision,
+        rejectionReason,
+        approvalNote,
+    );

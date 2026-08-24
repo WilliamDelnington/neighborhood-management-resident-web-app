@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Box, Icon } from "zmp-ui";
+import { FileText } from "lucide-react";
+import { Box, Icon } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import {
     EmptyState,
@@ -39,11 +40,18 @@ const FilesPage: React.FC = () => {
             title="Biểu mẫu"
             bottomNav={<AppBottomNav />}
         >
-            <Box className="bg-white mt-2">
+            <Box
+                className="bg-white mt-2"
+                style={{ minHeight: "calc(100vh - 112px)" }}
+            >
                 {loading && <LoadingState />}
                 {!loading && error && <ErrorState onRetry={load} />}
                 {!loading && !error && items.length === 0 && (
-                    <EmptyState label="Chưa có biểu mẫu nào" />
+                    <EmptyState
+                        label="Chưa có biểu mẫu nào"
+                        icon={FileText}
+                        tone="primary"
+                    />
                 )}
                 {!loading && !error && (
                     <Box px={4}>

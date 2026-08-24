@@ -1,7 +1,7 @@
 import React, { FunctionComponent } from "react";
 import styled from "styled-components";
 import tw from "twin.macro";
-import { List } from "zmp-ui";
+import { Icon, List } from "@components/ui";
 
 import { ImageIcon } from "@components/icons";
 import { Utinity } from "@dts";
@@ -32,8 +32,26 @@ const StyledListItem = styled(List.Item)`
     }
 `;
 
+const IconBadge = styled.div<{ $bg?: string; $color?: string }>`
+    ${tw`rounded-2xl flex items-center justify-center flex-shrink-0`};
+    width: 44px;
+    height: 44px;
+    background: ${({ $bg }) => $bg || "#ECFEFF"};
+    color: ${({ $color }) => $color || "#0891B2"};
+`;
+
 const UtinityItem: FunctionComponent<ItemProps> = props => {
-    const { iconSrc, label, handleClickUtinity } = props;
+    const {
+        icon: IconComp,
+        iconSrc,
+        color,
+        bgColor,
+        label,
+        path,
+        link,
+        phoneNumber,
+        handleClickUtinity,
+    } = props;
 
     const handleClick = (
         event: React.MouseEvent<HTMLDivElement, MouseEvent>,
@@ -42,11 +60,26 @@ const UtinityItem: FunctionComponent<ItemProps> = props => {
         handleClickUtinity?.(props);
     };
 
+    const actionable = Boolean(path || link || phoneNumber);
+
     return (
         <StyledListItem
             onClick={handleClick}
-            prefix={<ImageIcon src={iconSrc} />}
+            prefix={
+                IconComp ? (
+                    <IconBadge $bg={bgColor} $color={color}>
+                        <IconComp color={color} size={20} />
+                    </IconBadge>
+                ) : (
+                    iconSrc && <ImageIcon src={iconSrc} />
+                )
+            }
             title={label}
+            suffix={
+                actionable && (
+                    <Icon icon="zi-chevron-right" className="text-text_3" />
+                )
+            }
         />
     );
 };

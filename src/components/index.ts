@@ -4,7 +4,6 @@ export * from "./utilities";
 export * from "./common";
 export * from "./customized";
 export * from "./collapse";
-export { default as Auth } from "./Auth";
 export * from "./skeleton";
 export * from "./notifications/ErrorNotification";
 export * from "./date-picker";

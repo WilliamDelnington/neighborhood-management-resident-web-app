@@ -1,19 +1,24 @@
 import React, { useEffect, useState } from "react";
-import { Box, Icon, Text, useParams, useSnackbar } from "zmp-ui";
+import { Box, Icon, Text, useParams, useSnackbar } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button, Input, Radio } from "@components/customized";
 import { ErrorState, LoadingState } from "@components/admin";
 import { RequireAuth } from "@components/role";
-import { fetchMeetingDetail, registerMeeting } from "@service/meetingApi";
+import {
+    fetchMeetingAttachments,
+    fetchMeetingDetail,
+    registerMeeting,
+} from "@service/meetingApi";
 import { DANG_KY_HOP_LABEL } from "@constants/domain";
 import { formatDateTime } from "@utils/date-time";
-import { DangKyHop, Meeting } from "@dts";
+import { DangKyHop, FileAsset, Meeting } from "@dts";
 import { useStore } from "@store";
 
 const MeetingDetailPage: React.FC = () => {
     const { id } = useParams();
     const markMeetingsSeen = useStore(state => state.markMeetingsSeen);
     const [meeting, setMeeting] = useState<Meeting | null>(null);
+    const [attachments, setAttachments] = useState<FileAsset[]>([]);
     const [loading, setLoading] = useState(true);
     const [errorMessage, setErrorMessage] = useState<string | null>(null);
 
@@ -27,6 +32,10 @@ const MeetingDetailPage: React.FC = () => {
                 setErrorMessage(err?.message || "Không thể tải cuộc họp"),
             )
             .finally(() => setLoading(false));
+
+        fetchMeetingAttachments(id)
+            .then(setAttachments)
+            .catch(() => setAttachments([]));
     };
 
     useEffect(load, [id]);
@@ -45,7 +54,7 @@ const MeetingDetailPage: React.FC = () => {
 
                 {!loading && !errorMessage && meeting && (
                     <>
-                        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                        <Box className="bg-white rounded-2xl p-4 shadow-card">
                             <Text.Title size="small">
                                 {meeting.title}
                             </Text.Title>
@@ -99,7 +108,7 @@ const MeetingDetailPage: React.FC = () => {
                                 </Box>
                             )}
 
-                            {meeting.attachments.length > 0 && (
+                            {attachments.length > 0 && (
                                 <Box mt={3}>
                                     <Text
                                         size="xSmall"
@@ -107,16 +116,16 @@ const MeetingDetailPage: React.FC = () => {
                                     >
                                         File đính kèm
                                     </Text>
-                                    {meeting.attachments.map((url, index) => (
+                                    {attachments.map(a => (
                                         <Box
-                                            key={url}
+                                            key={a._id}
                                             flex
                                             alignItems="center"
                                             py={1}
                                             style={{ gap: 6 }}
                                             className="text-main"
                                             onClick={() =>
-                                                window.open(url, "_blank")
+                                                window.open(a.url, "_blank")
                                             }
                                         >
                                             <Icon icon="zi-file" size={16} />
@@ -124,7 +133,7 @@ const MeetingDetailPage: React.FC = () => {
                                                 size="xSmall"
                                                 className="text-main"
                                             >
-                                                Tài liệu {index + 1}
+                                                {a.name}
                                             </Text>
                                         </Box>
                                     ))}
@@ -189,7 +198,7 @@ const MeetingRsvpSection: React.FC<{ meetingId: string }> = ({ meetingId }) => {
     };
 
     return (
-        <Box className="bg-white rounded-2xl p-4 shadow-sm">
+        <Box className="bg-white rounded-2xl p-4 shadow-card">
             <Text.Title size="small" className="mb-2">
                 Đăng ký tham dự
             </Text.Title>

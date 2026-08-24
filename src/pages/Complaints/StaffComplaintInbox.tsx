@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Box, Text, useNavigate } from "zmp-ui";
+import { MessageSquareWarning } from "lucide-react";
+import { Box, Text, useNavigate } from "@components/ui";
 import { Button } from "@components/customized";
 import {
     EmptyState,
@@ -60,7 +61,7 @@ const StaffComplaintInbox: React.FC = () => {
     }, []);
 
     return (
-        <Box className="bg-white rounded-2xl p-4 shadow-sm mt-3">
+        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
             <Text.Title size="small" className="mb-2">
                 Phản ánh trong phạm vi phụ trách
             </Text.Title>
@@ -68,7 +69,11 @@ const StaffComplaintInbox: React.FC = () => {
             {loading && <LoadingState />}
             {!loading && error && <ErrorState onRetry={() => load(1, false)} />}
             {!loading && !error && items.length === 0 && (
-                <EmptyState label="Chưa có phản ánh nào trong phạm vi của bạn" />
+                <EmptyState
+                    label="Chưa có phản ánh nào trong phạm vi của bạn"
+                    icon={MessageSquareWarning}
+                    tone="danger"
+                />
             )}
             {!loading && !error && items.length > 0 && (
                 <>

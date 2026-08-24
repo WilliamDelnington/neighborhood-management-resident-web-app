@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Box, Sheet, Text } from "zmp-ui";
+import { Home } from "lucide-react";
+import { Box, Sheet, Text } from "@components/ui";
 import { Input } from "@components/customized";
 import { LoadingState, EmptyState } from "@components/admin";
 import { fetchHouses } from "@service/houseApi";
@@ -8,7 +9,7 @@ import { House, HouseStatus } from "@dts";
 export interface HousePickerSheetProps {
     visible: boolean;
     cluster?: string;
-    status?: HouseStatus;
+    status?: HouseStatus | HouseStatus[];
     onClose: () => void;
     onSelect: (house: House) => void;
 }
@@ -62,10 +63,12 @@ const HousePickerSheet: React.FC<HousePickerSheetProps> = ({
                     {!loading && items.length === 0 && (
                         <EmptyState
                             label={
-                                status === "verified"
-                                    ? "Bạn chưa có nhà số nào được xác thực"
+                                status
+                                    ? "Bạn chưa có nhà số nào ở trạng thái phù hợp (chưa bị từ chối hoặc bị khóa)"
                                     : "Không tìm thấy nhà số phù hợp"
                             }
+                            icon={Home}
+                            tone="primary"
                         />
                     )}
                     {!loading &&

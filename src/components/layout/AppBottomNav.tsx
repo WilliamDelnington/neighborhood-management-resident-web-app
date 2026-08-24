@@ -1,6 +1,6 @@
 import React from "react";
 import { useLocation } from "react-router-dom";
-import { BottomNavigation, Icon } from "zmp-ui";
+import { BottomNavigation, Icon } from "@components/ui";
 import { useStore } from "@store";
 import { hasPermission } from "@components/role";
 
@@ -9,8 +9,9 @@ import { hasPermission } from "@components/role";
  * ho dan / nhan khau) chi hien khi tai khoan duoc cap it nhat mot trong cac
  * quyen doc tuong ung - moi quyen duoc admin cau hinh rieng theo vai tro (xem
  * trang Vai tro & phan quyen), khong con gan voi "dashboard.read" nhu truoc.
- * Muc "Phan anh" luon hien voi moi tai khoan (nguoi dan gui/tra cuu, nhan vien
- * co them hop thu xem phan anh trong pham vi phu trach - xem ComplaintLookupPage).
+ * "Phan anh" va "Thong bao" khong con la muc rieng tren thanh nay - phan anh
+ * duoc truy cap qua the "Phan anh cua toi" tren trang chu, thong bao/thong
+ * cao qua bieu tuong chuong (xem NotificationsPage).
  */
 const AppBottomNav: React.FC = () => {
     const { pathname } = useLocation();
@@ -18,13 +19,13 @@ const AppBottomNav: React.FC = () => {
     const canViewSections =
         hasPermission(user, "houses.read") ||
         hasPermission(user, "households.read") ||
-        hasPermission(user, "citizens.read");
+        hasPermission(user, "citizens.read") ||
+        hasPermission(user, "businesses.read") ||
+        hasPermission(user, "business_types.read");
 
     const activeKey = (() => {
         if (pathname === "/") return "home";
-        if (pathname.startsWith("/announcements")) return "announcements";
         if (pathname.startsWith("/admin")) return "admin";
-        if (pathname.startsWith("/complaints")) return "complaints";
         if (pathname.startsWith("/account")) return "account";
         return "home";
     })();
@@ -38,13 +39,6 @@ const AppBottomNav: React.FC = () => {
                 icon={<Icon icon="zi-home" />}
                 linkTo="/"
             />
-            <BottomNavigation.Item
-                key="announcements"
-                itemKey="announcements"
-                label="Thông báo"
-                icon={<Icon icon="zi-notif" />}
-                linkTo="/announcements"
-            />
             {canViewSections && (
                 <BottomNavigation.Item
                     key="admin"
@@ -54,13 +48,6 @@ const AppBottomNav: React.FC = () => {
                     linkTo="/admin"
                 />
             )}
-            <BottomNavigation.Item
-                key="complaints"
-                itemKey="complaints"
-                label="Phản ánh"
-                icon={<Icon icon="zi-note" />}
-                linkTo="/complaints/lookup"
-            />
             <BottomNavigation.Item
                 key="account"
                 itemKey="account"

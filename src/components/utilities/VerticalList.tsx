@@ -2,7 +2,7 @@ import React, { FunctionComponent } from "react";
 import styled from "styled-components";
 import tw from "twin.macro";
 import { Utinity } from "@dts";
-import { Box, List, Text } from "zmp-ui";
+import { Box, List, Text } from "@components/ui";
 import Item from "./VerticalListItem";
 
 interface VerticalListPorps {

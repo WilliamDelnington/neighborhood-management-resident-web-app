@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import tw from "twin.macro";
-import { Text } from "zmp-ui";
+import { Text } from "@components/ui";
 
 export const RowDisplay = styled.div`
     ${tw`flex flex-row justify-between items-start`}

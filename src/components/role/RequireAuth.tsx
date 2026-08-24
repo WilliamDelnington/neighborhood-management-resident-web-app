@@ -1,11 +1,12 @@
 import React, { PropsWithChildren, ReactElement, useEffect } from "react";
-import { Box, Page, Spinner, useLocation, useNavigate } from "zmp-ui";
+import { Box, Page, Spinner, useLocation, useNavigate } from "@components/ui";
 import DefaultHeader from "@components/layout/DefaultHeader";
 import { useStore } from "@store";
 
 /**
- * Bao boc mot man hinh yeu cau dang nhap. Trong khi dang bootstrap phien (goi Zalo + doi token
- * backend) se hien loading; neu that bai/chua co token se dieu huong ve trang dang nhap.
+ * Bao boc mot man hinh yeu cau dang nhap: neu dang co token thi hien children
+ * ngay; neu chua co token va khong co luot dang nhap nao dang chay (vd nguoi
+ * dung vua bam dang nhap tu man khac) thi dieu huong thang ve /login.
  *
  * Luu y: import DefaultHeader truc tiep (khong qua barrel @components/layout) de tranh vong lap
  * import - AppBottomNav (trong @components/layout) lai import hasAdminAccess tu chinh module nay.
@@ -13,14 +14,13 @@ import { useStore } from "@store";
 const RequireAuth: React.FC<PropsWithChildren> = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [token, bootstrapping, bootstrapError] = useStore(state => [
+    const [token, bootstrapping] = useStore(state => [
         state.token,
         state.bootstrapping,
-        state.bootstrapError,
     ]);
 
     useEffect(() => {
-        if (!token && !bootstrapping && bootstrapError) {
+        if (!token && !bootstrapping) {
             // Dung replace de khong luu lai man hinh yeu cau dang nhap (dang bi chan) trong
             // history - neu khong, nut back/close se quay lai chinh man hinh nay va bi
             // dieu huong lap lai ve /login, tao cam giac "nut dong khong hoat dong".
@@ -32,7 +32,7 @@ const RequireAuth: React.FC<PropsWithChildren> = ({ children }) => {
                 state: { from: `${location.pathname}${location.search}` },
             });
         }
-    }, [token, bootstrapping, bootstrapError]);
+    }, [token, bootstrapping]);
 
     if (!token) {
         return (

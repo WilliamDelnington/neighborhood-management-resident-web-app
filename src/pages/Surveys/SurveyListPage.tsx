@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from "react";
-import { Box, useNavigate } from "zmp-ui";
+import { BarChart3 } from "lucide-react";
+import { Box, useNavigate } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import {
     EmptyState,
@@ -33,11 +34,18 @@ const SurveyListPage: React.FC = () => {
             title="Khảo sát"
             bottomNav={<AppBottomNav />}
         >
-            <Box className="bg-white mt-2">
+            <Box
+                className="bg-white mt-2"
+                style={{ minHeight: "calc(100vh - 112px)" }}
+            >
                 {loading && <LoadingState />}
                 {!loading && error && <ErrorState onRetry={load} />}
                 {!loading && !error && items.length === 0 && (
-                    <EmptyState label="Hiện chưa có khảo sát nào đang mở" />
+                    <EmptyState
+                        label="Hiện chưa có khảo sát nào đang mở"
+                        icon={BarChart3}
+                        tone="success"
+                    />
                 )}
                 {!loading && !error && (
                     <Box px={4}>

@@ -1,9 +1,10 @@
 import React, { useEffect, useState } from "react";
-import { Box, Sheet, Text } from "zmp-ui";
+import { Tags } from "lucide-react";
+import { Box, Sheet, Text } from "@components/ui";
 import { Input } from "@components/customized";
-import { LoadingState, EmptyState } from "@components/admin";
+import { LoadingState, EmptyState, ErrorState } from "@components/admin";
 import { fetchBusinessTypes } from "@service/businessTypeApi";
-import { BusinessType } from "@dts";
+import { AppError, BusinessType } from "@dts";
 
 export interface BusinessTypePickerSheetProps {
     visible: boolean;
@@ -19,16 +20,20 @@ const BusinessTypePickerSheet: React.FC<BusinessTypePickerSheetProps> = ({
     const [search, setSearch] = useState("");
     const [items, setItems] = useState<BusinessType[]>([]);
     const [loading, setLoading] = useState(false);
+    const [error, setError] = useState<string | null>(null);
+
+    const load = () => {
+        setLoading(true);
+        setError(null);
+        fetchBusinessTypes({ search: search || undefined, active: true })
+            .then(res => setItems(res.items))
+            .catch(err => setError((err as AppError).message))
+            .finally(() => setLoading(false));
+    };
 
     useEffect(() => {
         if (!visible) return;
-        setLoading(true);
-        const timer = setTimeout(() => {
-            fetchBusinessTypes({ search: search || undefined, active: true })
-                .then(res => setItems(res.items))
-                .catch(() => setItems([]))
-                .finally(() => setLoading(false));
-        }, 300);
+        const timer = setTimeout(load, 300);
         // eslint-disable-next-line consistent-return
         return () => clearTimeout(timer);
     }, [visible, search]);
@@ -49,10 +54,18 @@ const BusinessTypePickerSheet: React.FC<BusinessTypePickerSheetProps> = ({
                 />
                 <Box mt={3}>
                     {loading && <LoadingState />}
-                    {!loading && items.length === 0 && (
-                        <EmptyState label="Không tìm thấy loại hình phù hợp" />
+                    {!loading && error && (
+                        <ErrorState label={error} onRetry={load} />
+                    )}
+                    {!loading && !error && items.length === 0 && (
+                        <EmptyState
+                            label="Không tìm thấy loại hình phù hợp"
+                            icon={Tags}
+                            tone="warning"
+                        />
                     )}
                     {!loading &&
+                        !error &&
                         items.map(businessType => (
                             <Box
                                 key={businessType._id}

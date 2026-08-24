@@ -1,5 +1,13 @@
 import React, { useEffect, useState } from "react";
-import { Box, Icon, Sheet, Text, useNavigate, useSnackbar } from "zmp-ui";
+import { Home } from "lucide-react";
+import {
+    Box,
+    Icon,
+    Sheet,
+    Text,
+    useNavigate,
+    useSnackbar,
+} from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { Button, Input } from "@components/customized";
 import {
@@ -127,7 +135,7 @@ const HouseListContent: React.FC = () => {
     return (
         <PageLayout id="house-list-page" title="Danh sách nhà số">
             <Box p={4}>
-                <Box className="bg-white rounded-2xl p-4 shadow-sm">
+                <Box className="bg-white rounded-2xl p-4 shadow-card">
                     <Input
                         placeholder="Tìm theo mã nhà hoặc địa chỉ"
                         value={searchInput}
@@ -140,13 +148,17 @@ const HouseListContent: React.FC = () => {
                     </Box>
                 </Box>
 
-                <Box className="bg-white rounded-2xl mt-3 shadow-sm">
+                <Box className="bg-white rounded-2xl mt-3 shadow-card">
                     {loading && <LoadingState />}
                     {!loading && error && (
                         <ErrorState onRetry={() => load(1, search, false)} />
                     )}
                     {!loading && !error && items.length === 0 && (
-                        <EmptyState label="Không tìm thấy nhà số nào" />
+                        <EmptyState
+                            label="Không tìm thấy nhà số nào"
+                            icon={Home}
+                            tone="primary"
+                        />
                     )}
                     {!loading && !error && items.length > 0 && (
                         <Box px={4}>
@@ -206,7 +218,7 @@ const HouseListContent: React.FC = () => {
                         display: "flex",
                         alignItems: "center",
                         justifyContent: "center",
-                        boxShadow: "0 4px 12px rgba(37,99,235,0.4)",
+                        boxShadow: "0 4px 12px rgba(5,170,192,0.4)",
                         zIndex: 20,
                     }}
                     onClick={openCreate}
