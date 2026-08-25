@@ -127,6 +127,12 @@ export type Neighborhood = {
     description?: string;
     contactPhone?: string;
     notes?: string;
+    // Phuong/xa + tinh/thanh cua chinh to dan pho nay - dung de ghep dia chi
+    // day du khi geocode 1 lan (xem HouseForm.tsx), KHONG suy ra tu Street.
+    wardCode?: number;
+    wardName?: string;
+    provinceCode?: number;
+    provinceName?: string;
     createdAt: string;
     updatedAt: string;
 };

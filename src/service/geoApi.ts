@@ -3,7 +3,7 @@ import { request } from "./request";
 
 /**
  * Goi qua proxy backend (KHONG bao gio goi thang Goong tu client bang API key
- * REST - khoa do chi ton tai o server, xem goong.ts backend). Ca 2 endpoint
+ * REST - khoa do chi ton tai o server, xem goong.ts backend). Ca 3 endpoint
  * deu yeu cau quyen houses.create/update/update_gis - chi nguoi dang tao/sua
  * nha so moi goi duoc. Rieng ban do xac nhan pin (StaticMapPinConfirm.tsx)
  * khong qua day nua - no goi thang Goong Map Tiles tu client bang
@@ -39,3 +39,12 @@ export const fetchPlaceDetails = (
         placeId,
         sessionToken,
     });
+
+/**
+ * Geocode 1 lan cho dia chi DAY DU (so nha + duong + phuong/xa + tinh, xem
+ * HouseForm.tsx ghep chuoi) - dung khi da biet chac cac thanh phan dia chi,
+ * khong can nguoi dung go tim va chon tu danh sach goi y nhu
+ * autocompleteAddress + fetchPlaceDetails o tren.
+ */
+export const geocodeAddress = (address: string): Promise<GeoPlaceDetails> =>
+    request<GeoPlaceDetails>("POST", API.HOUSES_GEO_GEOCODE, { address });

@@ -1,10 +1,11 @@
 import React, { useEffect, useRef, useState } from "react";
 import { Box, Text, useSnackbar } from "@components/ui";
-import { Checkbox, Input, Radio } from "@components/customized";
+import { Button, Checkbox, Input, Radio } from "@components/customized";
 import StaticMapPinConfirm from "@components/house/StaticMapPinConfirm";
 import {
     autocompleteAddress,
     fetchPlaceDetails,
+    geocodeAddress,
     GeoAutocompletePrediction,
 } from "@service/geoApi";
 import type { HouseGisSource } from "@dts";
@@ -68,6 +69,12 @@ interface HouseLocationPickerProps {
     // chi", tranh bat nguoi dung phai go lai tu dau (xem HouseForm.tsx).
     // Nguoi dung van co the sua/xoa truoc khi tim.
     initialAddress?: string;
+    // Dia chi DAY DU (so nha + duong/pho + phuong/xa + tinh/thanh cua To dan
+    // pho da chon, xem HouseForm.tsx ghep chuoi) - du de geocode CHINH XAC 1
+    // lan qua Goong (goong.ts backend), khong can nguoi dung go tim/chon tu
+    // danh sach goi y nua. Chi hien nut nay khi da co du thanh phan (con
+    // undefined neu chua chon duong/pho hoac to dan pho).
+    fullAddress?: string;
 }
 
 /**
@@ -81,6 +88,7 @@ const HouseLocationPicker: React.FC<HouseLocationPickerProps> = ({
     values,
     onChange,
     initialAddress,
+    fullAddress,
 }) => {
     const { openSnackbar } = useSnackbar();
     const [searchText, setSearchText] = useState("");
@@ -90,6 +98,10 @@ const HouseLocationPicker: React.FC<HouseLocationPickerProps> = ({
     const [searching, setSearching] = useState(false);
     const [pendingPin, setPendingPin] = useState<PendingPin | null>(null);
     const [locating, setLocating] = useState(false);
+    const [geocoding, setGeocoding] = useState(false);
+    // true = bo qua ban xem truoc dia chi day du, quay ve go tim thu cong nhu
+    // truoc day (vd khi geocodeFullAddress that bai, hoac dia chi day du sai).
+    const [useManualSearch, setUseManualSearch] = useState(false);
     const sessionTokenRef = useRef<string | null>(null);
     const debounceRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
@@ -104,6 +116,7 @@ const HouseLocationPicker: React.FC<HouseLocationPickerProps> = ({
         setSearchText("");
         setSuggestions([]);
         setPendingPin(null);
+        setUseManualSearch(false);
         sessionTokenRef.current = null;
     };
 
@@ -171,6 +184,34 @@ const HouseLocationPicker: React.FC<HouseLocationPickerProps> = ({
                 type: "error",
                 text: "Không lấy được chi tiết địa chỉ. Vui lòng thử lại.",
             });
+        }
+    };
+
+    /**
+     * Geocode 1 lan cho dia chi DAY DU (fullAddress, xem HouseForm.tsx ghep
+     * chuoi) - khong qua Autocomplete/Place Details, khong can nguoi dung go
+     * tim/chon tu danh sach goi y. Neu that bai (khong tim thay/dia chi sai
+     * dinh dang), rot ve o tim kiem thu cong voi fullAddress nap san.
+     */
+    const geocodeFullAddress = async () => {
+        if (!fullAddress) return;
+        try {
+            setGeocoding(true);
+            const details = await geocodeAddress(fullAddress);
+            setPendingPin({
+                lat: details.lat,
+                lng: details.lng,
+                accuracyMeters: null,
+            });
+        } catch {
+            openSnackbar({
+                type: "error",
+                text: "Không xác định được tọa độ từ địa chỉ này. Vui lòng tìm thủ công.",
+            });
+            setUseManualSearch(true);
+            setSearchText(fullAddress);
+        } finally {
+            setGeocoding(false);
         }
     };
 
@@ -271,7 +312,37 @@ const HouseLocationPicker: React.FC<HouseLocationPickerProps> = ({
             {values.geoMode === "address" &&
                 values.geoConsentAccepted &&
                 !pendingPin &&
-                !values.gisLatitude && (
+                !values.gisLatitude &&
+                (fullAddress && !useManualSearch ? (
+                    <Box
+                        className="bg-ng_10 rounded-lg p-3"
+                        style={{
+                            display: "flex",
+                            flexDirection: "column",
+                            gap: 8,
+                        }}
+                    >
+                        <Text size="small">{fullAddress}</Text>
+                        <Button
+                            onClick={geocodeFullAddress}
+                            disabled={geocoding}
+                        >
+                            {geocoding
+                                ? "Đang xác định tọa độ..."
+                                : "Xác định tọa độ từ địa chỉ này"}
+                        </Button>
+                        <Text
+                            size="xSmall"
+                            className="text-main"
+                            onClick={() => {
+                                setUseManualSearch(true);
+                                setSearchText(fullAddress);
+                            }}
+                        >
+                            Tìm địa chỉ khác
+                        </Text>
+                    </Box>
+                ) : (
                     <Box>
                         <Input
                             placeholder="Nhập số nhà, đường, phường..."
@@ -292,8 +363,17 @@ const HouseLocationPicker: React.FC<HouseLocationPickerProps> = ({
                                 <Text size="small">{prediction.text}</Text>
                             </Box>
                         ))}
+                        {fullAddress && (
+                            <Text
+                                size="xSmall"
+                                className="text-main mt-1"
+                                onClick={() => setUseManualSearch(false)}
+                            >
+                                Quay lại địa chỉ đã nhập
+                            </Text>
+                        )}
                     </Box>
-                )}
+                ))}
 
             {values.geoMode === "gps" &&
                 values.geoConsentAccepted &&

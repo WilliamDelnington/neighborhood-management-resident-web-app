@@ -33,6 +33,7 @@ export const API = {
     HOUSES_MINE: "/api/houses/mine",
     HOUSES_GEO_AUTOCOMPLETE: "/api/houses/geo/autocomplete",
     HOUSES_GEO_PLACE_DETAILS: "/api/houses/geo/place-details",
+    HOUSES_GEO_GEOCODE: "/api/houses/geo/geocode",
     NEIGHBORHOODS_MINE: "/api/neighborhoods/mine",
     DASHBOARD_MINE: "/api/dashboard/mine",
     ORGANIZATIONS: "/api/organizations",
