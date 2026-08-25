@@ -9,11 +9,13 @@
     support without per-mode templating) - dropping it breaks `npm run dev`,
     not just this file's production use. connect-src lists every real API
     origin used across .env*/.env.dev/.env.production/.env.remote since this
-    file is static regardless of build mode.
+    file is static regardless of build mode. tiles.goong.io is called
+    directly from the client (StaticMapPinConfirm.tsx map tiles/style JSON),
+    not through the backend proxy like the other Goong REST calls.
   -->
         <meta
             http-equiv="Content-Security-Policy"
-            content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.dev.quanlytodanpho.com https://hiscustom.io.vn http://localhost:4000"
+            content="default-src 'self'; script-src 'self' 'unsafe-inline'; style-src 'self' 'unsafe-inline'; img-src 'self' data: https:; font-src 'self' data:; connect-src 'self' https://api.dev.quanlytodanpho.com https://hiscustom.io.vn http://localhost:4000 https://tiles.goong.io"
         />
         <meta
             name="viewport"
