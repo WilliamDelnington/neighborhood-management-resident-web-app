@@ -153,19 +153,6 @@ const HomePage: React.FunctionComponent = () => {
                 }
             />
 
-            <FeaturesCard features={features} />
-
-            {dashboard && (
-                <Box className="bg-white mx-4 mt-3 p-4 rounded-2xl shadow-card">
-                    <Text.Title size="small" className="mb-3">
-                        Việc cần xử lý
-                    </Text.Title>
-                    <TaskSummaryGrid dashboard={dashboard} />
-                </Box>
-            )}
-
-            {user && <MyRequestsPreview />}
-
             <Box className="bg-white mx-4 mt-3 p-4 rounded-2xl shadow-card">
                 <Box
                     flex
@@ -229,6 +216,21 @@ const HomePage: React.FunctionComponent = () => {
                 ))}
             </Box>
 
+            <FeaturesCard features={features} />
+
+            <UtilityAppsRow />
+
+            {dashboard && (
+                <Box className="bg-white mx-4 mt-3 p-4 rounded-2xl shadow-card">
+                    <Text.Title size="small" className="mb-3">
+                        Việc cần xử lý
+                    </Text.Title>
+                    <TaskSummaryGrid dashboard={dashboard} />
+                </Box>
+            )}
+
+            {user && <MyRequestsPreview />}
+
             <Box className="bg-white mx-4 mt-3 p-4 rounded-2xl shadow-card">
                 <Box
                     flex
@@ -289,8 +291,6 @@ const HomePage: React.FunctionComponent = () => {
                     </Box>
                 ))}
             </Box>
-
-            <UtilityAppsRow />
 
             <EmergencyContactBox hotlines={EMERGENCY_HOTLINES} />
 
