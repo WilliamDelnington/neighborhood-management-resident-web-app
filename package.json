@@ -50,6 +50,7 @@
         "@xuannghia/html2canvas": "^1.4.1",
         "clsx": "^1.2.1",
         "date-fns": "^2.30.0",
+        "dompurify": "^3.4.14",
         "lodash.debounce": "^4.0.8",
         "lucide-react": "^1.31.0",
         "maplibre-gl": "^6.5.0",

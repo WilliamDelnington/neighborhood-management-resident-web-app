@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from "react";
+import DOMPurify from "dompurify";
 import { Box, Text, useParams } from "@components/ui";
 import { PageLayout } from "@components/layout";
 import { ErrorState, LoadingState } from "@components/admin";
@@ -7,6 +8,11 @@ import { LOAI_TIN_TUC_LABEL } from "@constants/domain";
 import { resolveAssetUrl } from "@constants/common";
 import { formatDateTime } from "@utils/date-time";
 import { News } from "@dts";
+
+const RICH_CONTENT_SANITIZE_OPTIONS = {
+    ALLOWED_TAGS: ["p", "br", "strong", "em", "u", "b", "i", "img"],
+    ALLOWED_ATTR: ["src", "alt"],
+};
 
 const NewsDetailPage: React.FC = () => {
     const { id } = useParams();
@@ -68,12 +74,15 @@ const NewsDetailPage: React.FC = () => {
                                           new Date(news.createdAt),
                                       )}`}
                             </Text>
-                            <Text
-                                size="small"
-                                className="mt-3 whitespace-pre-line"
-                            >
-                                {news.content}
-                            </Text>
+                            <div
+                                className="rich-content mt-3 text-[14px] leading-[18px]"
+                                dangerouslySetInnerHTML={{
+                                    __html: DOMPurify.sanitize(
+                                        news.content,
+                                        RICH_CONTENT_SANITIZE_OPTIONS,
+                                    ),
+                                }}
+                            />
 
                             {news.images.length > 0 && (
                                 <Box
