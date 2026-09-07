@@ -28,7 +28,9 @@ export const API = {
     AUTH_ME: "/api/auth/me",
     AUTH_LOGOUT: "/api/auth/logout",
 
+    USERS: "/api/users",
     USERS_ASSIGNABLE_STAFF: "/api/users/assignable-staff",
+    USERS_CREATABLE_ROLES: "/api/users/creatable-roles",
     HOUSES: "/api/houses",
     HOUSES_MINE: "/api/houses/mine",
     HOUSES_GEO_AUTOCOMPLETE: "/api/houses/geo/autocomplete",

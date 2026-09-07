@@ -5,6 +5,9 @@ import { Spinner } from "@components/ui";
 const HomePage = lazy(() => import("./Home/HomePage"));
 const LoginPage = lazy(() => import("./Login/LoginPage"));
 const AccountPage = lazy(() => import("./Account/AccountPage"));
+const ChangePasswordRequiredPage = lazy(
+    () => import("./Account/ChangePasswordRequiredPage"),
+);
 const InteractionHistoryPage = lazy(
     () => import("./Account/InteractionHistoryPage"),
 );
@@ -104,6 +107,7 @@ const SurveyDetailPage = lazy(() => import("./Surveys/SurveyDetailPage"));
 const FilesPage = lazy(() => import("./Files/FilesPage"));
 
 const AdminHomePage = lazy(() => import("./Admin/AdminHomePage"));
+const CreateAccountPage = lazy(() => import("./Admin/CreateAccountPage"));
 const HouseholdListPage = lazy(() => import("./Admin/HouseholdListPage"));
 const HouseholdDetailPage = lazy(() => import("./Admin/HouseholdDetailPage"));
 const CitizenListPage = lazy(() => import("./Admin/CitizenListPage"));
@@ -127,6 +131,10 @@ const Routes: React.FC = () => (
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/account" element={<AccountPage />} />
+            <Route
+                path="/change-password-required"
+                element={<ChangePasswordRequiredPage />}
+            />
             <Route
                 path="/account/history"
                 element={<InteractionHistoryPage />}
@@ -250,6 +258,10 @@ const Routes: React.FC = () => (
             <Route path="/files" element={<FilesPage />} />
 
             <Route path="/admin" element={<AdminHomePage />} />
+            <Route
+                path="/admin/create-account"
+                element={<CreateAccountPage />}
+            />
             <Route path="/admin/households" element={<HouseholdListPage />} />
             <Route
                 path="/admin/households/:id"

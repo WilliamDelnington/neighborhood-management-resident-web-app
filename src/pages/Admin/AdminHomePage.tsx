@@ -1,5 +1,5 @@
 import React from "react";
-import { Home, Mail, Store, Tags, IdCard, Users } from "lucide-react";
+import { Home, Mail, Store, Tags, IdCard, Users, UserPlus } from "lucide-react";
 import { Box, Text, useNavigate } from "@components/ui";
 import { PageLayout, AppBottomNav } from "@components/layout";
 import { ListRow } from "@components/admin";
@@ -25,6 +25,7 @@ const AdminHomeContent: React.FC = () => {
     const canViewBusinessTypes = hasPermission(user, "business_types.read");
     const canViewBusinesses = hasPermission(user, "businesses.read");
     const canViewCorrespondences = hasPermission(user, "correspondences.read");
+    const canCreateAccount = hasPermission(user, "users.create");
 
     return (
         <PageLayout
@@ -41,8 +42,22 @@ const AdminHomeContent: React.FC = () => {
                     canViewHouses ||
                     canViewBusinessTypes ||
                     canViewBusinesses ||
-                    canViewCorrespondences) && (
+                    canViewCorrespondences ||
+                    canCreateAccount) && (
                     <Box px={4}>
+                        {canCreateAccount && (
+                            <ListRow
+                                title="Tạo tài khoản"
+                                subtitle="Tạo tài khoản mới, gán vai trò được phép"
+                                icon={UserPlus}
+                                tone="primary"
+                                onClick={() =>
+                                    navigate("/admin/create-account", {
+                                        animate: true,
+                                    })
+                                }
+                            />
+                        )}
                         {canViewHouses && (
                             <ListRow
                                 title="Danh sách nhà số"
@@ -144,7 +159,8 @@ const AdminHomeContent: React.FC = () => {
                     !canViewHouses &&
                     !canViewBusinessTypes &&
                     !canViewBusinesses &&
-                    !canViewCorrespondences && (
+                    !canViewCorrespondences &&
+                    !canCreateAccount && (
                         <Box p={6}>
                             <Text
                                 size="small"

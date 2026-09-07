@@ -79,7 +79,8 @@ const serviceLabel = (serviceId: Appointment["serviceId"]): string =>
 const serviceIdOf = (serviceId: Appointment["serviceId"]): string =>
     typeof serviceId === "string" ? serviceId : serviceId._id;
 
-const houseLabel = (houseId: Appointment["houseId"]): string => {
+const houseLabel = (houseId: Appointment["houseId"]): string | null => {
+    if (!houseId) return null;
     if (typeof houseId === "string") return houseId;
     return houseId.address
         ? `${houseId.code} — ${houseId.address}`
@@ -348,17 +349,19 @@ const AppointmentDetailPageContent: React.FC = () => {
                                     {appointment.endTime}
                                 </Text>
                             </Box>
-                            <Box
-                                flex
-                                alignItems="center"
-                                className="text-text_2 mt-1"
-                                style={{ gap: 6 }}
-                            >
-                                <Icon icon="zi-location" size={16} />
-                                <Text size="xSmall" className="text-text_2">
-                                    Nhà: {houseLabel(appointment.houseId)}
-                                </Text>
-                            </Box>
+                            {houseLabel(appointment.houseId) && (
+                                <Box
+                                    flex
+                                    alignItems="center"
+                                    className="text-text_2 mt-1"
+                                    style={{ gap: 6 }}
+                                >
+                                    <Icon icon="zi-location" size={16} />
+                                    <Text size="xSmall" className="text-text_2">
+                                        Nhà: {houseLabel(appointment.houseId)}
+                                    </Text>
+                                </Box>
+                            )}
 
                             {appointment.proxyName && (
                                 <Text

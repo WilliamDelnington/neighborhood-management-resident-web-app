@@ -79,6 +79,7 @@ const LoginPage: React.FC = () => {
 
     const [
         token,
+        user,
         bootstrapping,
         bootstrapError,
         loginAsTestUser,
@@ -86,6 +87,7 @@ const LoginPage: React.FC = () => {
         registerWithPhone,
     ] = useStore(state => [
         state.token,
+        state.user,
         state.bootstrapping,
         state.bootstrapError,
         state.loginAsTestUser,
@@ -97,13 +99,25 @@ const LoginPage: React.FC = () => {
         // Sau khi dang nhap thanh cong, dieu huong ve trang nguoi dung dinh vao
         // ban dau (RequireAuth luu trong location.state.from) hoac trang chu -
         // truoc day khong co redirect nao ca nen man hinh dang nhap "dung im"
-        // sau khi bam nut, trong nhu nut khong hoat dong.
-        if (token) {
+        // sau khi bam nut, trong nhu nut khong hoat dong. Rieng tai khoan co
+        // mat khau do nguoi khac dat thay (xem User.mustChangePassword) bi
+        // dieu huong sang man doi mat khau bat buoc thay vi "from"/trang chu -
+        // kem theo mat khau vua go (qua location.state) de man do khong bat
+        // nguoi dung go lai "mat khau hien tai".
+        if (token && user) {
+            if (user.mustChangePassword) {
+                navigate("/change-password-required", {
+                    animate: true,
+                    replace: true,
+                    state: { currentPassword: password },
+                });
+                return;
+            }
             const from =
                 (location.state as { from?: string } | null)?.from || "/";
             navigate(from, { animate: true, replace: true });
         }
-    }, [token]);
+    }, [token, user]);
 
     const handleLoginAsTestUser = (zaloUserId: string, name: string) => {
         loginAsTestUser(zaloUserId, name);
@@ -256,43 +270,6 @@ const LoginPage: React.FC = () => {
                                 {phoneAuthMode === "register"
                                     ? "Đăng ký"
                                     : "Đăng nhập"}
-                            </Button>
-                        </Box>
-
-                        <Box
-                            flex
-                            alignItems="center"
-                            mt={4}
-                            style={{ gap: 10 }}
-                        >
-                            <Box
-                                style={{ flex: 1, height: 1 }}
-                                className="bg-divider_01"
-                            />
-                            <Text size="xxSmall" className="text-text_3">
-                                hoặc
-                            </Text>
-                            <Box
-                                style={{ flex: 1, height: 1 }}
-                                className="bg-divider_01"
-                            />
-                        </Box>
-
-                        <Box mt={3}>
-                            <Button
-                                fullWidth
-                                variant="secondary"
-                                onClick={() =>
-                                    openSnackbar({
-                                        text: "Tính năng đang được phát triển",
-                                        type: "info",
-                                        duration: 3000,
-                                        verticalAction: true,
-                                        action: { text: "Đóng", close: true },
-                                    })
-                                }
-                            >
-                                Đăng nhập bằng VNeID
                             </Button>
                         </Box>
 

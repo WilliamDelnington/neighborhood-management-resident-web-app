@@ -14,9 +14,10 @@ import { useStore } from "@store";
 const RequireAuth: React.FC<PropsWithChildren> = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [token, bootstrapping] = useStore(state => [
+    const [token, bootstrapping, user] = useStore(state => [
         state.token,
         state.bootstrapping,
+        state.user,
     ]);
 
     useEffect(() => {
@@ -31,8 +32,24 @@ const RequireAuth: React.FC<PropsWithChildren> = ({ children }) => {
                 replace: true,
                 state: { from: `${location.pathname}${location.search}` },
             });
+            return;
         }
-    }, [token, bootstrapping]);
+        // Luoi an toan cho tai khoan co mat khau do nguoi khac dat thay (xem
+        // User.mustChangePassword) - LoginPage da dieu huong ngay sau khi
+        // dang nhap, nhung neu nguoi dung dieu huong sang man khac (vd bam
+        // link trong app) ma chua doi mat khau xong, moi man RequireAuth se
+        // keo ho tro lai day. Tru chinh trang doi mat khau (tranh vong lap).
+        if (
+            token &&
+            user?.mustChangePassword &&
+            location.pathname !== "/change-password-required"
+        ) {
+            navigate("/change-password-required", {
+                animate: true,
+                replace: true,
+            });
+        }
+    }, [token, bootstrapping, user, location.pathname]);
 
     if (!token) {
         return (
