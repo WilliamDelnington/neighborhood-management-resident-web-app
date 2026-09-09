@@ -7,6 +7,7 @@ import {
     LoaiSoHuu,
     PaginatedData,
     RequiredDocumentRecord,
+    User,
     VerificationStatus,
 } from "@dts";
 import { request } from "./request";
@@ -16,6 +17,7 @@ import {
     submitEntityDocument,
     SubmitEntityDocumentInput,
 } from "./requiredDocumentApi";
+import { CreateLinkedAccountInput } from "./userApi";
 
 export const searchHouseholds = (params: {
     search?: string;
@@ -88,6 +90,18 @@ export const updateHousehold = (
 
 export const deleteHousehold = (id: string): Promise<null> =>
     request<null>("DELETE", `${API.HOUSEHOLDS}/${id}`);
+
+/**
+ * Chu nha tu tao tai khoan chu ho (household_head) cho ho dan nay va lien ket
+ * luon trong 1 buoc - xem userService.createHouseholdHeadByOwner o backend.
+ * Tu choi (403) neu actor khong so huu Nha so cua ho dan nay; 409 neu ho dan
+ * da co tai khoan chu ho.
+ */
+export const createHouseholdHeadAccount = (
+    id: string,
+    input: CreateLinkedAccountInput,
+): Promise<User> =>
+    request<User>("POST", `${API.HOUSEHOLDS}/${id}/head-account`, input);
 
 export const fetchHouseholdAttachments = (id: string): Promise<FileAsset[]> =>
     request<FileAsset[]>("GET", `${API.HOUSEHOLDS}/${id}/attachments`);

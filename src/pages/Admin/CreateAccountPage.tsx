@@ -66,14 +66,13 @@ const CreateAccountContent: React.FC = () => {
     const isValid =
         form.phone.trim().length > 0 &&
         form.displayName.trim().length > 0 &&
-        form.idNumber.trim().length > 0 &&
         form.password.trim().length >= 6;
 
     const handleCreate = async () => {
         if (!isValid) {
             openSnackbar({
                 type: "error",
-                text: "Vui lòng nhập đầy đủ số điện thoại, họ tên, số CMND/CCCD và mật khẩu (ít nhất 6 ký tự)",
+                text: "Vui lòng nhập đầy đủ số điện thoại, họ tên và mật khẩu (ít nhất 6 ký tự)",
             });
             return;
         }
@@ -83,7 +82,7 @@ const CreateAccountContent: React.FC = () => {
                 phone: form.phone.trim(),
                 displayName: form.displayName.trim(),
                 address: form.address.trim() || undefined,
-                idNumber: form.idNumber.trim(),
+                idNumber: form.idNumber.trim() || undefined,
                 role: form.role,
                 password: form.password.trim(),
             });
@@ -164,7 +163,7 @@ const CreateAccountContent: React.FC = () => {
                 </Box>
                 <Box mb={3}>
                     <Input
-                        label="Số CMND/CCCD"
+                        label="Số CMND/CCCD (tùy chọn)"
                         value={form.idNumber}
                         onChange={e => set("idNumber", e.target.value)}
                     />

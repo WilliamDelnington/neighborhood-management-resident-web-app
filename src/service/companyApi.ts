@@ -5,6 +5,7 @@ import {
     FileAsset,
     PaginatedData,
     RequiredDocumentRecord,
+    User,
     VerificationStatus,
 } from "@dts";
 import { request } from "./request";
@@ -14,6 +15,7 @@ import {
     submitEntityDocument,
     SubmitEntityDocumentInput,
 } from "./requiredDocumentApi";
+import { CreateLinkedAccountInput } from "./userApi";
 
 /**
  * Mirror cua businessApi.ts - Company khong co businessType (dong luat
@@ -57,6 +59,17 @@ export const updateCompany = (
 
 export const deleteCompany = (id: string): Promise<null> =>
     request<null>("DELETE", `${API.COMPANIES}/${id}`);
+
+/**
+ * Chu nha tu tao tai khoan dai dien (company_representative) cho cong ty nay
+ * va lien ket luon trong 1 buoc - xem
+ * userService.createCompanyRepresentativeByOwner o backend.
+ */
+export const createCompanyRepresentativeAccount = (
+    id: string,
+    input: CreateLinkedAccountInput,
+): Promise<User> =>
+    request<User>("POST", `${API.COMPANIES}/${id}/representative-account`, input);
 
 export const fetchCompanyAttachments = (id: string): Promise<FileAsset[]> =>
     request<FileAsset[]>("GET", `${API.COMPANIES}/${id}/attachments`);

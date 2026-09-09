@@ -258,6 +258,11 @@ export type Household = {
     cluster: string;
     address: string;
     headOfHousehold: string;
+    // Tai khoan chu ho da lien ket (neu co) - xem
+    // userService.createHouseholdHeadByOwner o backend.
+    headOfHouseholdUserId?:
+        | string
+        | { _id: string; displayName: string; phone?: string };
     phone?: string;
     memberCount: number;
     ownershipType: LoaiSoHuu;
@@ -279,6 +284,8 @@ export type DocumentType = {
     hasIssueDate: boolean;
     hasExpiryDate: boolean;
     active: boolean;
+    sampleFileUrl?: string;
+    sampleFileName?: string;
     createdAt: string;
     updatedAt: string;
 };
@@ -320,6 +327,11 @@ export type Business = {
     // Khong bat buoc - khong phai ho kinh doanh nao cung da dang ky ma so
     // thue (xem models/Business.ts o backend).
     taxCode?: string;
+    // Tai khoan dai dien da lien ket (neu co) - xem
+    // userService.createBusinessRepresentativeByOwner o backend.
+    representativeUserId?:
+        | string
+        | { _id: string; displayName: string; phone?: string };
     phone?: string;
     active: boolean;
     status: VerificationStatus;
@@ -344,6 +356,11 @@ export type Company = {
     // trong mini app (chi admin web app), them field de du lieu day du khi
     // can dung sau nay.
     organizationId?: { _id: string; name: string } | string | null;
+    // Tai khoan dai dien da lien ket (neu co) - xem
+    // userService.createCompanyRepresentativeByOwner o backend.
+    representativeUserId?:
+        | string
+        | { _id: string; displayName: string; phone?: string };
     phone?: string;
     active: boolean;
     status: VerificationStatus;
@@ -497,8 +514,14 @@ export type Citizen = {
     isElderly: boolean;
     isChild: boolean;
     isDisabledOrSupportNeeded: boolean;
+    isDisabledChild: boolean;
     isPartyMember: boolean;
     isUnionMember: boolean;
+    isMartyr: boolean;
+    isMartyrFamily: boolean;
+    isVeteran: boolean;
+    isOtherSpecial: boolean;
+    otherSpecialLabel?: string;
     createdAt: string;
     updatedAt: string;
 };

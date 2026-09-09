@@ -28,13 +28,30 @@ export interface CreateAccountParams {
     phone: string;
     displayName: string;
     address?: string;
-    idNumber: string;
+    idNumber?: string;
     role?: Role;
     password?: string;
 }
 
 export const createAccount = (params: CreateAccountParams): Promise<User> =>
     request<User>("POST", API.USERS, params);
+
+/**
+ * Cung dinh dang voi CreateAccountParams nhung khong co `role` - dung boi
+ * chu nha (house_owner) de tu tao tai khoan quan ly thay MOT thuc the cu the
+ * cua minh (chu ho cua 1 ho dan, dai dien cua 1 ho kinh doanh/cong ty), vai
+ * tro co dinh theo endpoint duoc goi (xem createHouseholdHeadAccount trong
+ * householdApi.ts, createBusinessRepresentativeAccount trong businessApi.ts,
+ * createCompanyRepresentativeAccount trong companyApi.ts) - khong dung chung
+ * POST /api/users vi house_owner khong co quyen "users.create".
+ */
+export interface CreateLinkedAccountInput {
+    phone: string;
+    displayName: string;
+    address?: string;
+    idNumber?: string;
+    password?: string;
+}
 
 /**
  * Danh sach vai tro (key + ten) ma nguoi dang dang nhap duoc phep chon khi

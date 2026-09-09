@@ -10,6 +10,7 @@ import {
 import { PageLayout } from "@components/layout";
 import { ErrorState, LoadingState, StatusBadge } from "@components/admin";
 import { Button } from "@components/customized";
+import { CreateLinkedAccountSheet } from "@components/common";
 import { RequireAuth, hasPermission } from "@components/role";
 import {
     CompanyForm,
@@ -32,6 +33,7 @@ import {
     VerificationStatus,
 } from "@dts";
 import {
+    createCompanyRepresentativeAccount,
     deleteCompany,
     fetchCompanyAttachments,
     fetchCompanyById,
@@ -91,6 +93,8 @@ const CompanyDetailContent: React.FC = () => {
     const [form, setForm] = useState<CompanyFormValues | null>(null);
     const [saving, setSaving] = useState(false);
     const [confirmDelete, setConfirmDelete] = useState(false);
+    const [representativeSheetVisible, setRepresentativeSheetVisible] =
+        useState(false);
     const [deleting, setDeleting] = useState(false);
     const [statusSubmitting, setStatusSubmitting] = useState(false);
 
@@ -306,6 +310,32 @@ const CompanyDetailContent: React.FC = () => {
                                         value={company.ownerName || "Không có"}
                                     />
                                     <InfoRow
+                                        label="Tài khoản đại diện"
+                                        value={
+                                            company.representativeUserId &&
+                                            typeof company.representativeUserId ===
+                                                "object"
+                                                ? `${company.representativeUserId.displayName}${company.representativeUserId.phone ? ` · ${company.representativeUserId.phone}` : ""}`
+                                                : "Chưa có"
+                                        }
+                                    />
+                                    {isOwner &&
+                                        canUpdate &&
+                                        !company.representativeUserId && (
+                                            <Box mt={2} mb={2}>
+                                                <Button
+                                                    fullWidth
+                                                    onClick={() =>
+                                                        setRepresentativeSheetVisible(
+                                                            true,
+                                                        )
+                                                    }
+                                                >
+                                                    Tạo tài khoản đại diện
+                                                </Button>
+                                            </Box>
+                                        )}
+                                    <InfoRow
                                         label="Mã số thuế"
                                         value={company.taxCode}
                                     />
@@ -432,6 +462,17 @@ const CompanyDetailContent: React.FC = () => {
                         disabled: deleting,
                     },
                 ]}
+            />
+
+            <CreateLinkedAccountSheet
+                visible={representativeSheetVisible}
+                onClose={() => setRepresentativeSheetVisible(false)}
+                title="Tạo tài khoản đại diện"
+                onSubmit={input => createCompanyRepresentativeAccount(id, input)}
+                onCreated={() => {
+                    setRepresentativeSheetVisible(false);
+                    load();
+                }}
             />
         </PageLayout>
     );
