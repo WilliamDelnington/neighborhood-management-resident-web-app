@@ -89,14 +89,19 @@ const ComplaintCreatePageContent: React.FC = () => {
     );
     useEffect(() => {
         fetchComplaintTypeDefinitions({ active: true, limit: 200 })
-            .then(res =>
-                setCategoryOptions(
-                    res.items.map(type => ({
-                        key: type.key,
-                        label: type.name,
-                    })),
-                ),
-            )
+            .then(res => {
+                // Giu danh sach tinh (NHOM_PHAN_ANH_LABEL) neu API tra ve rong -
+                // tranh nguoi dung khong chon duoc gi ca khi scope/du lieu phia
+                // server tam thoi khong co ket qua nao.
+                if (res.items.length > 0) {
+                    setCategoryOptions(
+                        res.items.map(type => ({
+                            key: type.key,
+                            label: type.name,
+                        })),
+                    );
+                }
+            })
             .catch(() => {
                 /* giu danh sach tinh (NHOM_PHAN_ANH_LABEL) neu goi API loi */
             });

@@ -35,8 +35,14 @@ export interface CitizenInput {
     isElderly?: boolean;
     isChild?: boolean;
     isDisabledOrSupportNeeded?: boolean;
+    isDisabledChild?: boolean;
     isPartyMember?: boolean;
     isUnionMember?: boolean;
+    isMartyr?: boolean;
+    isMartyrFamily?: boolean;
+    isVeteran?: boolean;
+    isOtherSpecial?: boolean;
+    otherSpecialLabel?: string;
 }
 
 export const createCitizen = (input: CitizenInput): Promise<Citizen> =>

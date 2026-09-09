@@ -18,6 +18,7 @@ import {
     StatusBadge,
 } from "@components/admin";
 import { Button } from "@components/customized";
+import { CreateLinkedAccountSheet } from "@components/common";
 import { RequireAuth, hasPermission } from "@components/role";
 import {
     HouseholdForm,
@@ -48,6 +49,7 @@ import {
     VerificationStatus,
 } from "@dts";
 import {
+    createHouseholdHeadAccount,
     deleteHousehold,
     fetchHouseholdById,
     fetchHouseholdCitizens,
@@ -157,6 +159,8 @@ const HouseholdDetailContent: React.FC = () => {
     }, [household, user]);
 
     const [citizenSheetVisible, setCitizenSheetVisible] = useState(false);
+    const [headAccountSheetVisible, setHeadAccountSheetVisible] =
+        useState(false);
     const [citizenForm, setCitizenForm] =
         useState<CitizenFormValues>(EMPTY_CITIZEN_FORM);
     const [citizenSubmitting, setCitizenSubmitting] = useState(false);
@@ -412,6 +416,32 @@ const HouseholdDetailContent: React.FC = () => {
                                         value={household.headOfHousehold}
                                     />
                                     <InfoRow
+                                        label="Tài khoản chủ hộ"
+                                        value={
+                                            household.headOfHouseholdUserId &&
+                                            typeof household.headOfHouseholdUserId ===
+                                                "object"
+                                                ? `${household.headOfHouseholdUserId.displayName}${household.headOfHouseholdUserId.phone ? ` · ${household.headOfHouseholdUserId.phone}` : ""}`
+                                                : "Chưa có"
+                                        }
+                                    />
+                                    {isOwner &&
+                                        canUpdate &&
+                                        !household.headOfHouseholdUserId && (
+                                            <Box mt={2} mb={2}>
+                                                <Button
+                                                    fullWidth
+                                                    onClick={() =>
+                                                        setHeadAccountSheetVisible(
+                                                            true,
+                                                        )
+                                                    }
+                                                >
+                                                    Tạo tài khoản chủ hộ
+                                                </Button>
+                                            </Box>
+                                        )}
+                                    <InfoRow
                                         label="Số điện thoại"
                                         value={
                                             household.phone || "Chưa cập nhật"
@@ -626,6 +656,17 @@ const HouseholdDetailContent: React.FC = () => {
                     </Box>
                 </Box>
             </Sheet>
+
+            <CreateLinkedAccountSheet
+                visible={headAccountSheetVisible}
+                onClose={() => setHeadAccountSheetVisible(false)}
+                title="Tạo tài khoản chủ hộ"
+                onSubmit={input => createHouseholdHeadAccount(id, input)}
+                onCreated={() => {
+                    setHeadAccountSheetVisible(false);
+                    load();
+                }}
+            />
         </PageLayout>
     );
 };

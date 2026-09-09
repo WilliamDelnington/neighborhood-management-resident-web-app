@@ -63,7 +63,9 @@ export const deleteAppointmentAttachment = (
 
 export interface CreateAppointmentParams {
     serviceId: string;
-    houseId: string;
+    // Bo qua khi dich vu khong bat buoc gan nha (AppointmentService.
+    // houseRequirement="none", hoac "optional" va nguoi dat khong chon nha).
+    houseId?: string;
     timeSlotId: string;
     // Dinh dang "YYYY-MM-DD".
     appointedDate: string;
@@ -118,7 +120,11 @@ export const rescheduleAppointment = (
     id: string,
     params: { timeSlotId: string; appointedDate: string; reason: string },
 ): Promise<Appointment> =>
-    request<Appointment>("POST", `${API.APPOINTMENTS}/${id}/reschedule`, params);
+    request<Appointment>(
+        "POST",
+        `${API.APPOINTMENTS}/${id}/reschedule`,
+        params,
+    );
 
 /**
  * Danh gia buoi lam viec - chi goi duoc mot lan, va chi khi trang thai dang

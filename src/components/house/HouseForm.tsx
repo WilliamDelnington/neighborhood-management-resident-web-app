@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { Box, Text } from "@components/ui";
 import { Checkbox, Input, TextArea, Radio } from "@components/customized";
 import NeighborhoodPickerSheet from "@components/household/NeighborhoodPickerSheet";
@@ -16,6 +16,7 @@ import {
     HOUSE_USAGE_TYPE_LABEL,
 } from "@constants/domain";
 import { HouseInput } from "@service/houseApi";
+import { fetchNeighborhoodById } from "@service/neighborhoodApi";
 import {
     HOUSE_USAGE_TYPE,
     HousePhysicalStatus,
@@ -85,7 +86,9 @@ export function toHouseInput(values: HouseFormValues): HouseInput {
         note: values.note.trim() || undefined,
         organizationId: values.organizationId || undefined,
         gisLatitude:
-            values.geoMode === "skip" ? undefined : values.gisLatitude ?? undefined,
+            values.geoMode === "skip"
+                ? undefined
+                : values.gisLatitude ?? undefined,
         gisLongitude:
             values.geoMode === "skip"
                 ? undefined
@@ -94,7 +97,10 @@ export function toHouseInput(values: HouseFormValues): HouseInput {
             values.geoMode === "skip"
                 ? undefined
                 : values.gisAccuracyMeters ?? undefined,
-        gisSource: values.geoMode === "skip" ? undefined : values.gisSource || undefined,
+        gisSource:
+            values.geoMode === "skip"
+                ? undefined
+                : values.gisSource || undefined,
         geoConsentAccepted:
             values.geoMode === "skip" ? undefined : values.geoConsentAccepted,
     };
@@ -145,6 +151,56 @@ const HouseForm: React.FC<HouseFormProps> = ({
         key: K,
         value: HouseFormValues[K],
     ) => onChange({ ...values, [key]: value });
+
+    // Phuong/xa + tinh/thanh cua To dan pho DANG CHON - lay rieng (khong luu
+    // vao HouseFormValues) chi de ghep dia chi day du geocode 1 lan (xem
+    // fullAddress ben duoi). Tai lai moi khi neighborhoodId doi (ca luc mo
+    // man sua co san neighborhoodId, khong chi luc nguoi dung tu chon).
+    const [neighborhoodGeo, setNeighborhoodGeo] = useState<{
+        wardName?: string;
+        provinceName?: string;
+    }>({});
+    useEffect(() => {
+        if (!values.neighborhoodId) {
+            setNeighborhoodGeo({});
+            return undefined;
+        }
+        let cancelled = false;
+        fetchNeighborhoodById(values.neighborhoodId)
+            .then(neighborhood => {
+                if (!cancelled) {
+                    setNeighborhoodGeo({
+                        wardName: neighborhood.wardName,
+                        provinceName: neighborhood.provinceName,
+                    });
+                }
+            })
+            .catch(() => {
+                if (!cancelled) setNeighborhoodGeo({});
+            });
+        return () => {
+            cancelled = true;
+        };
+    }, [values.neighborhoodId]);
+
+    // Dia chi DAY DU de geocode 1 lan qua Goong (xem HouseLocationPicker) -
+    // chi co khi da biet chac ca 4 thanh phan (so nha, duong/pho, phuong/xa,
+    // tinh/thanh); thieu bat ky phan nao thi undefined, HouseLocationPicker se
+    // rot ve o tim kiem thu cong nhu truoc.
+    const fullAddress =
+        values.address.trim() &&
+        (values.streetLabel || values.cluster.trim()) &&
+        neighborhoodGeo.wardName &&
+        neighborhoodGeo.provinceName
+            ? [
+                  values.address.trim(),
+                  values.streetLabel || values.cluster.trim(),
+                  neighborhoodGeo.wardName,
+                  neighborhoodGeo.provinceName,
+              ]
+                  .filter(Boolean)
+                  .join(", ")
+            : undefined;
 
     return (
         <Box style={{ display: "flex", flexDirection: "column", gap: 14 }}>
@@ -224,6 +280,12 @@ const HouseForm: React.FC<HouseFormProps> = ({
             />
             <HouseLocationPicker
                 values={values}
+                initialAddress={
+                    [values.address.trim(), values.streetLabel]
+                        .filter(Boolean)
+                        .join(", ") || undefined
+                }
+                fullAddress={fullAddress}
                 onChange={geo => onChange({ ...values, ...geo })}
             />
             <Box>

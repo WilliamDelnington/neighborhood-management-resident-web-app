@@ -127,9 +127,37 @@ const AppointmentBookingPageContent: React.FC = () => {
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [serviceId]);
 
-    const verifiedOwnHouses = ownHouses
+    // Mac dinh "required"/"verified" khi service chua tra ve hai truong nay
+    // (dich vu tao truoc khi co tinh nang, xem AppointmentService.ts).
+    const houseRequirement = service?.houseRequirement || "required";
+    const houseStatusRequirement =
+        service?.houseStatusRequirement || "verified";
+    const showHouseSection = houseRequirement !== "none";
+    const houseSelectionRequired = houseRequirement === "required";
+
+    const eligibleOwnHouses = ownHouses
         .map(item => item.house)
-        .filter(house => house.status === "verified");
+        .filter(house => {
+            if (houseStatusRequirement === "verified") {
+                return house.status === "verified";
+            }
+            if (houseStatusRequirement === "in_scope") {
+                if (
+                    service?.scope === "neighborhood" &&
+                    service.neighborhoodId
+                ) {
+                    const houseNeighborhoodId =
+                        typeof house.neighborhoodId === "string"
+                            ? house.neighborhoodId
+                            : house.neighborhoodId?._id;
+                    return houseNeighborhoodId === service.neighborhoodId;
+                }
+                // Pham vi "toan phuong": khong co wardCode o House cua app
+                // nay de doi chieu tren client - de backend kiem tra lai.
+                return true;
+            }
+            return true;
+        });
 
     useEffect(() => {
         setOwnHousesLoading(true);
@@ -140,12 +168,12 @@ const AppointmentBookingPageContent: React.FC = () => {
     }, []);
 
     useEffect(() => {
-        if (proxyMode) return;
-        if (verifiedOwnHouses.length === 1 && !selectedHouseId) {
-            setSelectedHouseId(verifiedOwnHouses[0]._id);
+        if (proxyMode || !showHouseSection) return;
+        if (eligibleOwnHouses.length === 1 && !selectedHouseId) {
+            setSelectedHouseId(eligibleOwnHouses[0]._id);
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [proxyMode, ownHouses]);
+    }, [proxyMode, ownHouses, showHouseSection]);
 
     useEffect(() => {
         setSelectedSlotId(null);
@@ -238,11 +266,13 @@ const AppointmentBookingPageContent: React.FC = () => {
         }
     };
 
-    const houseId = proxyMode ? proxyHouse?._id : selectedHouseId;
+    const houseId = showHouseSection
+        ? (proxyMode ? proxyHouse?._id : selectedHouseId) || undefined
+        : undefined;
 
     const handleSubmit = async () => {
         if (!service) return;
-        if (!houseId) {
+        if (houseSelectionRequired && !houseId) {
             openSnackbar({
                 type: "error",
                 text: "Vui lòng chọn nhà số",
@@ -432,123 +462,172 @@ const AppointmentBookingPageContent: React.FC = () => {
                             </Box>
                         )}
 
-                        <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
-                            <Text.Title size="small" className="mb-2">
-                                Nhà số
-                            </Text.Title>
-
-                            {proxyMode ? (
-                                <>
-                                    {proxyHouse ? (
-                                        <Box
-                                            flex
-                                            alignItems="center"
-                                            justifyContent="space-between"
-                                            p={3}
-                                            className="bg-ng_10 rounded-xl"
+                        {showHouseSection && (
+                            <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
+                                <Text.Title size="small" className="mb-2">
+                                    Nhà số
+                                    {!houseSelectionRequired && (
+                                        <Text
+                                            size="xxSmall"
+                                            className="text-text_2 font-normal"
                                         >
-                                            <Box
-                                                style={{
-                                                    minWidth: 0,
-                                                    flex: 1,
-                                                }}
-                                            >
-                                                <Text
-                                                    size="small"
-                                                    bold
-                                                    className="truncate"
-                                                >
-                                                    {proxyHouse.code}
-                                                    {proxyHouse.address
-                                                        ? ` — ${proxyHouse.address}`
-                                                        : ""}
-                                                </Text>
-                                            </Box>
-                                            <Box
-                                                onClick={() =>
-                                                    setProxyHouse(null)
-                                                }
-                                                pl={3}
-                                                style={{ flexShrink: 0 }}
-                                            >
-                                                <Icon
-                                                    icon="zi-close"
-                                                    className="text-text_3"
-                                                />
-                                            </Box>
-                                        </Box>
-                                    ) : (
-                                        <Button
-                                            variant="secondary"
-                                            fullWidth
-                                            onClick={() =>
-                                                setProxyHousePickerVisible(true)
-                                            }
-                                        >
-                                            Chọn nhà số
-                                        </Button>
+                                            {" "}
+                                            (không bắt buộc)
+                                        </Text>
                                     )}
+                                </Text.Title>
 
-                                    <Box mt={3}>
-                                        <Input
-                                            label="Tên người được đặt hộ"
-                                            placeholder="Họ tên cư dân"
-                                            value={proxyName}
-                                            onChange={e =>
-                                                setProxyName(e.target.value)
-                                            }
-                                        />
-                                    </Box>
-                                    <Box mt={3}>
-                                        <Input
-                                            label="Số điện thoại liên hệ"
-                                            placeholder="VD: 0912345678"
-                                            value={proxyPhone}
-                                            onChange={e =>
-                                                setProxyPhone(e.target.value)
-                                            }
-                                        />
-                                    </Box>
-                                </>
-                            ) : (
-                                <>
-                                    {ownHousesLoading && <LoadingState />}
-                                    {!ownHousesLoading &&
-                                        verifiedOwnHouses.length === 0 && (
-                                            <EmptyState
-                                                label="Bạn chưa có nhà số nào đã xác thực để đặt lịch hẹn. Vui lòng liên hệ Tổ dân phố để được hỗ trợ."
-                                                icon={Home}
-                                                tone="primary"
-                                            />
-                                        )}
-                                    {!ownHousesLoading &&
-                                        verifiedOwnHouses.length > 0 &&
-                                        verifiedOwnHouses.map(house => (
+                                {proxyMode ? (
+                                    <>
+                                        {proxyHouse ? (
                                             <Box
-                                                key={house._id}
+                                                flex
+                                                alignItems="center"
+                                                justifyContent="space-between"
                                                 p={3}
-                                                mb={2}
-                                                className={
-                                                    selectedHouseId ===
-                                                    house._id
-                                                        ? "bg-blue_10 rounded-xl"
-                                                        : "bg-ng_10 rounded-xl"
-                                                }
+                                                className="bg-ng_10 rounded-xl"
+                                            >
+                                                <Box
+                                                    style={{
+                                                        minWidth: 0,
+                                                        flex: 1,
+                                                    }}
+                                                >
+                                                    <Text
+                                                        size="small"
+                                                        bold
+                                                        className="truncate"
+                                                    >
+                                                        {proxyHouse.code}
+                                                        {proxyHouse.address
+                                                            ? ` — ${proxyHouse.address}`
+                                                            : ""}
+                                                    </Text>
+                                                </Box>
+                                                <Box
+                                                    onClick={() =>
+                                                        setProxyHouse(null)
+                                                    }
+                                                    pl={3}
+                                                    style={{ flexShrink: 0 }}
+                                                >
+                                                    <Icon
+                                                        icon="zi-close"
+                                                        className="text-text_3"
+                                                    />
+                                                </Box>
+                                            </Box>
+                                        ) : (
+                                            <Button
+                                                variant="secondary"
+                                                fullWidth
                                                 onClick={() =>
-                                                    setSelectedHouseId(
-                                                        house._id,
+                                                    setProxyHousePickerVisible(
+                                                        true,
                                                     )
                                                 }
                                             >
-                                                <Text size="small" bold>
-                                                    {house.code} —{" "}
-                                                    {house.address}
+                                                {houseSelectionRequired
+                                                    ? "Chọn nhà số"
+                                                    : "Chọn nhà số (không bắt buộc)"}
+                                            </Button>
+                                        )}
+
+                                        <Box mt={3}>
+                                            <Input
+                                                label="Tên người được đặt hộ"
+                                                placeholder="Họ tên cư dân"
+                                                value={proxyName}
+                                                onChange={e =>
+                                                    setProxyName(e.target.value)
+                                                }
+                                            />
+                                        </Box>
+                                        <Box mt={3}>
+                                            <Input
+                                                label="Số điện thoại liên hệ"
+                                                placeholder="VD: 0912345678"
+                                                value={proxyPhone}
+                                                onChange={e =>
+                                                    setProxyPhone(
+                                                        e.target.value,
+                                                    )
+                                                }
+                                            />
+                                        </Box>
+                                    </>
+                                ) : (
+                                    <>
+                                        {ownHousesLoading && <LoadingState />}
+                                        {!ownHousesLoading &&
+                                            eligibleOwnHouses.length === 0 &&
+                                            houseSelectionRequired && (
+                                                <EmptyState
+                                                    label="Bạn chưa có nhà số phù hợp để đặt lịch hẹn cho dịch vụ này. Vui lòng liên hệ Tổ dân phố để được hỗ trợ."
+                                                    icon={Home}
+                                                    tone="primary"
+                                                />
+                                            )}
+                                        {!ownHousesLoading &&
+                                            eligibleOwnHouses.length === 0 &&
+                                            !houseSelectionRequired && (
+                                                <Text
+                                                    size="xSmall"
+                                                    className="text-text_2"
+                                                >
+                                                    Bạn chưa có nhà số phù hợp -
+                                                    có thể đặt lịch hẹn mà không
+                                                    cần chọn nhà số.
                                                 </Text>
-                                            </Box>
-                                        ))}
-                                </>
-                            )}
-                        </Box>
+                                            )}
+                                        {!ownHousesLoading &&
+                                            eligibleOwnHouses.length > 0 &&
+                                            eligibleOwnHouses.map(house => (
+                                                <Box
+                                                    key={house._id}
+                                                    p={3}
+                                                    mb={2}
+                                                    className={
+                                                        selectedHouseId ===
+                                                        house._id
+                                                            ? "bg-blue_10 rounded-xl"
+                                                            : "bg-ng_10 rounded-xl"
+                                                    }
+                                                    onClick={() =>
+                                                        setSelectedHouseId(
+                                                            house._id,
+                                                        )
+                                                    }
+                                                >
+                                                    <Text size="small" bold>
+                                                        {house.code} —{" "}
+                                                        {house.address}
+                                                    </Text>
+                                                </Box>
+                                            ))}
+                                        {!ownHousesLoading &&
+                                            !houseSelectionRequired &&
+                                            eligibleOwnHouses.length > 0 && (
+                                                <Box
+                                                    p={3}
+                                                    className={
+                                                        !selectedHouseId
+                                                            ? "bg-blue_10 rounded-xl"
+                                                            : "bg-ng_10 rounded-xl"
+                                                    }
+                                                    onClick={() =>
+                                                        setSelectedHouseId(null)
+                                                    }
+                                                >
+                                                    <Text size="small" bold>
+                                                        Không chọn nhà số
+                                                    </Text>
+                                                </Box>
+                                            )}
+                                    </>
+                                )}
+                            </Box>
+                        )}
 
                         <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">
                             <Text.Title size="small" className="mb-2">

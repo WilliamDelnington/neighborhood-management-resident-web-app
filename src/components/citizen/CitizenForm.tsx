@@ -21,8 +21,14 @@ export interface CitizenFormValues {
     isElderly: boolean;
     isChild: boolean;
     isDisabledOrSupportNeeded: boolean;
+    isDisabledChild: boolean;
     isPartyMember: boolean;
     isUnionMember: boolean;
+    isMartyr: boolean;
+    isMartyrFamily: boolean;
+    isVeteran: boolean;
+    isOtherSpecial: boolean;
+    otherSpecialLabel: string;
     attachments: File[];
 }
 
@@ -40,8 +46,14 @@ export const EMPTY_CITIZEN_FORM: CitizenFormValues = {
     isElderly: false,
     isChild: false,
     isDisabledOrSupportNeeded: false,
+    isDisabledChild: false,
     isPartyMember: false,
     isUnionMember: false,
+    isMartyr: false,
+    isMartyrFamily: false,
+    isVeteran: false,
+    isOtherSpecial: false,
+    otherSpecialLabel: "",
     attachments: [],
 };
 
@@ -63,8 +75,14 @@ export function toCitizenInput(values: CitizenFormValues): CitizenInput {
         isElderly: values.isElderly,
         isChild: values.isChild,
         isDisabledOrSupportNeeded: values.isDisabledOrSupportNeeded,
+        isDisabledChild: values.isDisabledChild,
         isPartyMember: values.isPartyMember,
         isUnionMember: values.isUnionMember,
+        isMartyr: values.isMartyr,
+        isMartyrFamily: values.isMartyrFamily,
+        isVeteran: values.isVeteran,
+        isOtherSpecial: values.isOtherSpecial,
+        otherSpecialLabel: values.otherSpecialLabel.trim() || undefined,
     };
 }
 
@@ -73,7 +91,8 @@ export function isCitizenFormValid(values: CitizenFormValues): boolean {
         values.fullName.trim() &&
         values.householdId &&
         (values.residenceType !== "tam_tru" ||
-            !!values.temporaryResidenceExpiresAt)
+            !!values.temporaryResidenceExpiresAt) &&
+        (!values.isOtherSpecial || !!values.otherSpecialLabel.trim())
     );
 }
 
@@ -226,6 +245,14 @@ const CitizenForm: React.FC<CitizenFormProps> = ({
                     }
                 />
                 <Checkbox
+                    label="Trẻ em khuyết tật"
+                    value="isDisabledChild"
+                    checked={values.isDisabledChild}
+                    onChange={() =>
+                        set("isDisabledChild", !values.isDisabledChild)
+                    }
+                />
+                <Checkbox
                     label="Đảng viên"
                     value="isPartyMember"
                     checked={values.isPartyMember}
@@ -237,6 +264,43 @@ const CitizenForm: React.FC<CitizenFormProps> = ({
                     checked={values.isUnionMember}
                     onChange={() => set("isUnionMember", !values.isUnionMember)}
                 />
+                <Checkbox
+                    label="Liệt sĩ"
+                    value="isMartyr"
+                    checked={values.isMartyr}
+                    onChange={() => set("isMartyr", !values.isMartyr)}
+                />
+                <Checkbox
+                    label="Gia đình liệt sĩ"
+                    value="isMartyrFamily"
+                    checked={values.isMartyrFamily}
+                    onChange={() =>
+                        set("isMartyrFamily", !values.isMartyrFamily)
+                    }
+                />
+                <Checkbox
+                    label="Cựu chiến binh"
+                    value="isVeteran"
+                    checked={values.isVeteran}
+                    onChange={() => set("isVeteran", !values.isVeteran)}
+                />
+                <Checkbox
+                    label="Khác"
+                    value="isOtherSpecial"
+                    checked={values.isOtherSpecial}
+                    onChange={() =>
+                        set("isOtherSpecial", !values.isOtherSpecial)
+                    }
+                />
+                {values.isOtherSpecial && (
+                    <Input
+                        placeholder="Nhập tên diện ưu tiên khác"
+                        value={values.otherSpecialLabel}
+                        onChange={e =>
+                            set("otherSpecialLabel", e.target.value)
+                        }
+                    />
+                )}
             </Box>
             {showAttachments && (
                 <PendingAttachmentsPicker

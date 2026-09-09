@@ -49,6 +49,12 @@ export type User = {
     primaryRole: Role;
     permissions: string[];
     status: UserStatus;
+    // True khi mat khau hien tai la do nguoi khac dat thay (import Excel,
+    // nhan vien tao ho, admin dat lai) - phai chuyen huong sang man doi mat
+    // khau bat buoc (xem ChangePasswordRequiredPage) truoc khi dung duoc cac
+    // man hinh khac; backend da chan san moi API khac (rbac.ts requireUser
+    // tra ve 423), day chi la tin hieu de UI dieu huong dung.
+    mustChangePassword?: boolean;
     householdId?: string;
     citizenId?: string;
     assignedClusters: string[];
@@ -127,6 +133,12 @@ export type Neighborhood = {
     description?: string;
     contactPhone?: string;
     notes?: string;
+    // Phuong/xa + tinh/thanh cua chinh to dan pho nay - dung de ghep dia chi
+    // day du khi geocode 1 lan (xem HouseForm.tsx), KHONG suy ra tu Street.
+    wardCode?: number;
+    wardName?: string;
+    provinceCode?: number;
+    provinceName?: string;
     createdAt: string;
     updatedAt: string;
 };
@@ -246,6 +258,11 @@ export type Household = {
     cluster: string;
     address: string;
     headOfHousehold: string;
+    // Tai khoan chu ho da lien ket (neu co) - xem
+    // userService.createHouseholdHeadByOwner o backend.
+    headOfHouseholdUserId?:
+        | string
+        | { _id: string; displayName: string; phone?: string };
     phone?: string;
     memberCount: number;
     ownershipType: LoaiSoHuu;
@@ -267,6 +284,8 @@ export type DocumentType = {
     hasIssueDate: boolean;
     hasExpiryDate: boolean;
     active: boolean;
+    sampleFileUrl?: string;
+    sampleFileName?: string;
     createdAt: string;
     updatedAt: string;
 };
@@ -308,6 +327,11 @@ export type Business = {
     // Khong bat buoc - khong phai ho kinh doanh nao cung da dang ky ma so
     // thue (xem models/Business.ts o backend).
     taxCode?: string;
+    // Tai khoan dai dien da lien ket (neu co) - xem
+    // userService.createBusinessRepresentativeByOwner o backend.
+    representativeUserId?:
+        | string
+        | { _id: string; displayName: string; phone?: string };
     phone?: string;
     active: boolean;
     status: VerificationStatus;
@@ -332,6 +356,11 @@ export type Company = {
     // trong mini app (chi admin web app), them field de du lieu day du khi
     // can dung sau nay.
     organizationId?: { _id: string; name: string } | string | null;
+    // Tai khoan dai dien da lien ket (neu co) - xem
+    // userService.createCompanyRepresentativeByOwner o backend.
+    representativeUserId?:
+        | string
+        | { _id: string; displayName: string; phone?: string };
     phone?: string;
     active: boolean;
     status: VerificationStatus;
@@ -485,8 +514,14 @@ export type Citizen = {
     isElderly: boolean;
     isChild: boolean;
     isDisabledOrSupportNeeded: boolean;
+    isDisabledChild: boolean;
     isPartyMember: boolean;
     isUnionMember: boolean;
+    isMartyr: boolean;
+    isMartyrFamily: boolean;
+    isVeteran: boolean;
+    isOtherSpecial: boolean;
+    otherSpecialLabel?: string;
     createdAt: string;
     updatedAt: string;
 };
@@ -838,6 +873,15 @@ export type MyRequestItem = {
     respondedAt?: string;
     resolvedAt?: string;
     isOverdue: boolean;
+    // Snapshot ten/bieu mau cua RequestTypeDefinition tai thoi diem tao yeu
+    // cau (chi co tu sau khi loai "he thong" pccc/security/other/task duoc
+    // gop vao RequestTypeDefinition - request cu hon se khong co truong nay,
+    // dung REQUEST_TYPE_LABEL[type] lam du phong, xem MyRequestsPage.tsx).
+    formDefinitionSnapshot?: {
+        name: string;
+        dataEntryMode: "sender" | "recipient";
+        fields: unknown[];
+    };
 };
 
 // ---------------------------------------------------------------------------
@@ -975,6 +1019,9 @@ export type AppointmentTimeSlot = {
     active: boolean;
 };
 
+export type AppointmentHouseRequirement = "none" | "optional" | "required";
+export type AppointmentHouseStatusRequirement = "any" | "in_scope" | "verified";
+
 export type AppointmentService = {
     _id: string;
     key: string;
@@ -982,6 +1029,10 @@ export type AppointmentService = {
     description?: string;
     locationAddress: string;
     scope: "ward" | "neighborhood";
+    wardCode?: number;
+    neighborhoodId?: string;
+    houseRequirement: AppointmentHouseRequirement;
+    houseStatusRequirement: AppointmentHouseStatusRequirement;
     slotDurationMinutes: number;
     autoApprove: boolean;
     active: boolean;
@@ -993,7 +1044,7 @@ export type Appointment = {
     code: string;
     serviceId: string | { _id: string; name: string };
     timeSlotId: string;
-    houseId: string | { _id: string; code: string; address?: string };
+    houseId?: string | { _id: string; code: string; address?: string };
     citizenUserId?:
         | string
         | { _id: string; displayName: string; phone?: string };

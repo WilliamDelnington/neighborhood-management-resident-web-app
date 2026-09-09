@@ -190,7 +190,10 @@ const MyRequestsContent: React.FC = () => {
                                             size="xxSmall"
                                             className="text-text_2 mt-1"
                                         >
-                                            {REQUEST_TYPE_LABEL[item.type]}
+                                            {item.formDefinitionSnapshot
+                                                ?.name ||
+                                                REQUEST_TYPE_LABEL[item.type] ||
+                                                item.type}
                                             {" · "}
                                             {
                                                 REQUEST_PRIORITY_LABEL[

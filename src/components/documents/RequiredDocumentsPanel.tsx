@@ -24,6 +24,7 @@ import {
     AttachmentRelatedModel,
 } from "@service/uploadApi";
 import { SubmitEntityDocumentInput } from "@service/requiredDocumentApi";
+import { resolveAssetUrl } from "@constants/common";
 import {
     AppError,
     DocumentType,
@@ -68,6 +69,14 @@ const fileNameOf = (doc: RequiredDocumentRecord): string =>
 
 const fileUrlOf = (doc: RequiredDocumentRecord): string | undefined =>
     typeof doc.fileAssetId === "string" ? undefined : doc.fileAssetId.url;
+
+const IMAGE_EXTENSIONS = ["jpg", "jpeg", "png", "gif", "webp"];
+
+const fileExtensionOf = (fileName?: string, url?: string): string => {
+    const source = fileName || url || "";
+    const match = /\.([a-z0-9]+)(?:[?#].*)?$/i.exec(source);
+    return match ? match[1].toLowerCase() : "";
+};
 
 export interface RequiredDocumentsPanelProps {
     entityId: string;
@@ -122,6 +131,11 @@ const RequiredDocumentsPanel: React.FC<RequiredDocumentsPanelProps> = ({
     const [issueDate, setIssueDate] = useState<Date | undefined>();
     const [expiryDate, setExpiryDate] = useState<Date | undefined>();
     const [submitBusy, setSubmitBusy] = useState(false);
+
+    const [previewFile, setPreviewFile] = useState<{
+        url: string;
+        name?: string;
+    } | null>(null);
 
     const [reviewing, setReviewing] = useState<RequiredDocumentItem | null>(
         null,
@@ -248,6 +262,10 @@ const RequiredDocumentsPanel: React.FC<RequiredDocumentsPanelProps> = ({
                     {items.map(item => {
                         const key = documentTypeIdOf(item);
                         const historyOpen = expandedHistory.has(key);
+                        const sampleFileUrl = documentTypeOf(item)
+                            ?.sampleFileUrl;
+                        const sampleFileName = documentTypeOf(item)
+                            ?.sampleFileName;
                         return (
                             <Box
                                 key={key}
@@ -283,6 +301,22 @@ const RequiredDocumentsPanel: React.FC<RequiredDocumentsPanelProps> = ({
                                                     : "gray"
                                             }
                                         />
+                                        {sampleFileUrl && (
+                                            <Text
+                                                size="xxSmall"
+                                                className="text-main"
+                                                onClick={() =>
+                                                    setPreviewFile({
+                                                        url: resolveAssetUrl(
+                                                            sampleFileUrl,
+                                                        ),
+                                                        name: sampleFileName,
+                                                    })
+                                                }
+                                            >
+                                                Xem mẫu
+                                            </Text>
+                                        )}
                                     </Box>
                                     <Box
                                         flex
@@ -561,6 +595,65 @@ const RequiredDocumentsPanel: React.FC<RequiredDocumentsPanelProps> = ({
                         </Button>
                     </Box>
                 </Box>
+            </Sheet>
+            <Sheet
+                visible={!!previewFile}
+                onClose={() => setPreviewFile(null)}
+                title={previewFile?.name || "Xem mẫu"}
+                height="85vh"
+                mask
+            >
+                {previewFile &&
+                    (() => {
+                        const ext = fileExtensionOf(
+                            previewFile.name,
+                            previewFile.url,
+                        );
+                        if (IMAGE_EXTENSIONS.includes(ext)) {
+                            return (
+                                <img
+                                    src={previewFile.url}
+                                    alt={previewFile.name || "Xem mẫu"}
+                                    style={{
+                                        maxWidth: "100%",
+                                        display: "block",
+                                        margin: "0 auto",
+                                    }}
+                                />
+                            );
+                        }
+                        if (ext === "pdf") {
+                            return (
+                                <iframe
+                                    src={previewFile.url}
+                                    title={previewFile.name || "Xem mẫu"}
+                                    style={{
+                                        width: "100%",
+                                        height: "70vh",
+                                        border: "none",
+                                    }}
+                                />
+                            );
+                        }
+                        return (
+                            <Box style={{ textAlign: "center", padding: 16 }}>
+                                <Text
+                                    size="small"
+                                    className="text-text_2 block mb-3"
+                                >
+                                    Không thể xem trước loại tệp này, vui lòng
+                                    mở tệp để xem.
+                                </Text>
+                                <Button
+                                    onClick={() =>
+                                        window.open(previewFile.url, "_blank")
+                                    }
+                                >
+                                    Mở tệp
+                                </Button>
+                            </Box>
+                        );
+                    })()}
             </Sheet>
         </Box>
     );

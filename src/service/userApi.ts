@@ -1,5 +1,5 @@
 import { API } from "@constants/common";
-import { AssignableStaff, Role } from "@dts";
+import { AssignableStaff, Role, User } from "@dts";
 import { request } from "./request";
 
 /**
@@ -15,3 +15,50 @@ export const fetchAssignableStaffByRoles = (
         : request<AssignableStaff[]>("GET", API.USERS_ASSIGNABLE_STAFF, {
               roles: roles.join(","),
           });
+
+/**
+ * Tao tai khoan phone+password thay cho nguoi khac - man "Tạo tài khoản" o
+ * trang Quản trị (xem CreateAccountPage.tsx), dung chung endpoint
+ * POST /api/users voi admin-web-app (userService.createHouseOwnerByStaff).
+ * Doi hoi permission "users.create"; role khac "house_owner" chi duoc chap
+ * nhan neu nam trong fetchCreatableRoles() cua actor (backend tu choi neu
+ * khong, xem userService.getCreatableRolesForActor).
+ */
+export interface CreateAccountParams {
+    phone: string;
+    displayName: string;
+    address?: string;
+    idNumber?: string;
+    role?: Role;
+    password?: string;
+}
+
+export const createAccount = (params: CreateAccountParams): Promise<User> =>
+    request<User>("POST", API.USERS, params);
+
+/**
+ * Cung dinh dang voi CreateAccountParams nhung khong co `role` - dung boi
+ * chu nha (house_owner) de tu tao tai khoan quan ly thay MOT thuc the cu the
+ * cua minh (chu ho cua 1 ho dan, dai dien cua 1 ho kinh doanh/cong ty), vai
+ * tro co dinh theo endpoint duoc goi (xem createHouseholdHeadAccount trong
+ * householdApi.ts, createBusinessRepresentativeAccount trong businessApi.ts,
+ * createCompanyRepresentativeAccount trong companyApi.ts) - khong dung chung
+ * POST /api/users vi house_owner khong co quyen "users.create".
+ */
+export interface CreateLinkedAccountInput {
+    phone: string;
+    displayName: string;
+    address?: string;
+    idNumber?: string;
+    password?: string;
+}
+
+/**
+ * Danh sach vai tro (key + ten) ma nguoi dang dang nhap duoc phep chon khi
+ * "Tạo tài khoản" - LUON co house_owner, cong them cac vai tro nam trong
+ * Role.allowedCreatableRoles cua bat ky vai tro nao actor dang giu (hoac tat
+ * ca vai tro active neu actor la admin) - xem
+ * userService.getCreatableRolesForActor o backend.
+ */
+export const fetchCreatableRoles = (): Promise<{ key: Role; name: string }[]> =>
+    request<{ key: Role; name: string }[]>("GET", API.USERS_CREATABLE_ROLES);

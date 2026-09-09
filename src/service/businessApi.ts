@@ -5,9 +5,11 @@ import {
     FileAsset,
     PaginatedData,
     RequiredDocumentsResult,
+    User,
     VerificationStatus,
 } from "@dts";
 import { request } from "./request";
+import { CreateLinkedAccountInput } from "./userApi";
 
 /**
  * Yeu cau quyen businesses.read. Backend tu gioi han theo ownerId (house_owner,
@@ -51,6 +53,17 @@ export const updateBusiness = (
 
 export const deleteBusiness = (id: string): Promise<null> =>
     request<null>("DELETE", `${API.BUSINESSES}/${id}`);
+
+/**
+ * Chu nha tu tao tai khoan dai dien (business_representative) cho ho kinh
+ * doanh nay va lien ket luon trong 1 buoc - xem
+ * userService.createBusinessRepresentativeByOwner o backend.
+ */
+export const createBusinessRepresentativeAccount = (
+    id: string,
+    input: CreateLinkedAccountInput,
+): Promise<User> =>
+    request<User>("POST", `${API.BUSINESSES}/${id}/representative-account`, input);
 
 // Admin ghi de tuy y; chu ho chi duoc goi voi status="pending" tu "denied" (gui
 // lai ho so sau khi bi tu choi - xem PATCH /api/businesses/:id/status o
