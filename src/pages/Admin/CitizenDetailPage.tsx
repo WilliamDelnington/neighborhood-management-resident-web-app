@@ -8,7 +8,7 @@ import {
     useSnackbar,
 } from "@components/ui";
 import { PageLayout } from "@components/layout";
-import { ErrorState, LoadingState } from "@components/admin";
+import { ErrorState, LoadingState, StatusBadge } from "@components/admin";
 import { Button } from "@components/customized";
 import { RequireAuth, hasPermission } from "@components/role";
 import {
@@ -38,6 +38,7 @@ const toFormValues = (c: Citizen): CitizenFormValues => {
         birthDate: c.birthDate ? new Date(c.birthDate) : null,
         gender: c.gender,
         relationToHead: c.relationToHead || "",
+        occupation: c.occupation || "",
         householdId:
             typeof c.householdId === "string"
                 ? c.householdId
@@ -46,6 +47,10 @@ const toFormValues = (c: Citizen): CitizenFormValues => {
             ? `${household.code} — ${household.address}`
             : "",
         residenceType: c.residenceType,
+        isResidencyDeclared: c.isResidencyDeclared,
+        temporaryResidenceStartsAt: c.temporaryResidenceStartsAt
+            ? new Date(c.temporaryResidenceStartsAt)
+            : null,
         temporaryResidenceExpiresAt: c.temporaryResidenceExpiresAt
             ? new Date(c.temporaryResidenceExpiresAt)
             : null,
@@ -224,11 +229,58 @@ const CitizenDetailContent: React.FC = () => {
                                     }
                                 />
                                 <InfoRow
+                                    label="Nghề nghiệp/nơi làm việc"
+                                    value={
+                                        citizen.occupation || "Chưa cập nhật"
+                                    }
+                                />
+                                <InfoRow
                                     label="Loại cư trú"
                                     value={
                                         LOAI_CU_TRU_LABEL[citizen.residenceType]
                                     }
                                 />
+                                <Box
+                                    flex
+                                    justifyContent="space-between"
+                                    py={2}
+                                    className="border-b border-divider_01 last:border-0"
+                                >
+                                    <Text size="xSmall" className="text-text_2">
+                                        Khai báo cư trú
+                                    </Text>
+                                    <StatusBadge
+                                        label={
+                                            citizen.isResidencyDeclared
+                                                ? "Đã khai báo cư trú"
+                                                : "Chưa khai báo cư trú"
+                                        }
+                                        tone={
+                                            citizen.isResidencyDeclared
+                                                ? "green"
+                                                : "gray"
+                                        }
+                                    />
+                                </Box>
+                                {citizen.residenceType === "tam_tru" && (
+                                    <InfoRow
+                                        label="Thời hạn tạm trú"
+                                        value={
+                                            citizen.temporaryResidenceStartsAt &&
+                                            citizen.temporaryResidenceExpiresAt
+                                                ? `${new Date(
+                                                      citizen.temporaryResidenceStartsAt,
+                                                  ).toLocaleDateString(
+                                                      "vi-VN",
+                                                  )} – ${new Date(
+                                                      citizen.temporaryResidenceExpiresAt,
+                                                  ).toLocaleDateString(
+                                                      "vi-VN",
+                                                  )}`
+                                                : "Chưa cập nhật"
+                                        }
+                                    />
+                                )}
 
                                 {(canUpdate || canDelete) && (
                                     <Box mt={4} flex style={{ gap: 8 }}>

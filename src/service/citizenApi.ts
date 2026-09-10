@@ -29,8 +29,11 @@ export interface CitizenInput {
     birthDate?: string;
     gender?: GioiTinh;
     relationToHead?: string;
+    occupation?: string;
     householdId: string;
     residenceType?: LoaiCuTru;
+    isResidencyDeclared?: boolean;
+    temporaryResidenceStartsAt?: string;
     temporaryResidenceExpiresAt?: string;
     isElderly?: boolean;
     isChild?: boolean;
