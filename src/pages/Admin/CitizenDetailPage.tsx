@@ -48,6 +48,7 @@ const toFormValues = (c: Citizen): CitizenFormValues => {
             : "",
         residenceType: c.residenceType,
         isResidencyDeclared: c.isResidencyDeclared,
+        isUnemployed: c.isUnemployed,
         temporaryResidenceStartsAt: c.temporaryResidenceStartsAt
             ? new Date(c.temporaryResidenceStartsAt)
             : null,
@@ -231,9 +232,31 @@ const CitizenDetailContent: React.FC = () => {
                                 <InfoRow
                                     label="Nghề nghiệp/nơi làm việc"
                                     value={
-                                        citizen.occupation || "Chưa cập nhật"
+                                        citizen.isUnemployed
+                                            ? "—"
+                                            : citizen.occupation ||
+                                              "Chưa cập nhật"
                                     }
                                 />
+                                {citizen.isUnemployed && (
+                                    <Box
+                                        flex
+                                        justifyContent="space-between"
+                                        py={2}
+                                        className="border-b border-divider_01 last:border-0"
+                                    >
+                                        <Text
+                                            size="xSmall"
+                                            className="text-text_2"
+                                        >
+                                            Tình trạng việc làm
+                                        </Text>
+                                        <StatusBadge
+                                            label="Đang thất nghiệp"
+                                            tone="yellow"
+                                        />
+                                    </Box>
+                                )}
                                 <InfoRow
                                     label="Loại cư trú"
                                     value={

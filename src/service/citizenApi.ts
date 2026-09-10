@@ -33,6 +33,7 @@ export interface CitizenInput {
     householdId: string;
     residenceType?: LoaiCuTru;
     isResidencyDeclared?: boolean;
+    isUnemployed?: boolean;
     temporaryResidenceStartsAt?: string;
     temporaryResidenceExpiresAt?: string;
     isElderly?: boolean;

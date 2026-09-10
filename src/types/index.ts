@@ -69,6 +69,11 @@ export type LoaiSoHuu = "chinh_chu" | "cho_thue";
 export type GioiTinh = "nam" | "nu" | "khac";
 export type LoaiCuTru = "thuong_tru" | "tam_tru";
 
+// Trang thai benh/dich benh cua ho - 4 gia tri loai tru lan nhau (KHAC voi cac
+// co (flag) trang thai dac biet khac cua Household nhu isNearPoor), yeu cau
+// diseaseName khi khac "none" (backend zod refine).
+export type DiseaseStatus = "none" | "recorded" | "monitoring" | "resolved";
+
 export type HouseStatus =
     | "unverified"
     | "pending"
@@ -267,6 +272,8 @@ export type Household = {
     memberCount: number;
     ownershipType: LoaiSoHuu;
     needsSupport: boolean;
+    diseaseStatus: DiseaseStatus;
+    diseaseName?: string;
     houseId?: string | House;
     status: VerificationStatus;
     approvalNote?: string;
@@ -515,6 +522,7 @@ export type Citizen = {
     // cho biet phan loai do DA duoc khai bao voi UBND Phuong hay chua, ap
     // dung cho ca hai loai cu tru nen khong an theo residenceType.
     isResidencyDeclared: boolean;
+    isUnemployed: boolean;
     temporaryResidenceStartsAt?: string;
     temporaryResidenceExpiresAt?: string;
     isElderly: boolean;

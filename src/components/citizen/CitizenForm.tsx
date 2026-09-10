@@ -19,6 +19,7 @@ export interface CitizenFormValues {
     householdLabel: string;
     residenceType: LoaiCuTru;
     isResidencyDeclared: boolean;
+    isUnemployed: boolean;
     temporaryResidenceStartsAt: Date | null;
     temporaryResidenceExpiresAt: Date | null;
     isElderly: boolean;
@@ -47,6 +48,7 @@ export const EMPTY_CITIZEN_FORM: CitizenFormValues = {
     householdLabel: "",
     residenceType: "thuong_tru",
     isResidencyDeclared: false,
+    isUnemployed: false,
     temporaryResidenceStartsAt: null,
     temporaryResidenceExpiresAt: null,
     isElderly: false,
@@ -74,9 +76,12 @@ export function toCitizenInput(values: CitizenFormValues): CitizenInput {
             : undefined,
         gender: values.gender,
         relationToHead: values.relationToHead.trim() || undefined,
-        occupation: values.occupation.trim() || undefined,
+        occupation: values.isUnemployed
+            ? undefined
+            : values.occupation.trim() || undefined,
         residenceType: values.residenceType,
         isResidencyDeclared: values.isResidencyDeclared,
+        isUnemployed: values.isUnemployed,
         temporaryResidenceStartsAt: values.temporaryResidenceStartsAt
             ? values.temporaryResidenceStartsAt.toISOString()
             : undefined,
@@ -207,10 +212,18 @@ const CitizenForm: React.FC<CitizenFormProps> = ({
                 value={values.relationToHead}
                 onChange={e => set("relationToHead", e.target.value)}
             />
-            <Input
-                label="Nghề nghiệp/nơi làm việc"
-                value={values.occupation}
-                onChange={e => set("occupation", e.target.value)}
+            {!values.isUnemployed && (
+                <Input
+                    label="Nghề nghiệp/nơi làm việc"
+                    value={values.occupation}
+                    onChange={e => set("occupation", e.target.value)}
+                />
+            )}
+            <Checkbox
+                label="Đang thất nghiệp"
+                value="isUnemployed"
+                checked={values.isUnemployed}
+                onChange={() => set("isUnemployed", !values.isUnemployed)}
             />
             <Box>
                 <Text size="xSmall" className="text-text_2 mb-1">

@@ -2,6 +2,7 @@ import type {
     AppointmentStatus,
     BusinessDocumentStatus,
     DangKyHop,
+    DiseaseStatus,
     GioiTinh,
     HouseOwnershipRelationshipType,
     HouseOwnershipVerificationStatus,
@@ -264,6 +265,23 @@ export const GIOI_TINH_LABEL: Record<GioiTinh, string> = {
 export const LOAI_CU_TRU_LABEL: Record<LoaiCuTru, string> = {
     thuong_tru: "Thường trú",
     tam_tru: "Tạm trú",
+};
+
+export const DISEASE_STATUS_LABEL: Record<DiseaseStatus, string> = {
+    none: "Không có",
+    recorded: "Mới ghi nhận",
+    monitoring: "Đang theo dõi",
+    resolved: "Đã xử lý - hết theo dõi",
+};
+
+export const DISEASE_STATUS_TONE: Record<
+    DiseaseStatus,
+    "gray" | "blue" | "yellow" | "green" | "red"
+> = {
+    none: "gray",
+    recorded: "red",
+    monitoring: "yellow",
+    resolved: "green",
 };
 
 export const MUC_NGUY_CO_PCCC_LABEL: Record<MucNguyCoPccc, string> = {
