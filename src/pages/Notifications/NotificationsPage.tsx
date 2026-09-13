@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { BellOff } from "lucide-react";
 import { Box, Tabs, Text, useLocation, useNavigate } from "@components/ui";
-import { PageLayout } from "@components/layout";
+import { PageLayout, AppBottomNav } from "@components/layout";
 import { Button } from "@components/customized";
 import { EmptyState, ErrorState, LoadingState } from "@components/admin";
 import AnnouncementListView from "@components/announcements/AnnouncementListView";
@@ -48,10 +48,9 @@ const RELATED_MODEL_FIXED_PATH: Record<string, string> = {
 };
 
 /**
- * Man hinh mo tu bieu tuong chuong tren Home - gop "Thong bao chung" (thong
- * cao cong khai, xem AnnouncementListView) va "Thong bao cua toi" (rieng cho
- * tai khoan da dang nhap) vao hai tab, thay vi hai muc rieng tren danh sach
- * tien ich/thanh dieu huong nhu truoc.
+ * Man hinh mo tu muc "Thong bao" tren thanh dieu huong duoi cung - gop
+ * "Thong bao chung" (thong cao cong khai, xem AnnouncementListView) va
+ * "Thong bao cua toi" (rieng cho tai khoan da dang nhap) vao hai tab.
  *
  * Cho phep noi dieu huong chi dinh tab mo dau (vd nut "Xem tat ca" cua khoi
  * "Thong bao moi nhat" tren Home, dang chi hien thong bao chung) qua
@@ -66,7 +65,11 @@ const NotificationsPage: React.FC = () => {
     );
 
     return (
-        <PageLayout id="notifications-page" title="Thông báo">
+        <PageLayout
+            id="notifications-page"
+            title="Thông báo"
+            bottomNav={<AppBottomNav />}
+        >
             <Tabs
                 activeKey={activeTab}
                 onChange={key => setActiveTab(key)}
