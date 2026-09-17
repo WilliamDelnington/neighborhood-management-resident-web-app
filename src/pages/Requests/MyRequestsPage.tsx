@@ -34,8 +34,11 @@ const houseLabel = (houseId: MyRequestItem["houseId"]): string | null => {
     return `${houseId.code} — ${houseId.address}`;
 };
 
+// "pending" nhay thang sang "in_progress" (bo qua "acknowledged" trung gian) -
+// nhanh "acknowledged" chi con giu de xu ly cac yeu cau CU da o trang thai nay
+// tu truoc khi doi (van co the tiep tuc sang in_progress binh thuong).
 const NEXT_STATUS_OPTIONS: Record<RequestStatus, RequestStatus[]> = {
-    pending: ["acknowledged"],
+    pending: ["in_progress"],
     acknowledged: ["in_progress"],
     in_progress: ["awaiting_confirmation", "needs_info"],
     needs_info: ["in_progress"],

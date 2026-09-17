@@ -28,6 +28,10 @@ export const API = {
     AUTH_ME: "/api/auth/me",
     AUTH_LOGOUT: "/api/auth/logout",
 
+    PASSWORD_RESET_REQUESTS: "/api/password-reset-requests",
+    PASSWORD_RESET_REQUESTS_CHECK: "/api/password-reset-requests/check",
+    PASSWORD_RESET_REQUESTS_REVEAL: "/api/password-reset-requests/reveal",
+
     USERS: "/api/users",
     USERS_ASSIGNABLE_STAFF: "/api/users/assignable-staff",
     USERS_CREATABLE_ROLES: "/api/users/creatable-roles",
