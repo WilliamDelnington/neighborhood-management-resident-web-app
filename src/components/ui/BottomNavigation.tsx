@@ -8,6 +8,8 @@ export interface BottomNavigationItemProps {
     icon?: ReactNode;
     linkTo?: string;
     onClick?: () => void;
+    /** Hien cham do o goc tren-phai icon, dung cho cac muc co du lieu chua doc (vd. thong bao). */
+    badge?: boolean;
 }
 
 const Item: FC<BottomNavigationItemProps> = () => null;
@@ -39,7 +41,8 @@ const BottomNavigation: FC<BottomNavigationProps> & {
             )}
         >
             {items.map(item => {
-                const { itemKey, label, icon, linkTo, onClick } = item.props;
+                const { itemKey, label, icon, linkTo, onClick, badge } =
+                    item.props;
                 const isActive = itemKey === activeKey;
                 return (
                     <button
@@ -56,7 +59,12 @@ const BottomNavigation: FC<BottomNavigationProps> & {
                                 : "text-text_2",
                         )}
                     >
-                        {icon}
+                        <span className="relative inline-flex">
+                            {icon}
+                            {badge && (
+                                <span className="absolute -top-0.5 -right-0.5 h-2 w-2 rounded-full bg-red-500" />
+                            )}
+                        </span>
                         <span>{label}</span>
                     </button>
                 );

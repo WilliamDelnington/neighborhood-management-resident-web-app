@@ -4,6 +4,7 @@ import { Spinner } from "@components/ui";
 
 const HomePage = lazy(() => import("./Home/HomePage"));
 const LoginPage = lazy(() => import("./Login/LoginPage"));
+const ForgotPasswordPage = lazy(() => import("./Login/ForgotPasswordPage"));
 const AccountPage = lazy(() => import("./Account/AccountPage"));
 const ChangePasswordRequiredPage = lazy(
     () => import("./Account/ChangePasswordRequiredPage"),
@@ -130,6 +131,7 @@ const Routes: React.FC = () => (
         <RouterRoutes>
             <Route path="/" element={<HomePage />} />
             <Route path="/login" element={<LoginPage />} />
+            <Route path="/forgot-password" element={<ForgotPasswordPage />} />
             <Route path="/account" element={<AccountPage />} />
             <Route
                 path="/change-password-required"

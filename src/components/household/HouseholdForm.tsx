@@ -3,8 +3,8 @@ import { Box, Text } from "@components/ui";
 import { Input, TextArea, Radio, Checkbox } from "@components/customized";
 import { HousePickerSheet } from "@components/house";
 import { PendingAttachmentsPicker } from "@components/attachments";
-import { LOAI_SO_HUU_LABEL } from "@constants/domain";
-import { House, LoaiSoHuu } from "@dts";
+import { DISEASE_STATUS_LABEL, LOAI_SO_HUU_LABEL } from "@constants/domain";
+import { DiseaseStatus, House, LoaiSoHuu } from "@dts";
 import { HouseholdInput } from "@service/householdApi";
 
 export interface HouseholdFormValues {
@@ -18,6 +18,8 @@ export interface HouseholdFormValues {
     contactName: string;
     ownershipType: LoaiSoHuu;
     needsSupport: boolean;
+    diseaseStatus: DiseaseStatus;
+    diseaseName: string;
     houseId: string;
     houseLabel: string;
     note: string;
@@ -33,6 +35,8 @@ export const EMPTY_HOUSEHOLD_FORM: HouseholdFormValues = {
     contactName: "",
     ownershipType: "chinh_chu",
     needsSupport: false,
+    diseaseStatus: "none",
+    diseaseName: "",
     houseId: "",
     houseLabel: "",
     note: "",
@@ -50,6 +54,11 @@ export function toHouseholdInput(
         phone: values.phone.trim() || undefined,
         ownershipType: values.ownershipType,
         needsSupport: values.needsSupport,
+        diseaseStatus: values.diseaseStatus,
+        diseaseName:
+            values.diseaseStatus === "none"
+                ? undefined
+                : values.diseaseName.trim() || undefined,
         houseId: values.houseId || null,
         note: values.note.trim() || undefined,
     };
@@ -77,7 +86,8 @@ export function isHouseholdFormValid(
         values.houseId.trim() &&
         values.cluster.trim() &&
         values.address.trim() &&
-        values.headOfHousehold.trim()
+        values.headOfHousehold.trim() &&
+        (values.diseaseStatus === "none" || !!values.diseaseName.trim())
     );
     if (mode !== "create") return baseValid;
     return (
@@ -234,6 +244,34 @@ const HouseholdForm: React.FC<HouseholdFormProps> = ({
                 checked={values.needsSupport}
                 onChange={() => set("needsSupport", !values.needsSupport)}
             />
+            <Box>
+                <Text size="xSmall" className="text-text_2 mb-1">
+                    Tình trạng bệnh/dịch bệnh
+                </Text>
+                <Box flex style={{ gap: 16, flexWrap: "wrap" }}>
+                    {(
+                        Object.entries(DISEASE_STATUS_LABEL) as [
+                            DiseaseStatus,
+                            string,
+                        ][]
+                    ).map(([key, label]) => (
+                        <Radio
+                            key={key}
+                            label={label}
+                            checked={values.diseaseStatus === key}
+                            onChange={() => set("diseaseStatus", key)}
+                        />
+                    ))}
+                </Box>
+            </Box>
+            {values.diseaseStatus !== "none" && (
+                <Input
+                    label="Tên bệnh/dịch bệnh"
+                    placeholder="Nhập tên bệnh/dịch bệnh"
+                    value={values.diseaseName}
+                    onChange={e => set("diseaseName", e.target.value)}
+                />
+            )}
             <TextArea
                 label="Ghi chú"
                 placeholder="Ghi chú thêm (nếu có)"

@@ -1,6 +1,7 @@
 import { API } from "@constants/common";
 import {
     Citizen,
+    DiseaseStatus,
     EntityRequiredDocumentsResult,
     FileAsset,
     Household,
@@ -75,6 +76,8 @@ export interface HouseholdInput {
     contactName?: string;
     ownershipType?: LoaiSoHuu;
     needsSupport?: boolean;
+    diseaseStatus?: DiseaseStatus;
+    diseaseName?: string;
     houseId?: string | null;
     note?: string;
 }

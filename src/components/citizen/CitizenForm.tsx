@@ -14,9 +14,13 @@ export interface CitizenFormValues {
     birthDate: Date | null;
     gender: GioiTinh;
     relationToHead: string;
+    occupation: string;
     householdId: string;
     householdLabel: string;
     residenceType: LoaiCuTru;
+    isResidencyDeclared: boolean;
+    isUnemployed: boolean;
+    temporaryResidenceStartsAt: Date | null;
     temporaryResidenceExpiresAt: Date | null;
     isElderly: boolean;
     isChild: boolean;
@@ -39,9 +43,13 @@ export const EMPTY_CITIZEN_FORM: CitizenFormValues = {
     birthDate: null,
     gender: "nam",
     relationToHead: "",
+    occupation: "",
     householdId: "",
     householdLabel: "",
     residenceType: "thuong_tru",
+    isResidencyDeclared: false,
+    isUnemployed: false,
+    temporaryResidenceStartsAt: null,
     temporaryResidenceExpiresAt: null,
     isElderly: false,
     isChild: false,
@@ -68,7 +76,15 @@ export function toCitizenInput(values: CitizenFormValues): CitizenInput {
             : undefined,
         gender: values.gender,
         relationToHead: values.relationToHead.trim() || undefined,
+        occupation: values.isUnemployed
+            ? undefined
+            : values.occupation.trim() || undefined,
         residenceType: values.residenceType,
+        isResidencyDeclared: values.isResidencyDeclared,
+        isUnemployed: values.isUnemployed,
+        temporaryResidenceStartsAt: values.temporaryResidenceStartsAt
+            ? values.temporaryResidenceStartsAt.toISOString()
+            : undefined,
         temporaryResidenceExpiresAt: values.temporaryResidenceExpiresAt
             ? values.temporaryResidenceExpiresAt.toISOString()
             : undefined,
@@ -91,7 +107,12 @@ export function isCitizenFormValid(values: CitizenFormValues): boolean {
         values.fullName.trim() &&
         values.householdId &&
         (values.residenceType !== "tam_tru" ||
-            !!values.temporaryResidenceExpiresAt) &&
+            (!!values.temporaryResidenceStartsAt &&
+                !!values.temporaryResidenceExpiresAt)) &&
+        (!values.temporaryResidenceStartsAt ||
+            !values.temporaryResidenceExpiresAt ||
+            values.temporaryResidenceStartsAt <=
+                values.temporaryResidenceExpiresAt) &&
         (!values.isOtherSpecial || !!values.otherSpecialLabel.trim())
     );
 }
@@ -191,6 +212,19 @@ const CitizenForm: React.FC<CitizenFormProps> = ({
                 value={values.relationToHead}
                 onChange={e => set("relationToHead", e.target.value)}
             />
+            {!values.isUnemployed && (
+                <Input
+                    label="Nghề nghiệp/nơi làm việc"
+                    value={values.occupation}
+                    onChange={e => set("occupation", e.target.value)}
+                />
+            )}
+            <Checkbox
+                label="Đang thất nghiệp"
+                value="isUnemployed"
+                checked={values.isUnemployed}
+                onChange={() => set("isUnemployed", !values.isUnemployed)}
+            />
             <Box>
                 <Text size="xSmall" className="text-text_2 mb-1">
                     Loại cư trú
@@ -211,6 +245,33 @@ const CitizenForm: React.FC<CitizenFormProps> = ({
                     ))}
                 </Box>
             </Box>
+            <Box>
+                <Text size="xSmall" className="text-text_2 mb-1">
+                    Khai báo cư trú
+                </Text>
+                <Box flex style={{ gap: 16 }}>
+                    <Radio
+                        label="Đã khai báo cư trú"
+                        checked={values.isResidencyDeclared === true}
+                        onChange={() => set("isResidencyDeclared", true)}
+                    />
+                    <Radio
+                        label="Chưa khai báo cư trú"
+                        checked={values.isResidencyDeclared === false}
+                        onChange={() => set("isResidencyDeclared", false)}
+                    />
+                </Box>
+            </Box>
+            {values.residenceType === "tam_tru" && (
+                <DatePicker
+                    label="Ngày bắt đầu tạm trú"
+                    title="Chọn ngày bắt đầu tạm trú"
+                    value={values.temporaryResidenceStartsAt || undefined}
+                    onChange={date => set("temporaryResidenceStartsAt", date)}
+                    placeholder="Chọn ngày bắt đầu"
+                    max={values.temporaryResidenceExpiresAt || undefined}
+                />
+            )}
             {values.residenceType === "tam_tru" && (
                 <DatePicker
                     label="Thời hạn tạm trú"
@@ -218,6 +279,7 @@ const CitizenForm: React.FC<CitizenFormProps> = ({
                     value={values.temporaryResidenceExpiresAt || undefined}
                     onChange={date => set("temporaryResidenceExpiresAt", date)}
                     placeholder="Chọn ngày hết hạn"
+                    min={values.temporaryResidenceStartsAt || undefined}
                 />
             )}
             <Box style={{ display: "flex", flexDirection: "column", gap: 8 }}>
@@ -296,9 +358,7 @@ const CitizenForm: React.FC<CitizenFormProps> = ({
                     <Input
                         placeholder="Nhập tên diện ưu tiên khác"
                         value={values.otherSpecialLabel}
-                        onChange={e =>
-                            set("otherSpecialLabel", e.target.value)
-                        }
+                        onChange={e => set("otherSpecialLabel", e.target.value)}
                     />
                 )}
             </Box>

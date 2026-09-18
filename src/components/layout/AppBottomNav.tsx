@@ -1,4 +1,4 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useLocation } from "react-router-dom";
 import { BottomNavigation, Icon } from "@components/ui";
 import { useStore } from "@store";
@@ -9,13 +9,16 @@ import { hasPermission } from "@components/role";
  * ho dan / nhan khau) chi hien khi tai khoan duoc cap it nhat mot trong cac
  * quyen doc tuong ung - moi quyen duoc admin cau hinh rieng theo vai tro (xem
  * trang Vai tro & phan quyen), khong con gan voi "dashboard.read" nhu truoc.
- * "Phan anh" va "Thong bao" khong con la muc rieng tren thanh nay - phan anh
- * duoc truy cap qua the "Phan anh cua toi" tren trang chu, thong bao/thong
- * cao qua bieu tuong chuong (xem NotificationsPage).
+ * "Phan anh" khong con la muc rieng tren thanh nay - phan anh duoc truy cap
+ * qua the "Phan anh cua toi" tren trang chu.
  */
 const AppBottomNav: React.FC = () => {
     const { pathname } = useLocation();
     const user = useStore(state => state.user);
+    const unreadCount = useStore(state => state.unreadCount);
+    const refreshNotificationStatus = useStore(
+        state => state.refreshNotificationStatus,
+    );
     const canViewSections =
         hasPermission(user, "houses.read") ||
         hasPermission(user, "households.read") ||
@@ -23,9 +26,14 @@ const AppBottomNav: React.FC = () => {
         hasPermission(user, "businesses.read") ||
         hasPermission(user, "business_types.read");
 
+    useEffect(() => {
+        refreshNotificationStatus();
+    }, [refreshNotificationStatus]);
+
     const activeKey = (() => {
         if (pathname === "/") return "home";
         if (pathname.startsWith("/admin")) return "admin";
+        if (pathname.startsWith("/notifications")) return "notifications";
         if (pathname.startsWith("/account")) return "account";
         return "home";
     })();
@@ -48,6 +56,14 @@ const AppBottomNav: React.FC = () => {
                     linkTo="/admin"
                 />
             )}
+            <BottomNavigation.Item
+                key="notifications"
+                itemKey="notifications"
+                label="Thông báo"
+                icon={<Icon icon="zi-notif" />}
+                linkTo="/notifications"
+                badge={unreadCount > 0}
+            />
             <BottomNavigation.Item
                 key="account"
                 itemKey="account"

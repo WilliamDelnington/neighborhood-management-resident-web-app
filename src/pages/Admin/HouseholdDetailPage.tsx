@@ -39,6 +39,8 @@ import {
     VERIFICATION_STATUS_LABEL,
     VERIFICATION_STATUS_TONE,
     LOAI_SO_HUU_LABEL,
+    DISEASE_STATUS_LABEL,
+    DISEASE_STATUS_TONE,
 } from "@constants/domain";
 import {
     AppError,
@@ -89,6 +91,8 @@ const toFormValues = (h: Household): HouseholdFormValues => {
         contactName: "",
         ownershipType: h.ownershipType,
         needsSupport: h.needsSupport,
+        diseaseStatus: h.diseaseStatus,
+        diseaseName: h.diseaseName || "",
         houseId: typeof h.houseId === "string" ? h.houseId : house?._id || "",
         houseLabel: house ? `${house.code} — ${house.address}` : "",
         note: h.note || "",
@@ -369,6 +373,30 @@ const HouseholdDetailContent: React.FC = () => {
                                             tone="yellow"
                                         />
                                     )}
+                                    {household.diseaseStatus !== "none" && (
+                                        <StatusBadge
+                                            label={
+                                                household.diseaseName
+                                                    ? `${
+                                                          DISEASE_STATUS_LABEL[
+                                                              household
+                                                                  .diseaseStatus
+                                                          ]
+                                                      }: ${
+                                                          household.diseaseName
+                                                      }`
+                                                    : DISEASE_STATUS_LABEL[
+                                                          household
+                                                              .diseaseStatus
+                                                      ]
+                                            }
+                                            tone={
+                                                DISEASE_STATUS_TONE[
+                                                    household.diseaseStatus
+                                                ]
+                                            }
+                                        />
+                                    )}
                                 </Box>
                             </Box>
 
@@ -421,7 +449,17 @@ const HouseholdDetailContent: React.FC = () => {
                                             household.headOfHouseholdUserId &&
                                             typeof household.headOfHouseholdUserId ===
                                                 "object"
-                                                ? `${household.headOfHouseholdUserId.displayName}${household.headOfHouseholdUserId.phone ? ` · ${household.headOfHouseholdUserId.phone}` : ""}`
+                                                ? `${
+                                                      household
+                                                          .headOfHouseholdUserId
+                                                          .displayName
+                                                  }${
+                                                      household
+                                                          .headOfHouseholdUserId
+                                                          .phone
+                                                          ? ` · ${household.headOfHouseholdUserId.phone}`
+                                                          : ""
+                                                  }`
                                                 : "Chưa có"
                                         }
                                     />

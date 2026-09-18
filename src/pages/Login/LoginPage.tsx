@@ -71,9 +71,14 @@ const LoginPage: React.FC = () => {
     const location = useLocation();
     const { openSnackbar } = useSnackbar();
 
+    const prefill = location.state as {
+        prefillPhone?: string;
+        prefillPassword?: string;
+    } | null;
+
     const [phoneAuthMode] = useState<PhoneAuthMode>("login");
-    const [phone, setPhone] = useState("");
-    const [password, setPassword] = useState("");
+    const [phone, setPhone] = useState(prefill?.prefillPhone || "");
+    const [password, setPassword] = useState(prefill?.prefillPassword || "");
     const [confirmPassword, setConfirmPassword] = useState("");
     const [displayName, setDisplayName] = useState("");
 
@@ -277,14 +282,12 @@ const LoginPage: React.FC = () => {
                             size="xSmall"
                             className="text-main text-center mt-3"
                             onClick={() =>
-                                openSnackbar({
-                                    type: "info",
-                                    text: "Vui lòng liên hệ Tổ trưởng tổ dân phố hoặc UBND phường Dương Nội để được hỗ trợ đặt lại mật khẩu.",
-                                    duration: 6000,
+                                navigate("/forgot-password", {
+                                    animate: true,
                                 })
                             }
                         >
-                            Quên mật khẩu? Gửi hỗ trợ
+                            Quên mật khẩu?
                         </Text>
                     </Box>
                 )}
