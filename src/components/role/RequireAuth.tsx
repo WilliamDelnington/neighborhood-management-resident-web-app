@@ -14,13 +14,19 @@ import { useStore } from "@store";
 const RequireAuth: React.FC<PropsWithChildren> = ({ children }) => {
     const navigate = useNavigate();
     const location = useLocation();
-    const [token, bootstrapping, user] = useStore(state => [
+    const [token, bootstrapping, user, hasHydrated] = useStore(state => [
         state.token,
         state.bootstrapping,
         state.user,
+        state.hasHydrated,
     ]);
 
     useEffect(() => {
+        // Doi zustand persist doc xong token tu localStorage truoc khi ket
+        // luan la chua dang nhap - ngay sau khi refresh trang, token trong
+        // store van la undefined trong khoanh khac ngan truoc khi rehydrate
+        // xong, du phien dang nhap van con hop le.
+        if (!hasHydrated) return;
         if (!token && !bootstrapping) {
             // Dung replace de khong luu lai man hinh yeu cau dang nhap (dang bi chan) trong
             // history - neu khong, nut back/close se quay lai chinh man hinh nay va bi
@@ -49,9 +55,9 @@ const RequireAuth: React.FC<PropsWithChildren> = ({ children }) => {
                 replace: true,
             });
         }
-    }, [token, bootstrapping, user, location.pathname]);
+    }, [token, bootstrapping, user, hasHydrated, location.pathname]);
 
-    if (!token) {
+    if (!hasHydrated || !token) {
         return (
             <Page id="require-auth-loading">
                 <DefaultHeader

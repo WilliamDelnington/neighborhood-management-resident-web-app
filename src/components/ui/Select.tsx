@@ -45,7 +45,7 @@ const Select: FC<SelectProps> & { Option: FC<SelectOptionProps> } = ({
                 type="button"
                 onClick={() => setOpen(true)}
                 className={clsx(
-                    "flex w-full items-center justify-between rounded-xl border border-ng_20 bg-ng_10 px-3 py-3 text-left text-[15px] transition-colors focus:outline-none focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100",
+                    "flex w-full items-center justify-between rounded-xl border border-ng_20 bg-white px-3 py-3 text-left text-[15px] transition-colors focus:outline-none focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100",
                     className,
                 )}
             >

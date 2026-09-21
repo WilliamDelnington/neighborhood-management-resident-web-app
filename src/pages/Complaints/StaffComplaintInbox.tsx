@@ -15,6 +15,7 @@ import {
     TRANG_THAI_PHAN_ANH_TONE,
 } from "@constants/domain";
 import { Complaint } from "@dts";
+import { formatDateTime } from "@utils/date-time";
 
 const PAGE_SIZE = 20;
 
@@ -84,7 +85,9 @@ const StaffComplaintInbox: React.FC = () => {
                         <ListRow
                             key={item._id}
                             title={item.title}
-                            subtitle={item.code}
+                            subtitle={`${item.code} · ${formatDateTime(
+                                new Date(item.createdAt),
+                            )}`}
                             right={
                                 <StatusBadge
                                     label={

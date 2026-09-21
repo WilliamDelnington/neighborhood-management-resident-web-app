@@ -21,6 +21,7 @@ import {
     TRANG_THAI_PHAN_ANH_TONE,
 } from "@constants/domain";
 import { Complaint, ComplaintDetail } from "@dts";
+import { formatDateTime } from "@utils/date-time";
 import ComplaintTimelineView from "./ComplaintTimelineView";
 import StaffComplaintInbox from "./StaffComplaintInbox";
 
@@ -39,21 +40,28 @@ const ComplaintLookupPage: React.FC = () => {
     const [myComplaints, setMyComplaints] = useState<Complaint[]>([]);
     const [myLoading, setMyLoading] = useState(false);
     const [myError, setMyError] = useState(false);
+    const [myFilter, setMyFilter] = useState("");
 
-    const loadMyComplaints = () => {
+    const loadMyComplaints = (search?: string) => {
         setMyLoading(true);
         setMyError(false);
-        fetchMyComplaints()
+        fetchMyComplaints(1, undefined, search || undefined)
             .then(res => setMyComplaints(res.items))
             .catch(() => setMyError(true))
             .finally(() => setMyLoading(false));
     };
 
+    // Loc (debounce) danh sach "Phản ánh của tôi" khi go tim - an toan vi danh
+    // sach nay da duoc backend gioi han theo chinh nguoi dang dang nhap
+    // (createdByUserId), khac voi o "Tra cứu theo mã phản ánh" ben tren (khong
+    // dang nhap cung goi duoc) nen KHONG the doi thanh tim tu do o do (se lo
+    // tieu de/noi dung phan anh cua nguoi khac cho nguoi chua dang nhap).
     useEffect(() => {
-        if (token) {
-            loadMyComplaints();
-        }
-    }, [token]);
+        if (!token) return undefined;
+        const timer = setTimeout(() => loadMyComplaints(myFilter), 300);
+        return () => clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token, myFilter]);
 
     const handleSearch = async () => {
         if (!code.trim()) {
@@ -122,16 +130,27 @@ const ComplaintLookupPage: React.FC = () => {
                         <Text.Title size="small" className="mb-2">
                             Phản ánh của tôi
                         </Text.Title>
+                        <Input
+                            placeholder="Tìm theo tiêu đề hoặc mã phản ánh..."
+                            value={myFilter}
+                            onChange={e => setMyFilter(e.target.value)}
+                        />
 
                         {myLoading && <LoadingState />}
                         {!myLoading && myError && (
-                            <ErrorState onRetry={loadMyComplaints} />
+                            <ErrorState
+                                onRetry={() => loadMyComplaints(myFilter)}
+                            />
                         )}
                         {!myLoading &&
                             !myError &&
                             myComplaints.length === 0 && (
                                 <EmptyState
-                                    label="Bạn chưa gửi phản ánh nào"
+                                    label={
+                                        myFilter
+                                            ? "Không tìm thấy phản ánh phù hợp"
+                                            : "Bạn chưa gửi phản ánh nào"
+                                    }
                                     icon={MessageSquareWarning}
                                     tone="danger"
                                 />
@@ -142,7 +161,9 @@ const ComplaintLookupPage: React.FC = () => {
                                 <ListRow
                                     key={item._id}
                                     title={item.title}
-                                    subtitle={item.code}
+                                    subtitle={`${item.code} · ${formatDateTime(
+                                        new Date(item.createdAt),
+                                    )}`}
                                     right={
                                         <StatusBadge
                                             label={

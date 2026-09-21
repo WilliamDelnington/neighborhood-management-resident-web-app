@@ -45,10 +45,12 @@ export const deleteComplaintAttachment = (
 export const fetchMyComplaints = (
     page = 1,
     limit = DEFAULT_PAGE_SIZE,
+    search: string | undefined = undefined,
 ): Promise<PaginatedData<Complaint>> =>
     request<PaginatedData<Complaint>>("GET", API.COMPLAINTS_MINE, {
         page,
         limit,
+        search,
     });
 
 export const lookupComplaintByCode = (code: string): Promise<ComplaintDetail> =>

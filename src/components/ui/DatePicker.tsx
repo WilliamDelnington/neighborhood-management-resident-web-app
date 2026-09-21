@@ -86,7 +86,7 @@ const DatePicker: FC<DatePickerProps> = ({
                 }}
                 className={
                     className ||
-                    "w-full rounded-xl border border-transparent bg-ng_10 px-3 py-3 text-[15px] text-text_1 focus:border-transparent focus:outline-none"
+                    "w-full rounded-xl border border-ng_20 bg-white px-3 py-3 text-[15px] text-text_1 focus:outline-none focus:border-primary-400 focus:ring-2 focus:ring-primary-100"
                 }
             />
         </div>

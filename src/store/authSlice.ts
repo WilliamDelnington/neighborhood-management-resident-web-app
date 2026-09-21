@@ -15,6 +15,15 @@ export interface AuthSlice {
     bootstrapping: boolean;
     bootstrapError?: string;
     /**
+     * True sau khi zustand persist da doc xong token/user tu localStorage (xem
+     * store/index.ts). RequireAuth phai doi co gia tri nay truoc khi quyet
+     * dinh dieu huong ve /login - neu khong, ngay sau khi refresh trang, token
+     * se tam thoi la undefined (chua kip rehydrate) va nguoi dung se bi dang
+     * xuat oan du phien van con hop le.
+     */
+    hasHydrated: boolean;
+    setHasHydrated: (hasHydrated: boolean) => void;
+    /**
      * Dem tang dan moi khi mot luot dang nhap moi bat dau (loginAsTestUser,
      * loginWithPhone, registerWithPhone, verifyOtp). Dung de dam bao luot
      * dang nhap duoc khoi tao SAU CUNG luon la luot duoc ap dung vao store -
@@ -68,6 +77,9 @@ const authSlice: StateCreator<AuthSlice, [], [], AuthSlice> = (set, get) => ({
     user: undefined,
     bootstrapping: false,
     bootstrapError: undefined,
+    hasHydrated: false,
+    setHasHydrated: (hasHydrated: boolean) =>
+        set(state => ({ ...state, hasHydrated })),
     loginSeq: 0,
     setToken: (token?: string) => set(state => ({ ...state, token })),
     setUser: (user?: User) => set(state => ({ ...state, user })),
