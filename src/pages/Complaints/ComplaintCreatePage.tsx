@@ -19,7 +19,6 @@ import {
 } from "@service/complaintApi";
 import { pickAndUploadAttachment, PickedUpload } from "@service/uploadApi";
 import { fetchComplaintTypeDefinitions } from "@service/complaintTypeApi";
-import { NHOM_PHAN_ANH_LABEL } from "@constants/domain";
 import { Complaint, HouseLookupItem, NhomPhanAnh } from "@dts";
 import { useStore } from "@store";
 
@@ -75,36 +74,35 @@ const ComplaintCreatePageContent: React.FC = () => {
     const [pendingFiles, setPendingFiles] = useState<PickedUpload[]>([]);
     const [pickingFile, setPickingFile] = useState(false);
 
-    // Bat dau bang danh sach tinh (khong rong khi dang tai), sau do thay bang
-    // danh sach nhom phan anh dang hoat dong tu ComplaintTypeDefinition (quan
-    // tri duoc qua man Loai phan anh o admin app) - cung pattern voi
-    // RoleListPage.tsx (admin app).
+    // Danh sach nhom phan anh lay hoan toan tu ComplaintTypeDefinition (quan
+    // tri duoc qua man Loai phan anh o admin app) - KHONG con fallback ve
+    // NHOM_PHAN_ANH_LABEL (danh sach tinh trong code) nua: fallback do khien
+    // mot loai phan anh da bi go/khoa (active:false) o admin van hien lai cho
+    // nguoi dung moi khi API tra ve rong hoac loi tam thoi, tuc danh sach
+    // khong thuc su "xoa duoc" tu phia quan tri. NHOM_PHAN_ANH_LABEL van con
+    // dung o noi khac de hien label cho ban ghi Complaint cu (xem constants/domain.ts).
     const [categoryOptions, setCategoryOptions] = useState<
         Array<{ key: NhomPhanAnh; label: string }>
-    >(
-        Object.entries(NHOM_PHAN_ANH_LABEL).map(([key, label]) => ({
-            key,
-            label,
-        })),
-    );
+    >([]);
+    const [categoryOptionsLoading, setCategoryOptionsLoading] = useState(true);
     useEffect(() => {
         fetchComplaintTypeDefinitions({ active: true, limit: 200 })
             .then(res => {
-                // Giu danh sach tinh (NHOM_PHAN_ANH_LABEL) neu API tra ve rong -
-                // tranh nguoi dung khong chon duoc gi ca khi scope/du lieu phia
-                // server tam thoi khong co ket qua nao.
-                if (res.items.length > 0) {
-                    setCategoryOptions(
-                        res.items.map(type => ({
-                            key: type.key,
-                            label: type.name,
-                        })),
-                    );
-                }
+                setCategoryOptions(
+                    res.items.map(type => ({
+                        key: type.key,
+                        label: type.name,
+                    })),
+                );
             })
             .catch(() => {
-                /* giu danh sach tinh (NHOM_PHAN_ANH_LABEL) neu goi API loi */
-            });
+                openSnackbar({
+                    type: "error",
+                    text: "Không tải được danh sách nhóm phản ánh",
+                });
+            })
+            .finally(() => setCategoryOptionsLoading(false));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (!canCreate) {
@@ -325,7 +323,11 @@ const ComplaintCreatePageContent: React.FC = () => {
                         Nhóm phản ánh
                     </Text>
                     <Select
-                        placeholder="Chọn nhóm phản ánh"
+                        placeholder={
+                            categoryOptionsLoading
+                                ? "Đang tải..."
+                                : "Chọn nhóm phản ánh"
+                        }
                         value={category}
                         onChange={value => setCategory(value as NhomPhanAnh)}
                         closeOnSelect

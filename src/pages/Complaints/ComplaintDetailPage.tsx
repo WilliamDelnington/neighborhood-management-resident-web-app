@@ -13,8 +13,8 @@ import {
     confirmComplaintResolution,
     requestComplaintReevaluation,
 } from "@service/complaintApi";
+import { fetchComplaintTypeDefinitions } from "@service/complaintTypeApi";
 import { ComplaintDetail, NhomPhanAnh } from "@dts";
-import { NHOM_PHAN_ANH_LABEL } from "@constants/domain";
 import { useStore } from "@store";
 import ComplaintTimelineView from "./ComplaintTimelineView";
 
@@ -37,6 +37,27 @@ const ComplaintDetailPageContent: React.FC = () => {
     const [title, setTitle] = useState("");
     const [content, setContent] = useState("");
     const [saving, setSaving] = useState(false);
+
+    // Lay tu ComplaintTypeDefinition, khong dung NHOM_PHAN_ANH_LABEL tinh -
+    // cung ly do voi ComplaintCreatePage.tsx: danh sach tinh khien mot loai
+    // phan anh da bi go/khoa o admin van chon duoc khi sua phan anh.
+    const [categoryOptions, setCategoryOptions] = useState<
+        Array<{ key: NhomPhanAnh; label: string }>
+    >([]);
+    useEffect(() => {
+        fetchComplaintTypeDefinitions({ active: true, limit: 200 })
+            .then(res =>
+                setCategoryOptions(
+                    res.items.map(type => ({
+                        key: type.key,
+                        label: type.name,
+                    })),
+                ),
+            )
+            .catch(() => {
+                /* Select giu rong, ErrorState/snackbar khac trong trang da bao loi tai */
+            });
+    }, []);
 
     const [confirming, setConfirming] = useState(false);
     const [rating, setRating] = useState(0);
@@ -198,15 +219,13 @@ const ComplaintDetailPageContent: React.FC = () => {
                                     }
                                     closeOnSelect
                                 >
-                                    {Object.entries(NHOM_PHAN_ANH_LABEL).map(
-                                        ([value, label]) => (
-                                            <Select.Option
-                                                key={value}
-                                                value={value}
-                                                title={label}
-                                            />
-                                        ),
-                                    )}
+                                    {categoryOptions.map(({ key, label }) => (
+                                        <Select.Option
+                                            key={key}
+                                            value={key}
+                                            title={label}
+                                        />
+                                    ))}
                                 </Select>
                                 <Box mt={3}>
                                     <Input
