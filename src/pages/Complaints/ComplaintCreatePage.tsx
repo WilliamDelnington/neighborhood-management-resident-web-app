@@ -13,6 +13,11 @@ import { Button, Input, TextArea } from "@components/customized";
 import { RequireAuth, hasPermission } from "@components/role";
 import { HouseTargetPickerSheet } from "@components/house";
 import {
+    ComplaintLocationPicker,
+    ComplaintGeoValues,
+    EMPTY_COMPLAINT_GEO,
+} from "@components/complaints";
+import {
     createComplaint,
     createComplaintDraftId,
     deleteComplaintAttachment,
@@ -67,6 +72,7 @@ const ComplaintCreatePageContent: React.FC = () => {
         null,
     );
     const [housePickerVisible, setHousePickerVisible] = useState(false);
+    const [geo, setGeo] = useState<ComplaintGeoValues>(EMPTY_COMPLAINT_GEO);
     const [submitting, setSubmitting] = useState(false);
     const [created, setCreated] = useState<Complaint | null>(null);
 
@@ -214,6 +220,11 @@ const ComplaintCreatePageContent: React.FC = () => {
                 area: area.trim() || undefined,
                 houseId: targetHouse?._id,
                 draftId: draftId || undefined,
+                gisLatitude: geo.gisLatitude,
+                gisLongitude: geo.gisLongitude,
+                gisAccuracyMeters: geo.gisAccuracyMeters,
+                gisSource: geo.gisSource || undefined,
+                geoConsentAccepted: geo.geoConsentAccepted,
             });
             setCreated(complaint);
         } catch (err: any) {
@@ -421,6 +432,13 @@ const ComplaintCreatePageContent: React.FC = () => {
                             ánh, không nhất thiết là nhà của bạn. Nếu chọn, phản
                             ánh sẽ được gửi tới Tổ trưởng phụ trách nhà số đó.
                         </Text>
+                    </Box>
+
+                    <Box mt={4}>
+                        <ComplaintLocationPicker
+                            values={geo}
+                            onChange={setGeo}
+                        />
                     </Box>
                 </Box>
 

@@ -3,6 +3,7 @@ import {
     Complaint,
     ComplaintDetail,
     FileAsset,
+    HouseGisSource,
     NhomPhanAnh,
     PaginatedData,
     TrangThaiPhanAnh,
@@ -24,6 +25,15 @@ export interface CreateComplaintParams {
     // voi relatedModel="Complaint") truoc khi bam "Gui" - backend se dung id
     // nay lam _id cua phan anh moi de cac tai lieu do tu dong thuoc ve no.
     draftId?: string;
+    // Toa do GPS tuy chon dinh kem luc gui phan anh - xem
+    // ComplaintLocationPicker o components/complaints. Backend bat buoc phai
+    // co geoConsentAccepted=true kem theo khi gisSource la
+    // "device_gps"/"address_lookup" (xem requiresComplaintGeoConsent).
+    gisLatitude?: number | null;
+    gisLongitude?: number | null;
+    gisAccuracyMeters?: number | null;
+    gisSource?: HouseGisSource;
+    geoConsentAccepted?: boolean;
 }
 
 export const createComplaint = (

@@ -578,6 +578,11 @@ export type Complaint = {
     title: string;
     content: string;
     area?: string;
+    gisLatitude?: number | null;
+    gisLongitude?: number | null;
+    gisAccuracyMeters?: number | null;
+    gisSource?: HouseGisSource;
+    gisCapturedAt?: string | null;
     status: TrangThaiPhanAnh;
     createdByUserId:
         | string
