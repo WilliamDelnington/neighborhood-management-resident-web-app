@@ -38,6 +38,36 @@ interface ComplaintLocationPickerProps {
 }
 
 /**
+ * PERMISSION_DENIED bao gom ca truong hop trinh duyet TU DONG chan prompt xin
+ * quyen (vd Chrome sau nhieu lan nguoi dung bo qua/tu choi) - luc nay goi lai
+ * getCurrentPosition se KHONG bao giu hien prompt nua, chi bao loi ngay lap
+ * tuc, nen thong bao chung "Hay cap quyen dinh vi" (voi ham y "bam cho phep o
+ * hop thoai") gay hieu lam. Phai huong dan nguoi dung vao cai dat trang web
+ * cua trinh duyet de cap lai quyen thu cong.
+ */
+// Ma loi theo dung chuan Geolocation API (khong doi) - tranh phai tham chieu
+// truc tiep type GeolocationPositionError (eslint no-undef khong nhan dien
+// duoc global nay tu env "browser" hien tai).
+const GEOLOCATION_ERROR_CODE = {
+    PERMISSION_DENIED: 1,
+    POSITION_UNAVAILABLE: 2,
+    TIMEOUT: 3,
+} as const;
+
+const describeGeolocationError = (err: { code: number }): string => {
+    if (err.code === GEOLOCATION_ERROR_CODE.PERMISSION_DENIED) {
+        return "Trình duyệt đã chặn quyền định vị cho trang này (thường do đã từ chối/bỏ qua yêu cầu cấp quyền nhiều lần trước đó). Vui lòng mở phần cài đặt trang web của trình duyệt (biểu tượng khóa/thông tin cạnh thanh địa chỉ) → Vị trí → Cho phép, sau đó tải lại trang.";
+    }
+    if (err.code === GEOLOCATION_ERROR_CODE.POSITION_UNAVAILABLE) {
+        return "Không xác định được vị trí hiện tại. Vui lòng kiểm tra kết nối mạng/GPS và thử lại.";
+    }
+    if (err.code === GEOLOCATION_ERROR_CODE.TIMEOUT) {
+        return "Hết thời gian chờ lấy vị trí. Vui lòng thử lại.";
+    }
+    return "Không lấy được vị trí. Hãy cấp quyền định vị.";
+};
+
+/**
  * Dinh vi GPS tuy chon cho phan anh - phien ban rut gon cua HouseLocationPicker
  * (chi che do GPS, khong co tra cuu dia chi/nhap thu cong vi phan anh can
  * "vi tri hien tai" nhanh hon la dia chi chinh xac cua mot nha so). Van tai su
@@ -72,11 +102,11 @@ const ComplaintLocationPicker: React.FC<ComplaintLocationPickerProps> = ({
                     accuracyMeters: position.coords.accuracy ?? null,
                 });
             },
-            () => {
+            err => {
                 setLocating(false);
                 openSnackbar({
                     type: "error",
-                    text: "Không lấy được vị trí. Hãy cấp quyền định vị.",
+                    text: describeGeolocationError(err),
                 });
             },
             { enableHighAccuracy: true, timeout: 12000 },
