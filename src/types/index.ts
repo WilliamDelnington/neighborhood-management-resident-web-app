@@ -553,6 +553,7 @@ export type ComplaintTypeDefinition = {
     name: string;
     description?: string;
     isBuiltIn?: boolean;
+    isUrgent?: boolean;
     active?: boolean;
 };
 

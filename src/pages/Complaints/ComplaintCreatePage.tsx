@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import {
     Box,
     Icon,
+    Modal,
     Select,
     Text,
     useNavigate,
@@ -88,9 +89,10 @@ const ComplaintCreatePageContent: React.FC = () => {
     // khong thuc su "xoa duoc" tu phia quan tri. NHOM_PHAN_ANH_LABEL van con
     // dung o noi khac de hien label cho ban ghi Complaint cu (xem constants/domain.ts).
     const [categoryOptions, setCategoryOptions] = useState<
-        Array<{ key: NhomPhanAnh; label: string }>
+        Array<{ key: NhomPhanAnh; label: string; isUrgent?: boolean }>
     >([]);
     const [categoryOptionsLoading, setCategoryOptionsLoading] = useState(true);
+    const [urgentWarningVisible, setUrgentWarningVisible] = useState(false);
     useEffect(() => {
         fetchComplaintTypeDefinitions({ active: true, limit: 200 })
             .then(res => {
@@ -98,6 +100,7 @@ const ComplaintCreatePageContent: React.FC = () => {
                     res.items.map(type => ({
                         key: type.key,
                         label: type.name,
+                        isUrgent: type.isUrgent,
                     })),
                 );
             })
@@ -148,6 +151,14 @@ const ComplaintCreatePageContent: React.FC = () => {
             </PageLayout>
         );
     }
+
+    const handleCategoryChange = (value: NhomPhanAnh) => {
+        setCategory(value);
+        const selected = categoryOptions.find(opt => opt.key === value);
+        if (selected?.isUrgent) {
+            setUrgentWarningVisible(true);
+        }
+    };
 
     const handlePickFile = async () => {
         try {
@@ -340,7 +351,9 @@ const ComplaintCreatePageContent: React.FC = () => {
                                 : "Chọn nhóm phản ánh"
                         }
                         value={category}
-                        onChange={value => setCategory(value as NhomPhanAnh)}
+                        onChange={value =>
+                            handleCategoryChange(value as NhomPhanAnh)
+                        }
                         closeOnSelect
                     >
                         {categoryOptions.map(({ key, label }) => (
@@ -446,6 +459,19 @@ const ComplaintCreatePageContent: React.FC = () => {
                     visible={housePickerVisible}
                     onClose={() => setHousePickerVisible(false)}
                     onSelect={house => setTargetHouse(house)}
+                />
+
+                <Modal
+                    visible={urgentWarningVisible}
+                    title="⚠️ Phản ánh khẩn cấp"
+                    description="Nhóm phản ánh này được đánh dấu khẩn cấp và sẽ được ưu tiên xử lý. Nếu tình huống đe dọa trực tiếp đến tính mạng, tài sản (cháy nổ, tai nạn, an ninh nghiêm trọng...), vui lòng gọi ngay đường dây nóng 112/113/114/115 thay vì chỉ gửi phản ánh qua ứng dụng."
+                    onClose={() => setUrgentWarningVisible(false)}
+                    actions={[
+                        {
+                            text: "Đã hiểu, tiếp tục",
+                            close: true,
+                        },
+                    ]}
                 />
 
                 <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">

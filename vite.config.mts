@@ -28,7 +28,14 @@ export default () => {
         // "Failed to resolve entry for package 'fs'". Excluding it here skips that dead-end
         // scan - twin.macro never needs a real runtime bundle since the macro erases it.
         optimizeDeps: {
-            exclude: ["twin.macro"],
+            // maplibre-gl (StaticMapPinConfirm.tsx) tai worker tinh toan tile
+            // rieng luc runtime - esbuild pre-bundle (optimizeDeps mac dinh)
+            // khong dong bo dung file worker do vao node_modules/.vite/deps,
+            // gay loi "file does not exist ... maplibre-gl-worker.mjs" luc
+            // khoi tao ban do. Loai khoi pre-bundle de Vite serve truc tiep
+            // ESM goc tu node_modules (maplibre-gl da ship ESM hop le, khong
+            // can pre-bundle) - dung theo khuyen nghi cua chinh thong bao loi.
+            exclude: ["twin.macro", "maplibre-gl"],
         },
         build: {
             outDir: "www",
