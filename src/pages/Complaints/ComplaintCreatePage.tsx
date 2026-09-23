@@ -93,11 +93,18 @@ const ComplaintCreatePageContent: React.FC = () => {
     >([]);
     const [categoryOptionsLoading, setCategoryOptionsLoading] = useState(true);
     const [urgentWarningVisible, setUrgentWarningVisible] = useState(false);
+    const [categoryBeforeUrgentSelect, setCategoryBeforeUrgentSelect] =
+        useState<NhomPhanAnh | undefined>(undefined);
     useEffect(() => {
         fetchComplaintTypeDefinitions({ active: true, limit: 200 })
             .then(res => {
+                // Nhom khan cap len dau danh sach de giam thao tac tim kiem
+                // cua nguoi dung khi can bao khan cap gap.
+                const sorted = [...res.items].sort(
+                    (a, b) => Number(!!b.isUrgent) - Number(!!a.isUrgent),
+                );
                 setCategoryOptions(
-                    res.items.map(type => ({
+                    sorted.map(type => ({
                         key: type.key,
                         label: type.name,
                         isUrgent: type.isUrgent,
@@ -153,11 +160,17 @@ const ComplaintCreatePageContent: React.FC = () => {
     }
 
     const handleCategoryChange = (value: NhomPhanAnh) => {
-        setCategory(value);
         const selected = categoryOptions.find(opt => opt.key === value);
         if (selected?.isUrgent) {
+            setCategoryBeforeUrgentSelect(category);
             setUrgentWarningVisible(true);
         }
+        setCategory(value);
+    };
+
+    const handleChooseAgain = () => {
+        setCategory(categoryBeforeUrgentSelect);
+        setUrgentWarningVisible(false);
     };
 
     const handlePickFile = async () => {
@@ -356,11 +369,12 @@ const ComplaintCreatePageContent: React.FC = () => {
                         }
                         closeOnSelect
                     >
-                        {categoryOptions.map(({ key, label }) => (
+                        {categoryOptions.map(({ key, label, isUrgent }) => (
                             <Select.Option
                                 key={key}
                                 value={key}
                                 title={label}
+                                danger={isUrgent}
                             />
                         ))}
                     </Select>
@@ -465,11 +479,15 @@ const ComplaintCreatePageContent: React.FC = () => {
                     visible={urgentWarningVisible}
                     title="⚠️ Phản ánh khẩn cấp"
                     description="Nhóm phản ánh này được đánh dấu khẩn cấp và sẽ được ưu tiên xử lý. Nếu tình huống đe dọa trực tiếp đến tính mạng, tài sản (cháy nổ, tai nạn, an ninh nghiêm trọng...), vui lòng gọi ngay đường dây nóng 112/113/114/115 thay vì chỉ gửi phản ánh qua ứng dụng."
-                    onClose={() => setUrgentWarningVisible(false)}
+                    onClose={handleChooseAgain}
                     actions={[
                         {
+                            text: "Chọn lại",
+                            onClick: handleChooseAgain,
+                        },
+                        {
                             text: "Đã hiểu, tiếp tục",
-                            close: true,
+                            onClick: () => setUrgentWarningVisible(false),
                         },
                     ]}
                 />
