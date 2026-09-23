@@ -6,6 +6,7 @@ import Sheet from "./Sheet";
 export interface SelectOptionProps {
     value: string;
     title: string;
+    danger?: boolean;
 }
 
 const Option: FC<SelectOptionProps> = () => null;
@@ -45,11 +46,17 @@ const Select: FC<SelectProps> & { Option: FC<SelectOptionProps> } = ({
                 type="button"
                 onClick={() => setOpen(true)}
                 className={clsx(
-                    "flex w-full items-center justify-between rounded-xl border border-ng_20 bg-ng_10 px-3 py-3 text-left text-[15px] transition-colors focus:outline-none focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100",
+                    "flex w-full items-center justify-between rounded-xl border border-ng_20 bg-white px-3 py-3 text-left text-[15px] transition-colors focus:outline-none focus:border-primary-400 focus:bg-white focus:ring-2 focus:ring-primary-100",
                     className,
                 )}
             >
-                <span className={selected ? "text-text_1" : "text-text_3"}>
+                <span
+                    className={clsx({
+                        "text-text_3": !selected,
+                        "font-semibold text-red-600": !!selected?.props.danger,
+                        "text-text_1": !!selected && !selected.props.danger,
+                    })}
+                >
                     {selected ? selected.props.title : placeholder}
                 </span>
                 <Icon
@@ -68,6 +75,7 @@ const Select: FC<SelectProps> & { Option: FC<SelectOptionProps> } = ({
                 <div className="flex flex-col gap-2">
                     {options.map(option => {
                         const isActive = option.props.value === value;
+                        const isDanger = !!option.props.danger;
                         return (
                             <button
                                 type="button"
@@ -78,17 +86,37 @@ const Select: FC<SelectProps> & { Option: FC<SelectOptionProps> } = ({
                                 }}
                                 className={clsx(
                                     "flex items-center justify-between rounded-xl px-4 py-3.5 text-left text-[15px] transition-colors",
-                                    isActive
-                                        ? "bg-primary-50 font-semibold text-primary-700"
-                                        : "bg-ng_10 text-text_1",
+                                    {
+                                        "bg-red-100 font-semibold text-red-700":
+                                            isDanger && isActive,
+                                        "bg-red-50 font-medium text-red-600":
+                                            isDanger && !isActive,
+                                        "bg-primary-50 font-semibold text-primary-700":
+                                            !isDanger && isActive,
+                                        "bg-ng_10 text-text_1":
+                                            !isDanger && !isActive,
+                                    },
                                 )}
                             >
-                                {option.props.title}
+                                <span className="flex items-center gap-1.5">
+                                    {isDanger && (
+                                        <Icon
+                                            icon="zi-warning-solid"
+                                            size={16}
+                                            className="text-red-600"
+                                        />
+                                    )}
+                                    {option.props.title}
+                                </span>
                                 {isActive && (
                                     <Icon
                                         icon="zi-check-circle-solid"
                                         size={18}
-                                        className="text-primary-600"
+                                        className={
+                                            isDanger
+                                                ? "text-red-600"
+                                                : "text-primary-600"
+                                        }
                                     />
                                 )}
                             </button>

@@ -3,6 +3,7 @@ import { useLocation } from "react-router-dom";
 import {
     Box,
     Icon,
+    Modal,
     Select,
     Text,
     useNavigate,
@@ -13,13 +14,17 @@ import { Button, Input, TextArea } from "@components/customized";
 import { RequireAuth, hasPermission } from "@components/role";
 import { HouseTargetPickerSheet } from "@components/house";
 import {
+    ComplaintLocationPicker,
+    ComplaintGeoValues,
+    EMPTY_COMPLAINT_GEO,
+} from "@components/complaints";
+import {
     createComplaint,
     createComplaintDraftId,
     deleteComplaintAttachment,
 } from "@service/complaintApi";
 import { pickAndUploadAttachment, PickedUpload } from "@service/uploadApi";
 import { fetchComplaintTypeDefinitions } from "@service/complaintTypeApi";
-import { NHOM_PHAN_ANH_LABEL } from "@constants/domain";
 import { Complaint, HouseLookupItem, NhomPhanAnh } from "@dts";
 import { useStore } from "@store";
 
@@ -68,6 +73,7 @@ const ComplaintCreatePageContent: React.FC = () => {
         null,
     );
     const [housePickerVisible, setHousePickerVisible] = useState(false);
+    const [geo, setGeo] = useState<ComplaintGeoValues>(EMPTY_COMPLAINT_GEO);
     const [submitting, setSubmitting] = useState(false);
     const [created, setCreated] = useState<Complaint | null>(null);
 
@@ -75,36 +81,44 @@ const ComplaintCreatePageContent: React.FC = () => {
     const [pendingFiles, setPendingFiles] = useState<PickedUpload[]>([]);
     const [pickingFile, setPickingFile] = useState(false);
 
-    // Bat dau bang danh sach tinh (khong rong khi dang tai), sau do thay bang
-    // danh sach nhom phan anh dang hoat dong tu ComplaintTypeDefinition (quan
-    // tri duoc qua man Loai phan anh o admin app) - cung pattern voi
-    // RoleListPage.tsx (admin app).
+    // Danh sach nhom phan anh lay hoan toan tu ComplaintTypeDefinition (quan
+    // tri duoc qua man Loai phan anh o admin app) - KHONG con fallback ve
+    // NHOM_PHAN_ANH_LABEL (danh sach tinh trong code) nua: fallback do khien
+    // mot loai phan anh da bi go/khoa (active:false) o admin van hien lai cho
+    // nguoi dung moi khi API tra ve rong hoac loi tam thoi, tuc danh sach
+    // khong thuc su "xoa duoc" tu phia quan tri. NHOM_PHAN_ANH_LABEL van con
+    // dung o noi khac de hien label cho ban ghi Complaint cu (xem constants/domain.ts).
     const [categoryOptions, setCategoryOptions] = useState<
-        Array<{ key: NhomPhanAnh; label: string }>
-    >(
-        Object.entries(NHOM_PHAN_ANH_LABEL).map(([key, label]) => ({
-            key,
-            label,
-        })),
-    );
+        Array<{ key: NhomPhanAnh; label: string; isUrgent?: boolean }>
+    >([]);
+    const [categoryOptionsLoading, setCategoryOptionsLoading] = useState(true);
+    const [urgentWarningVisible, setUrgentWarningVisible] = useState(false);
+    const [categoryBeforeUrgentSelect, setCategoryBeforeUrgentSelect] =
+        useState<NhomPhanAnh | undefined>(undefined);
     useEffect(() => {
         fetchComplaintTypeDefinitions({ active: true, limit: 200 })
             .then(res => {
-                // Giu danh sach tinh (NHOM_PHAN_ANH_LABEL) neu API tra ve rong -
-                // tranh nguoi dung khong chon duoc gi ca khi scope/du lieu phia
-                // server tam thoi khong co ket qua nao.
-                if (res.items.length > 0) {
-                    setCategoryOptions(
-                        res.items.map(type => ({
-                            key: type.key,
-                            label: type.name,
-                        })),
-                    );
-                }
+                // Nhom khan cap len dau danh sach de giam thao tac tim kiem
+                // cua nguoi dung khi can bao khan cap gap.
+                const sorted = [...res.items].sort(
+                    (a, b) => Number(!!b.isUrgent) - Number(!!a.isUrgent),
+                );
+                setCategoryOptions(
+                    sorted.map(type => ({
+                        key: type.key,
+                        label: type.name,
+                        isUrgent: type.isUrgent,
+                    })),
+                );
             })
             .catch(() => {
-                /* giu danh sach tinh (NHOM_PHAN_ANH_LABEL) neu goi API loi */
-            });
+                openSnackbar({
+                    type: "error",
+                    text: "Không tải được danh sách nhóm phản ánh",
+                });
+            })
+            .finally(() => setCategoryOptionsLoading(false));
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     if (!canCreate) {
@@ -144,6 +158,20 @@ const ComplaintCreatePageContent: React.FC = () => {
             </PageLayout>
         );
     }
+
+    const handleCategoryChange = (value: NhomPhanAnh) => {
+        const selected = categoryOptions.find(opt => opt.key === value);
+        if (selected?.isUrgent) {
+            setCategoryBeforeUrgentSelect(category);
+            setUrgentWarningVisible(true);
+        }
+        setCategory(value);
+    };
+
+    const handleChooseAgain = () => {
+        setCategory(categoryBeforeUrgentSelect);
+        setUrgentWarningVisible(false);
+    };
 
     const handlePickFile = async () => {
         try {
@@ -216,6 +244,11 @@ const ComplaintCreatePageContent: React.FC = () => {
                 area: area.trim() || undefined,
                 houseId: targetHouse?._id,
                 draftId: draftId || undefined,
+                gisLatitude: geo.gisLatitude,
+                gisLongitude: geo.gisLongitude,
+                gisAccuracyMeters: geo.gisAccuracyMeters,
+                gisSource: geo.gisSource || undefined,
+                geoConsentAccepted: geo.geoConsentAccepted,
             });
             setCreated(complaint);
         } catch (err: any) {
@@ -325,16 +358,23 @@ const ComplaintCreatePageContent: React.FC = () => {
                         Nhóm phản ánh
                     </Text>
                     <Select
-                        placeholder="Chọn nhóm phản ánh"
+                        placeholder={
+                            categoryOptionsLoading
+                                ? "Đang tải..."
+                                : "Chọn nhóm phản ánh"
+                        }
                         value={category}
-                        onChange={value => setCategory(value as NhomPhanAnh)}
+                        onChange={value =>
+                            handleCategoryChange(value as NhomPhanAnh)
+                        }
                         closeOnSelect
                     >
-                        {categoryOptions.map(({ key, label }) => (
+                        {categoryOptions.map(({ key, label, isUrgent }) => (
                             <Select.Option
                                 key={key}
                                 value={key}
                                 title={label}
+                                danger={isUrgent}
                             />
                         ))}
                     </Select>
@@ -420,12 +460,36 @@ const ComplaintCreatePageContent: React.FC = () => {
                             ánh sẽ được gửi tới Tổ trưởng phụ trách nhà số đó.
                         </Text>
                     </Box>
+
+                    <Box mt={4}>
+                        <ComplaintLocationPicker
+                            values={geo}
+                            onChange={setGeo}
+                        />
+                    </Box>
                 </Box>
 
                 <HouseTargetPickerSheet
                     visible={housePickerVisible}
                     onClose={() => setHousePickerVisible(false)}
                     onSelect={house => setTargetHouse(house)}
+                />
+
+                <Modal
+                    visible={urgentWarningVisible}
+                    title="⚠️ Phản ánh khẩn cấp"
+                    description="Nhóm phản ánh này được đánh dấu khẩn cấp và sẽ được ưu tiên xử lý. Nếu tình huống đe dọa trực tiếp đến tính mạng, tài sản (cháy nổ, tai nạn, an ninh nghiêm trọng...), vui lòng gọi ngay đường dây nóng 112/113/114/115 thay vì chỉ gửi phản ánh qua ứng dụng."
+                    onClose={handleChooseAgain}
+                    actions={[
+                        {
+                            text: "Chọn lại",
+                            onClick: handleChooseAgain,
+                        },
+                        {
+                            text: "Đã hiểu, tiếp tục",
+                            onClick: () => setUrgentWarningVisible(false),
+                        },
+                    ]}
                 />
 
                 <Box className="bg-white rounded-2xl p-4 shadow-card mt-3">

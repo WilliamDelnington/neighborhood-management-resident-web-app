@@ -21,6 +21,7 @@ import {
     TRANG_THAI_PHAN_ANH_TONE,
 } from "@constants/domain";
 import { Complaint, ComplaintDetail } from "@dts";
+import { formatDateTime } from "@utils/date-time";
 import ComplaintTimelineView from "./ComplaintTimelineView";
 import StaffComplaintInbox from "./StaffComplaintInbox";
 
@@ -31,7 +32,11 @@ const ComplaintLookupPage: React.FC = () => {
     const canViewInbox = hasPermission(user, "complaints.read");
     const canCreate = hasPermission(user, "complaints.create");
 
-    const [code, setCode] = useState("");
+    // Mot o tim kiem duy nhat dung cho ca hai muc dich: go toi dau tu dong loc
+    // "Phản ánh của tôi" (debounce, chi khi da dang nhap) toi do, va bam
+    // "Tra cứu" de tra cuu chinh xac theo ma (hoat dong ca khi chua dang nhap,
+    // hoac de xem mot phan anh KHONG phai cua minh qua ma).
+    const [query, setQuery] = useState("");
     const [searching, setSearching] = useState(false);
     const [searchError, setSearchError] = useState<string | null>(null);
     const [result, setResult] = useState<ComplaintDetail | null>(null);
@@ -40,23 +45,28 @@ const ComplaintLookupPage: React.FC = () => {
     const [myLoading, setMyLoading] = useState(false);
     const [myError, setMyError] = useState(false);
 
-    const loadMyComplaints = () => {
+    const loadMyComplaints = (search?: string) => {
         setMyLoading(true);
         setMyError(false);
-        fetchMyComplaints()
+        fetchMyComplaints(1, undefined, search || undefined)
             .then(res => setMyComplaints(res.items))
             .catch(() => setMyError(true))
             .finally(() => setMyLoading(false));
     };
 
+    // Loc (debounce) danh sach "Phản ánh của tôi" theo cung o tim kiem ben
+    // tren - an toan vi danh sach nay da duoc backend gioi han theo chinh
+    // nguoi dang dang nhap (createdByUserId), nen khong lo lo tieu de/noi dung
+    // phan anh cua nguoi khac.
     useEffect(() => {
-        if (token) {
-            loadMyComplaints();
-        }
-    }, [token]);
+        if (!token) return undefined;
+        const timer = setTimeout(() => loadMyComplaints(query), 300);
+        return () => clearTimeout(timer);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [token, query]);
 
     const handleSearch = async () => {
-        if (!code.trim()) {
+        if (!query.trim()) {
             setSearchError("Vui lòng nhập mã phản ánh");
             return;
         }
@@ -64,7 +74,7 @@ const ComplaintLookupPage: React.FC = () => {
             setSearching(true);
             setSearchError(null);
             setResult(null);
-            const detail = await lookupComplaintByCode(code.trim());
+            const detail = await lookupComplaintByCode(query.trim());
             setResult(detail);
         } catch (err: any) {
             setResult(null);
@@ -85,12 +95,12 @@ const ComplaintLookupPage: React.FC = () => {
             <Box p={4}>
                 <Box className="bg-white rounded-2xl p-4 shadow-card">
                     <Text.Title size="small" className="mb-2">
-                        Tra cứu theo mã phản ánh
+                        Tìm kiếm phản ánh
                     </Text.Title>
                     <Input
-                        placeholder="VD: HB-PA-2026-0001"
-                        value={code}
-                        onChange={e => setCode(e.target.value)}
+                        placeholder="Nhập mã phản ánh (VD: HB-PA-2026-0001) hoặc tiêu đề..."
+                        value={query}
+                        onChange={e => setQuery(e.target.value)}
                     />
                     <Box mt={3}>
                         <Button
@@ -98,7 +108,7 @@ const ComplaintLookupPage: React.FC = () => {
                             loading={searching}
                             onClick={handleSearch}
                         >
-                            Tra cứu
+                            Tra cứu theo mã
                         </Button>
                     </Box>
                     {searchError && (
@@ -125,13 +135,19 @@ const ComplaintLookupPage: React.FC = () => {
 
                         {myLoading && <LoadingState />}
                         {!myLoading && myError && (
-                            <ErrorState onRetry={loadMyComplaints} />
+                            <ErrorState
+                                onRetry={() => loadMyComplaints(query)}
+                            />
                         )}
                         {!myLoading &&
                             !myError &&
                             myComplaints.length === 0 && (
                                 <EmptyState
-                                    label="Bạn chưa gửi phản ánh nào"
+                                    label={
+                                        query
+                                            ? "Không tìm thấy phản ánh phù hợp"
+                                            : "Bạn chưa gửi phản ánh nào"
+                                    }
                                     icon={MessageSquareWarning}
                                     tone="danger"
                                 />
@@ -142,7 +158,9 @@ const ComplaintLookupPage: React.FC = () => {
                                 <ListRow
                                     key={item._id}
                                     title={item.title}
-                                    subtitle={item.code}
+                                    subtitle={`${item.code} · ${formatDateTime(
+                                        new Date(item.createdAt),
+                                    )}`}
                                     right={
                                         <StatusBadge
                                             label={
